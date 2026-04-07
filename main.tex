@@ -1,0 +1,129 @@
+%% --------------------------------------------------------------------
+%% Template UTEC Tesis
+%% --------------------------------------------------------------------
+% Este es el archivo que se debe compilar.
+% 
+% Este template ha sido modificado y actualizado por Eduardo Castro y Roosevelt Ubaldo en base a lo trabajado por Víctor Murray, Oscar Ramos y Juan Carlos Barbaran.
+%
+% Última actualización: Mayo, 2022
+
+\documentclass[a4paper,12pt,oneside]{tesisutec}
+
+\selectlanguage{spanish}
+\usepackage{pgfgantt}
+\usepackage{pdflscape}
+
+%%añadidos por mi
+\usepackage{placeins}
+\usepackage{enumitem}
+
+
+
+%% Paquetes
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[square, numbers, comma, sort&compress]{natbib}
+%Libreria para codigo
+\usepackage{listings}
+% Ajustar los parámetros de lstlisting
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    xleftmargin=2em,  % margen izquierdo
+    xrightmargin=2em,  % margen derecho
+    language=Python,
+    captionpos=b,
+    tabsize=3,
+    frame=lines,
+    numbers=left,
+    numberstyle=\tiny,
+    numbersep=5pt,
+    breaklines=true,
+    showstringspaces=false,
+    basicstyle=\footnotesize,
+    %identifierstyle=\color[rgb]{0.3,0.133,0.133},
+    %keywordstyle=\color[rgb]{0.133,0.133,0.6},
+    %stringstyle=\color[rgb]{0.133,0.533,0.133},
+    %commentstyle=\color[rgb]{0.133,0.133,0.133},
+}
+% Libreria de idioma
+\usepackage[spanish]{babel}
+% Libreria para posicionamiento
+\usepackage{float}
+% Librerias para insertar codigos
+\usepackage[spanish,onelanguage,ruled,vlined]{algorithm2e}
+\usepackage{verbatim} 
+% Librería para hipervínculos
+\usepackage{hyperref}
+ % Librería necesaria para arreglar el orden de referencias en overleaf.com
+\usepackage{notoccite}
+
+% Incluir acá los paquetes adicionales que deseas. 
+% Ubicación de los imágenes.
+\graphicspath{images/}
+
+\makeatletter
+% Reinsert missing \algbackskip
+\def\algbackskip{\hskip-\ALG@thistlm}
+\makeatother
+
+\hypersetup{urlcolor=blue, colorlinks=true}
+
+\begin{document}
+
+\frontmatter
+
+\department{INGENIERÍA MECATRÓNICA}
+\degree{Bachiller }
+\major{Ingeniería Mecatrónica}
+
+\title{Desarrollo de un Índice de Calidad Ambiental Interior (IEQ) e implementación de un sistema de monitoreo y alerta IoT basado en LoRa con tres nodos sensores para espacios universitarios}
+
+
+
+\author{
+    Sebastián André Peralta Ibañez (ORCID: 0009-0002-0417-8626)
+}% Es obligatorio agregar ORCID del alumno
+
+
+\supervisor{Ruth Canahuire Cabello (ORCID: )} % Es obligatorio agregar ORCID del asesor
+
+\date{2024}
+
+\maketitle
+
+\setstretch{1.5}
+
+
+\input{encabezados/dedicatoria}
+\input{encabezados/agradecimientos}
+
+\tableofcontents
+
+\newpage
+
+\listoftables
+
+\newpage
+
+\listoffigures
+
+\addtocontents{toc}{\vspace{1.5em}}
+
+%% ============================================================================
+\mainmatter
+\pagestyle{fancy}
+
+\input{secciones/resumen}
+\input{secciones/abstract}
+\input{secciones/introduccion}
+\input{secciones/capitulo1}
+\input{secciones/capitulo2}
+\input{secciones/capitulo3}
+\input{secciones/capitulo4}
+\input{secciones/conclusiones}
+\input{secciones/referencias}
+\input{secciones/anexos}
+
+\end{document}

@@ -1,0 +1,520 @@
+\chapter{MARCO METODOLÓGICO}
+
+El trabajo de investigación se divide en los siguientes tres frentes: nodo sensor, aplicación web y gateway. En este sentido, se ha optado por dividir la metodología para tener una mejor documentación del proceso a seguir en cada frente del proyecto, tanto en la selección de los componentes electrónicos empleados y los protocolos de comunicación inalámbrica más eficientes, así como de las tecnologías empleadas para la selección.
+
+\begin{itemize}
+    \item \textbf{Desarrollo de nodo sensor}
+    \item \textbf{Desarrollo de la aplicación web}
+    \item \textbf{Configuración del gateway}
+\end{itemize}
+
+\section{Metodologías de investigación}
+
+\subsection{Metodología V model}
+Para el desarrollo de la aplicación web, se ha escogido la metodología V model. Esta metodología permite estructurar y gestionar de manera eficaz el proceso de desarrollo y prueba, asegurando que cada fase de construcción esté alineada con un proceso de validación correspondiente. A continuación se describe la adaptación de este modelo al desarrollo de la aplicación web de monitoreo de datos de CO\(_2\).
+
+\begin{figure}[H]
+	\centering
+    	\includegraphics[width=0.9\linewidth]{images/capitulo3/vmodel.png}
+	\caption{\centering Metodología V model \cite{vmodel}.}
+	\label{fig:vmodel}
+\end{figure}
+
+
+
+\subsubsection{Definición de Requisitos}
+
+En esta primera etapa, se establecen los requisitos funcionales y no funcionales de la aplicación web. Estos incluyen la capacidad para recibir y mostrar los datos provenientes del mega gateway Kona, almacenar y consultar dichos datos en una base de datos SQL, y activar alertas visuales y sonoras cuando los niveles de CO\(_2\) superen un umbral predeterminado.
+
+\subsubsection{Diseño de Sistema y Arquitectura}
+
+En esta fase, se desarrolla una arquitectura que permita la integración de todos los componentes necesarios para la recepción, almacenamiento y visualización de los datos. Se emplea la arquitectura por capas, la cual a su vez considera el uso de un backend basado en C\# y .NET, una API para la comunicación entre el backend y el frontend, y un frontend en React, con TypeScript y empleando la librería Tailwind para el diseño visual, optimizado para una visualización de los datos recopilados por los nodos sensores.
+
+\subsubsection{Diseño de Componentes}
+
+Aquí se realiza el diseño específico de cada componente de la aplicación web, considerando el flujo de datos entre el mega gateway Kona, la base de datos y la interfaz de usuario. Esta fase incluye el diseño de la estructura de la base de datos SQL para almacenar las lecturas, la configuración de la API para recibir los datos del gateway mediante el protocolo MQTT, y la implementación de componentes de interfaz en React para visualizar los datos y alertas.
+
+\subsubsection{Implementación y Codificación}
+
+En la fase de implementación, se lleva a cabo la construcción de cada componente diseñado. El backend en .NET maneja la lógica de negocio y la comunicación con la base de datos, mientras que el frontend en React presenta los datos al usuario y envía alertas cuando los niveles de CO\(_2\) son elevados. Cada parte del código se implementa luego con pruebas unitarias y de integración para asegurar el cumplimiento de los requisitos.
+
+\subsubsection{Verificación y Validación}
+
+Una vez implementados los componentes, se realizan pruebas de integración y validación para asegurar que la aplicación web funcione de acuerdo con los requisitos establecidos. Esto incluye pruebas de visualización y actualización de datos en tiempo real, pruebas de respuesta de la interfaz de usuario y pruebas de activación de alertas visuales y auditivas cuando los niveles de CO\(_2\) superan los umbrales establecidos.
+
+\subsubsection{Pruebas de Sistema}
+
+Finalmente, se lleva a cabo una prueba de sistema que verifica la interacción completa entre los diferentes módulos y la precisión en la recepción y visualización de datos en tiempo real. En esta fase se simulan diferentes escenarios, incluyendo niveles normales y elevados de CO\(_2\), para garantizar que la aplicación web cumpla con su propósito y proporcione alertas efectivas y accesibles al usuario.
+
+\subsubsection{Mantenimiento y Actualización}
+
+El modelo V incluye una fase de mantenimiento, donde se abordan posibles mejoras, correcciones de errores y ajustes de la interfaz para optimizar la experiencia del usuario. Dado que la aplicación web estará en constante interacción con datos en tiempo real, es crucial que el mantenimiento se realice de forma periódica para asegurar su fiabilidad y precisión en la entrega de información y alertas.
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Metodología PPDIOO}
+
+Para el desarrollo del nodo sensor y la configuración del gateway, se ha optado por emplear la metodología PPDIOO. Esta metodología se adapta bien a la implementación de sistemas de hardware y redes, pues permite una planificación detallada en cada fase, asegurando la fiabilidad y eficiencia del sistema desde la concepción hasta la operación y mejora continua. A continuación, se describe la aplicación de esta metodología en los dos frentes del proyecto: el nodo sensor y el gateway.
+
+\begin{figure}[H]
+	\centering
+    	\includegraphics[width=0.5\linewidth]{images/capitulo3/PPDIOO.png}
+	\caption{\centering Metodología PPDIOO \cite{PPDIOO}.}
+	\label{fig:PPDIOO}
+\end{figure}
+
+
+
+\subsubsection{Planificación}
+
+En esta fase inicial, se definen los objetivos y especificaciones del nodo sensor. Se identifican los componentes necesarios, que incluyen un sensor de CO\(_2\), un microcontrolador para el procesamiento de datos, y un módulo de comunicación LoRa para el envío de los datos al gateway. También se establecen los requisitos de transmisión, frecuencia de muestreo (configurable) y los umbrales de alerta para la detección de niveles elevados de CO\(_2\).
+
+\subsubsection{Preparación}
+
+Durante la preparación, se lleva a cabo la adquisición de los componentes y se realiza una evaluación de su compatibilidad y consumo energético. Se configura un entorno de desarrollo adecuado y se establecen conexiones de prueba entre el sensor y el microcontrolador, garantizando que el módulo LoRa pueda transmitir adecuadamente los datos generados por el sensor.
+
+\subsubsection{Diseño}
+
+El diseño abarca tanto el esquema de conexiones físicas del nodo sensor como la estructura del código que gestionará las lecturas del sensor. Aquí se diseña el algoritmo que leerá los datos de CO\(_2\), procesará y enviará las lecturas mediante LoRa. Se definen las configuraciones para asegurar una transmisión óptima de los datos y se diseñan métodos de verificación para validar los niveles de CO\(_2\) y activar la transmisión en tiempo real hacia el gateway.
+
+\subsubsection{Implementación}
+
+En la fase de implementación, se ensamblan los componentes electrónicos y se carga el código en el microcontrolador para la captura y transmisión de datos. Se llevan a cabo pruebas de comunicación entre el nodo y el gateway para asegurar que los datos se envían correctamente y que el módulo LoRa funciona de acuerdo con los requisitos establecidos.
+
+\subsubsection{Operación}
+
+Una vez implementado, el nodo sensor se coloca en condiciones de operación para la lectura continua de niveles de CO\(_2\) en el entorno. Esta fase implica una prueba prolongada del nodo para garantizar su rendimiento y la consistencia en la transmisión de datos hacia el gateway bajo diferentes condiciones ambientales.
+
+\subsubsection{Optimización}
+
+Finalmente, la fase de optimización contempla ajustes en la configuración de muestreo y transmisión para optimizar el consumo energético y mejorar la precisión de las lecturas. Se realizan actualizaciones en el código y en la calibración del sensor, de ser necesario, para asegurar que el nodo opere de manera estable y eficiente.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Desarrollo de la aplicación web}
+
+\subsection{Estudio de requisitos}
+
+\subsubsection{Interfaz de Usuario (Frontend)}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{images//capitulo3/DF_frontend.png}
+    \caption{Diagrama de flujo para el desarrollo Frontend}
+    \label{fig:DF_frontend}
+\end{figure}
+
+En la figura \ref{fig:DF_frontend} se observa la metodología seguida para del desarrollo del frontend de la aplicación web de Monitoreo. En cuanto al paso de evaluación de cualidad (QA: Quality Asessment), consiste en realizar una variedad de pruebas para asegurar el adecuado funcionamiento de la aplicación, cuyos principales focos de atención son los siguientes:
+
+\begin{itemize}
+    \item Correcciónes gramaticales.
+    \item Bugs y malfuncionamientos en ciertas acciones de la aplicación.
+    \item Configuraciones incompletas.
+\end{itemize}
+
+
+Así mismo, la página web cuenta con dos páginas que funcionan como dashboards. La primera es una landing page en la cual se detallan los datos más relevantes en la aplicaciónl, la segunda es una vista detallada para cada uno de los sensores. Las principales funciones de cada una se detallan a continuación. 
+
+
+
+\begin{itemize}
+    \item \textbf{Landing page (Dashboard)}:
+    \begin{itemize}
+        \item Mostrar las últimas lecturas de CO\(_2\) de tres sensores en tiempo real.
+        \item Incluir detalles de la ubicación de cada sensor.
+        \item Visualizar las alertas cuando los valores de CO\(_2\) superen el umbral permitido (mediante ventanas emergentes y sonidos de alerta).
+    \end{itemize}
+    
+    \item \textbf{Vista de Detalle de Sensor}:
+    \begin{itemize}
+        \item Mostrar información detallada de cada sensor, como el nombre y la ubicación.
+        \item Incluir un gráfico interactivo con las lecturas de CO\(_2\) de las últimas 8 horas.
+        \item Acceso desde un menú lateral que permite la navegación entre sensores.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Operaciones entre Frontend y Backend}
+
+\begin{itemize}
+    \item El frontend debe realizar solicitudes HTTP al backend para recibir actualizaciones de datos de los sensores en tiempo real.
+    \item El backend enviará datos actualizados al frontend cada vez que haya una nueva lectura registrada.
+    \item Cuando los datos de CO\(_2\) superen el umbral configurado, el backend enviará una señal de alerta que el frontend deberá presentar visual y sonoramente.
+    \item El frontend permitirá la consulta histórica de lecturas de CO\(_2\) de cada sensor para su representación en los gráficos.
+\end{itemize}
+
+\subsubsection{Interacción con el Mega Gateway Kona}
+
+\begin{itemize}
+    \item El mega gateway Kona recibirá los datos de los sensores mediante comunicación LoRa y los enviará al backend utilizando el protocolo MQTT.
+    \item El backend debe estar configurado para recibir y procesar mensajes MQTT enviados por el mega gateway Kona.
+    \item Los datos recibidos desde el mega gateway Kona deben almacenarse en una base de datos SQL para su posterior visualización y consulta histórica.
+    \item En caso de que el mega gateway envíe lecturas que superen el umbral, el backend debe activar el sistema de alertas.
+\end{itemize}
+
+\subsubsection{Requisitos de Almacenamiento y Persistencia de Datos}
+
+\begin{itemize}
+    \item Los datos de lectura de los sensores deben almacenarse en una base de datos SQL para permitir consultas en tiempo real y acceso a registros históricos.
+    \item La base de datos debe registrar la fecha, hora, ubicación y nivel de CO\(_2\) de cada lectura.
+    \item Los datos históricos deben poder ser visualizados por el usuario a través de gráficos en la interfaz de detalle de cada sensor.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+\subsection{Selección de la arquitectura de software}
+
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.5}
+\caption{Comparación de Arquitecturas de Software para Aplicaciones de Monitoreo IoT \cite{software_arquitectura}}
+\label{tabla:software_arquitecturas}
+\begin{tabular}{|p{3cm}|p{2.5cm}|p{2.8cm}|p{2.5cm}|p{3cm}|}
+\hline
+\textbf{Arquitectura} & \textbf{Escalabilidad} & \textbf{Facilidad de Implementación} & \textbf{Manejo de Datos en Tiempo Real} & \textbf{Capacidad de Procesamiento} \\ \hline
+\textbf{Por capas} & Moderada: adecuada para aplicaciones pequeñas y medianas & Alta: diseño claro y comúnmente usado en frameworks como ASP.NET y Django & Limitada: requiere de modificaciones para soporte en tiempo real  & Distribución de lógica de negocio en el backend; buena para procesamiento en servidor \\ \hline
+\textbf{Microservicios} & Muy alta: ideal para aplicaciones grandes y escalables, permite añadir servicios independientes & Moderada: requiere experiencia en la gestión de múltiples servicios, comunicación y despliegue & Muy buena: servicios independientes pueden manejar eventos en tiempo real & Procesamiento distribuido: cada servicio maneja una funcionalidad específica, óptimo para alto rendimiento \\ \hline
+\textbf{Serverless} & Alta: escalabilidad automática y flexible, óptima para aplicaciones con carga variable & Alta: simplifica la implementación al no requerir gestión de servidores & Buena: respuesta en tiempo real gestionada por eventos; adecuado para procesamiento en base a umbrales & Limitada al evento y tiempo de ejecución; más eficiente para tareas eventuales o de corta duración \\ \hline
+\end{tabular}
+\end{table}
+
+Se decidió que la arquitectura por capas es ideal para este trabajo de investigación, dado su enfoque accesible, escalable y educativo, adecuado para el monitoreo IoT, ya que ofrece una estructura clara y modular que facilita el aprendizaje práctico de los estudiantes de cada componente en el desarrollo web. La separación en Modelo, Vista y Controlador permite a los estudiantes entender el flujo de datos desde la captura de los sensores hasta la visualización en tiempo real, y aprender de manera segmentada las responsabilidades de cada capa.
+
+Además, la arquitectura por capas es escalable para aplicaciones de mediana complejidad, por lo que, a medida que el proyecto crezca (añadiendo sensores o funciones adicionales), podrá expandirse sin una reestructuración significativa. Su compatibilidad con frameworks educativos, como ASP.NET, el cual es utilizado para este trabajo, facilita la implementación y permite que los estudiantes se enfoquen en la lógica de negocio y el diseño de la interfaz sin la complejidad de arquitecturas más avanzadas.
+\FloatBarrier
+
+
+
+
+
+
+\subsection{Desarrollo del Frontend}
+
+\subsubsection{Selección de tecnologías de diseño}
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.5}
+\caption{Comparación de Tecnologías Frontend para Aplicaciones de Monitoreo IoT}
+\label{tabla:comparativa}
+\begin{tabular}{|p{2.1cm}|p{2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{3.7cm}|}
+\hline
+\textbf{Tecnología} & \textbf{Facilidad de Uso} & \textbf{Rendimiento} & \textbf{Soporte de Componentes de Visualización} & \textbf{Escalabilidad} & \textbf{Enfoque} \\ \hline
+\textbf{React} & Alta: gran documentación y comunidad & Alto, gracias a su DOM virtual optimizado & Amplio: compatible con bibliotecas como Chart.js y D3.js & Alta: compatible con arquitecturas modulares & Creado para construir interfaces de usuario y gestionar el estado de aplicaciones de una sola página (SPA) \\ \hline
+\textbf{Vue.js} & Muy alta: curva de aprendizaje rápida & Moderado-Alto: buen manejo de cambios & Amplio: compatible con bibliotecas gráficas & Moderado: adecuado para proyectos pequeños-medianos & Enfoque progresivo, diseñado para ser adaptable y escalable según las necesidades del proyecto \\ \hline
+\textbf{Angular} & Media: curva de aprendizaje más pronunciada & Alto: rendimiento robusto en aplicaciones grandes & Muy amplio: incluye gráficos y componentes integrados & Alta: ideal para proyectos grandes y escalables & Framework completo orientado a aplicaciones empresariales de gran tamaño y aplicaciones SPA complejas \\ \hline
+\textbf{Svelte} & Muy alta: sintaxis intuitiva y directa & Muy alto: menos carga de procesamiento en tiempo de ejecución & Moderado: soporte de bibliotecas externas & Moderado-Alto: más adecuado para aplicaciones ligeras & Diseño enfocado en la eficiencia, compila código en tiempo de desarrollo para optimizar el rendimiento en tiempo de ejecución \\ \hline
+\textbf{Blazor (para C\#)} & Media: requiere familiaridad con .NET & Alto: ejecuta WebAssembly & Moderado: integrable con bibliotecas .NET & Alta: conveniente para aplicaciones basadas en .NET & Orientado a la ejecución de aplicaciones .NET en el navegador usando WebAssembly \\ \hline
+\end{tabular}
+\end{table}
+\FloatBarrier
+
+
+Dado que el trabajo de investigación tiene un enfoque educativo y como objetivo principal establecer un flujo de trabajo sencillo para estudiantes, se considera que React es la opción más adecuada para la aplicación de monitoreo IoT. Esto debido a que permite la creación de componentes reutilizables, manteniendo un desarrollo ágil y modular, lo cual es prioritario para que el proyecto sea replicable y fácil de comprender en un entorno educativo, mientras que, a su vez, da margen suficiente para que los estudiantes puedan ajustar la aplicación en torno a sus necesidades específicas y explorar sus propios conceptos.
+
+
+
+
+
+
+
+\subsubsection{Diseño de componentes}
+
+A continuación se presentan los componentes creados e implementados en el diseño, tanto en el dashboard de la landing page, así como en la página de detalle de cada sensor, y la página de configuración del administrador. El código para estos componentes se puede visualizar en el anexo \ref{an:componentes_front}.
+
+\begin{itemize}
+    
+    \item \texttt{Sidebar.tsx}: Menú lateral de navegación que permite acceder rápidamente a diferentes secciones de la aplicación, como el Dashboard, detalles de sensores, configuración y ayuda. Incluye iconos para mejorar la usabilidad y el diseño.
+    
+    \item \texttt{SensorOverview.tsx}: Muestra un resumen en tiempo real del estado de los sensores de CO\(_2\). Cada sensor tiene su propia tarjeta con información sobre el nivel actual de CO\(_2\), ubicación, estado (normal, elevado, crítico) y última actualización.
+    
+    \item \texttt{ComparativeChart.tsx}: Componente que muestra una gráfica comparativa de los niveles de CO\(_2\) de varios sensores a lo largo del tiempo. Permite visualizar las tendencias de CO\(_2\) para cada sensor y ayuda a identificar patrones o picos.
+    
+    \item \texttt{Filters.tsx}: Card que permite seleccionar el período de tiempo (última hora, últimas 3 horas, etc.) para filtrar los datos que se muestran en la gráfica comparativa (\texttt{ComparativeChart}). Incluye un selector desplegable para ajustar el rango de tiempo.
+    
+    \item \texttt{Statistics.tsx}: Card que muestra las estadísticas generales de los sensores, como el nivel promedio de CO\(_2\), el máximo alcanzado, el tiempo total en alerta y el número de alertas generadas. Está diseñado para adaptarse a la altura de su contenido y optimizar el uso del espacio.
+    
+    \item \texttt{AlertHistory.tsx}: Card que muestra un historial de alertas, con información sobre la hora de cada alerta y el nivel de CO\(_2\) registrado. Ayuda a rastrear incidentes pasados y evaluar la frecuencia de las alertas.
+    
+    \item \texttt{Alerts.tsx}: Card que muestra las alertas activas en el sistema. Cada alerta tiene información sobre la ubicación, el nivel de CO\(_2\) y el estado (elevado, crítico). Incluye botones de acción (como "Reconocer" y "Silenciar") para gestionar las alertas.
+    
+    \item \texttt{CampusMap.tsx} (Opcional): Muestra un mapa del campus con las ubicaciones de los sensores de CO\(_2\) resaltadas. Este componente fue eliminado en la última versión del Dashboard para liberar espacio, pero puede reinsertarse según sea necesario.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Desarrollo del back end}
+
+\subsubsection{Selección de patrones de diseño}
+
+
+\begin{landscape}
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.2} % Ajusta la altura de las filas
+\fontsize{9}{10}\selectfont % Reduce aún más el tamaño de la fuente dentro de la tabla
+\caption{Patrones de Diseño Utilizados en el Proyecto \cite{design_patterns} \cite{design_patterns}}
+\label{tabla:patrones-diseno}
+\begin{tabular}{|p{2cm}|p{3cm}|p{3cm}|p{5cm}|p{2cm}|}
+\hline
+\textbf{Patrón de Diseño} & \textbf{Descripción} & \textbf{Función en el Proyecto} & \textbf{Beneficios} & \textbf{Capa(s) de la Arquitectura} \\ \hline
+
+\textbf{DTO (Data Transfer Object)} & 
+Objeto simple que encapsula datos para transferir entre capas, evitando exponer directamente las entidades del dominio. & 
+Facilita la transferencia de datos de las lecturas de sensores y alertas al frontend, asegurando que solo se transmita la información necesaria. & 
+\begin{itemize}[leftmargin=*, nosep]
+    \item Reduce el acoplamiento entre capas.
+    \item Mejora la seguridad al no exponer entidades internas.
+    \item Optimiza el rendimiento al transferir solo datos esenciales.
+\end{itemize} & 
+Capa de Aplicación $\leftrightarrow$ Capa de Presentación \\ \hline
+
+\textbf{Repository Pattern} & 
+Abstracción que maneja las operaciones de acceso a datos, proporcionando una interfaz para realizar operaciones CRUD. & 
+Gestiona la interacción con la base de datos para almacenar y recuperar lecturas de sensores, así como verificar umbrales para generar alertas. & 
+\begin{itemize}[leftmargin=*, nosep]
+    \item Aísla la lógica de acceso a datos de la lógica de negocio.
+    \item Facilita la prueba y mantenimiento del código.
+    \item Permite cambiar el proveedor de datos sin afectar otras capas.
+\end{itemize} & 
+Capa de Persistencia \\ \hline
+
+\textbf{Entity Framework (ORM)} & 
+Herramienta de mapeo objeto-relacional que permite interactuar con la base de datos utilizando modelos de entidad en lugar de consultas SQL directas. & 
+Simplifica la gestión de la base de datos, permitiendo mapear las lecturas de sensores y alertas a entidades de C\#. & 
+\begin{itemize}[leftmargin=*, nosep]
+    \item Reduce la complejidad del acceso a datos.
+    \item Facilita la gestión de cambios en el esquema de la base de datos.
+    \item Mejora la productividad al eliminar la necesidad de escribir consultas SQL manualmente.
+\end{itemize} & 
+Capa de Persistencia \\ \hline
+
+\textbf{Service Pattern} & 
+Organiza la lógica de negocio en servicios independientes y reutilizables que encapsulan operaciones específicas. & 
+Centraliza la lógica de procesamiento de datos de sensores, evaluación de umbrales y generación de alertas, manteniendo la lógica de negocio separada de otras preocupaciones. & 
+\begin{itemize}[leftmargin=*, nosep]
+    \item Promueve la reutilización de código.
+    \item Mejora la mantenibilidad y escalabilidad del sistema.
+    \item Facilita la implementación de pruebas unitarias.
+\end{itemize} & 
+Capa de Aplicación \\ \hline
+
+\end{tabular}
+\end{table}
+\FloatBarrier % Evita que las tablas floten por encima de este punto
+\end{landscape}
+\FloatBarrier
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsubsection{Desarrollo de REST API}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/capitulo3/DF_backend.png}
+    \caption{Diagrama de flujo del desarrollo de Backend.}
+    \label{fig:df_backend}
+\end{figure}
+
+
+El desarrollo backend sigue una arquitectura de capas en la que cada sección tiene un rol específico para gestionar las operaciones de datos de los sensores. La configuración inicial incluye la base de datos y el entorno en C\# con Entity Framework, permitiendo un acceso simplificado a MySQL mediante mapeo de objetos.
+
+Las entidades representan las tablas en la base de datos, y los DTOs permiten transferir datos de forma controlada entre capas, protegiendo la estructura de la base de datos. La capa de repositorio usa el \textit{Repository Pattern} para manejar las operaciones \textit{CRUD} de manera aislada. La capa de servicios aplica la lógica de negocio, como verificar los umbrales de CO\(_2\) y gestionar alertas. Finalmente, los controladores gestionan las solicitudes \texttt{HTTP} y \texttt{MQTT}, proporcionando los datos al frontend mediante endpoints bien definidos.
+
+Las pruebas unitarias e integración aseguran la calidad y funcionamiento del sistema antes del despliegue. El proceso de Quality Assessment verifica que todos los componentes cumplen con los estándares de calidad antes de finalizar el desarrollo.
+
+
+
+\section{Desarrollo del nodo sensor}
+
+\subsection{Selección de componentes}
+
+\begin{table}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images//capitulo3/comparacion_electronica.png}
+    \caption{Comparación de componentes electrónicos utilizados para el nodo sensor.}
+    \label{tab:comparacion_electronica}
+\end{table}
+
+
+Para determinar la combinación de componentes más óptima para el proyecto, de acuerdo a los componentes mostrados en la tabla \ref{tab:comparacion_electronica}, se emplean las matrices de la metodología VDI 2225 para diseño electrónico. En primer lugar, deben seleccionarse al menos 4 alternativas para la solución electrónica en función de los componentes evaluados. Estas alternativas se muestran a continuación:
+
+
+%\begin{itemize}
+    %\item \textbf{Opción CS 1: Arduino UNO + SCD30 + SX1276.} Esta combinación obtuvo buenos resultados técnicos (0.86) y económicos (0.85), destacándose en precisión y facilidad de integración.
+    %\item \textbf{Opción CS 2: STM32F103C8T6 + MH-Z19B + RA-01H.} Aunque es económica (0.81), su puntuación técnica es la menor entre todas las alternativas (0.81) debido a menor precisión y facilidad de integración.
+    %\item \textbf{Opción CS 3: Arduino MKR WAN 1310 + SCD30 + E32-915T30D.} Es la opción más robusta y precisa, con un valor técnico elevado (0.90), pero su alto costo lo hace menos económico (0.83).
+    %\item \textbf{Opción CS4: Arduino UNO + MH-Z19B + E220-900T30D.} Esta combinación equilibra el costo y rendimiento, siendo la más económica (0.94) y con un valor técnico alto (0.90), ideal si se prioriza alcance y eficiencia.
+%\end{itemize}
+
+\begin{itemize}
+    \item \textbf{Opción CS 1: Arduino UNO + SCD30 + SX1276.} Esta combinación obtuvo un desempeño técnico aceptable (0.86), destacándose en precisión y facilidad de integración. Sin embargo, su valor económico es relativamente bajo (0.63), debido a su menor disponibilidad en el mercado y costos de mantenimiento.
+    
+    \item \textbf{Opción CS 2: STM32F103C8T6 + MH-Z19B + RA-01H.} Aunque es la opción más económica (0.60), su puntuación técnica es la más baja entre todas las alternativas (0.81). Esto se debe a su menor facilidad de integración y escalabilidad, lo que la hace menos adecuada para proyectos que requieran flexibilidad y soporte técnico.
+    
+    \item \textbf{Opción CS 3: Arduino MKR WAN 1310 + SCD30 + E32-915T30D.} Esta alternativa presenta un equilibrio entre robustez y precisión, con un valor técnico alto (0.88). Su disponibilidad en el mercado y durabilidad son puntos fuertes, pero su costo lo hace menos competitivo económicamente (0.80).
+    
+    \item \textbf{Opción CS4: Arduino UNO + MH-Z19B + E220-900T30D.} Esta combinación equilibra el costo y rendimiento, siendo la mejor opción económica (0.90) y destacándose técnicamente (0.86). Su alta disponibilidad en el mercado, combinado con su durabilidad y compatibilidad, la hace ideal para proyectos con un enfoque en eficiencia y alcance.
+\end{itemize}
+
+
+
+
+
+
+
+\begin{table}[h!]
+    \centering
+    \renewcommand{\arraystretch}{1.5} % Aumenta la altura de las filas
+    \caption{Diseño de Proyecto - Evaluación de Proyectos Valor Técnico (Xi)}
+    \label{tabla:valor_tecnico}
+    \begin{tabular}{|p{0.8cm}|p{3cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|}
+        \hline
+        \multicolumn{11}{|c|}{\textbf{Diseño electrónico - Evaluación de Proyectos Valor Técnico (Xi)}} \\ \hline
+        \multicolumn{11}{|c|}{\textbf{p: puntaje de 0 al 4 (escala por la norma VDI 2225)}} \\ \hline
+        \multicolumn{11}{|c|}{\textbf{0=No satisface; 1=Aceptable; 2=Suficiente; 3=Bien; 4=Muy bien}} \\ \hline
+        \multicolumn{11}{|c|}{\textbf{g: ponderado, basado en los criterios de evaluación}} \\ \hline
+        \textbf{Nro.} & \textbf{Criterio de Evaluación} & \textbf{g (\%)} & 
+        \multicolumn{2}{c|}{\textbf{CS 1}} & 
+        \multicolumn{2}{c|}{\textbf{CS 2}} & 
+        \multicolumn{2}{c|}{\textbf{CS 3}} & 
+        \multicolumn{2}{c|}{\textbf{CS 4}} \\ \hline
+        & & & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} \\ \hline
+        1 & Precisión en medición de CO$_2$ & 20 & 4 & 80 & 3 & 60 & 4 & 80 & 4 & 80 \\ \hline
+        2 & Consumo energético & 15 & 3 & 45 & 4 & 60 & 3 & 45 & 2 & 30 \\ \hline
+        3 & Facilidad de integración & 15 & 4 & 60 & 3 & 45 & 4 & 60 & 4 & 60 \\ \hline
+        4 & Alcance de comunicación & 15 & 3 & 45 & 3 & 45 & 4 & 60 & 4 & 60 \\ \hline
+        5 & Costo de implementación & 10 & 3 & 30 & 4 & 40 & 2 & 20 & 3 & 30 \\ \hline
+        6 & Robustez y durabilidad & 10 & 3 & 30 & 3 & 30 & 4 & 40 & 4 & 40 \\ \hline
+        7 & Escalabilidad & 10 & 4 & 40 & 3 & 30 & 4 & 40 & 2 & 20 \\ \hline
+        8 & Mantenimiento y soporte & 10 & 3 & 30 & 3 & 30 & 3 & 30 & 4 & 40 \\ \hline
+        \multicolumn{3}{|c|}{\textbf{Total}} & & \textbf{360} & & \textbf{340} & & \textbf{375} & & \textbf{360} \\ \hline
+        \multicolumn{3}{|c|}{\textbf{Puntaje Unitario}} & & 3.60 & & 3.40 & & 3.75 & & 3.60 \\ \hline
+        \multicolumn{3}{|c|}{\textbf{Valor Técnico Xi}} & & 0.86 & & 0.81 & & 0.88 & & 0.86 \\ \hline
+    \end{tabular}
+\end{table}
+
+
+
+
+
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.5}
+\caption{Diseño de Proyecto - Evaluación de Proyectos Valor Económico (Yi) Ajustado}
+\label{tabla:valor_economico}
+\begin{tabular}{|p{0.8cm}|p{3cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|}
+        \hline
+        \multicolumn{11}{|c|}{\textbf{Diseño electrónico - Evaluación de Proyectos Valor Económico (Yi)}} \\ \hline
+        \multicolumn{11}{|c|}{\textbf{p: puntaje de 0 al 4 (escala por la norma VDI 2225)}} \\ \hline
+        \multicolumn{11}{|c|}{\textbf{0=No satisface; 1=Aceptable; 2=Suficiente; 3=Bien; 4=Muy bien}} \\ \hline
+        \multicolumn{11}{|c|}{\textbf{g: ponderado, basado en los criterios de evaluación}} \\ \hline
+        \textbf{Nro.} & \textbf{Criterio de Evaluación} & \textbf{g (\%)} & 
+        \multicolumn{2}{c|}{\textbf{CS 1}} & 
+        \multicolumn{2}{c|}{\textbf{CS 2}} & 
+        \multicolumn{2}{c|}{\textbf{CS 3}} & 
+        \multicolumn{2}{c|}{\textbf{CS 4}} \\ \hline
+        & & & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} \\ \hline
+1 & Disponibilidad en el mercado & 35 & 2 & 70 & 2 & 70 & 3 & 105 & 4 & 140 \\ \hline
+2 & Costos de Mantenimiento & 20 & 2 & 40 & 2 & 40 & 3 & 60 & 3 & 60 \\ \hline
+3 & Durabilidad & 20 & 3 & 60 & 3 & 60 & 4 & 80 & 4 & 80 \\ \hline
+4 & Flexibilidad de Expansión & 15 & 2 & 30 & 2 & 30 & 3 & 45 & 3 & 45 \\ \hline
+5 & Compatibilidad y Soporte Técnico & 10 & 3 & 30 & 2 & 20 & 3 & 30 & 4 & 40 \\ \hline
+ & \textbf{Total} & \textbf{100} & & \textbf{230} & & \textbf{220} & & \textbf{320} & & \textbf{365} \\ \hline
+ & \textbf{Puntaje Unitario} & & & 2.30 & & 2.20 & & 3.20 & & 3.65 \\ \hline
+ & \textbf{Valor Económico Yi} & & & 0.63 & & 0.60 & & 0.80 & & 0.90 \\ \hline
+\end{tabular}
+\end{table}
+
+
+
+\FloatBarrier
+De acuerdo con las matrices \ref{tabla:valor_tecnico} y \ref{tabla:valor_economico}, la solución más óptima para el proyecto es la número 4. Esta solución consiste en los componentes Arduino UNO + MH-Z19B + E220-900T30D, y se destaca por su equilibrio entre valor técnico (\( X_i = 0.86 \)) y valor económico (\( Y_i = 0.90 \)). 
+
+En términos técnicos, esta configuración sobresale por su facilidad de integración, robustez, y un alcance de comunicación superior, aunque el consumo energético (\( p = 2 \)) es moderado en comparación con otras alternativas. La precisión del MH-Z19B es adecuada para aplicaciones de monitoreo estándar, lo que lo hace funcional para los requisitos del proyecto.
+
+En términos económicos, esta opción es la más favorable debido a su alta disponibilidad en el mercado peruano, donde el módulo E220-900T30D, que opera en la banda australiana de 915 MHz, se encuentra por debajo de los 200 soles. Su costo accesible, combinado con su compatibilidad y soporte técnico, refuerzan su idoneidad para proyectos que prioricen tanto la eficiencia como la relación costo-beneficio.
+
+Por estas razones, la solución número 4 se considera la más adecuada para cumplir con los objetivos del proyecto, garantizando un balance óptimo entre desempeño técnico y económico.
+
+
+
+
+
+
+
+
+\newpage
+\section{Configuración del gateway}
+Para la configuración del gateway Kona Mega, primero se debe confirmar que tanto la computadora, desde donde se enviará la configuración, y el gateway estén en la misma red. Se pueden emplear 2 herramientas. Por un lado, se tiene la opción de utilizar una consola para comunicarse con el dispositivo via SSH (Secure Shell). Esto puede realizarse ya sea en el sistema operativo (OS: Operative System) Linux, el cual cuenta con una consola SSH preinstalada, así como una serie de comandos que pueden agilizar la interacción con el gateway durante la configuración; o también se pueden utilizar aplicaciones como PuTTY para la comunicación via SSH. Por otro lado, se puede emplear la aplicacion Kona Field Tool (KonaFT), la cual fue la empleada en este proyecto. Esta herramienta no solo permite realizar las configuraciones del gateway mediante una interfaz gráfica de usuario (GUI: Graphic User Interface), sino también, identificar la dirección IP de todos los dispositivos TekTelic conectados a la misma red que la computadora en la que está instalada el programa. El proceso de idetificación y configuración del gateway sigue el siguiente flujo mostrado en la figura \ref{fig:DF_gateway}.
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/capitulo3/DF_gateway.png}
+    \caption{Diagrama de flujo de la configuración del gateway Kona Mega.}
+    \label{fig:DF_gateway}
+\end{figure}
+
+
+
+
+
+
+\newpage
+\section{Integración del sistema}
+
+El diagrama de flujo muestra el funcionamiento general del sistema integrado. Entre los pasos mencionados, proceso como la validación y formateo de datos en el gateway antes de enviarlos a la base de datos, si bien son brevemente mencionado en el diagrama, son esenciales para asegurar integridad y evitar errores. Además, el gateway debe gestionar eficientemente la conexión MQTT para asegurar que no haya pérdida de datos durante la transmisión. Cuando se genera una alerta por niveles de CO$_2$ altos, esta no solo se envía al frontend, sino que también puede almacenarse en la base de datos para un historial.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/capitulo3/DF_integracion.png}
+    \caption{Diagrama de flujo del funcionamiento del sistema}
+    \label{fig:DF_integracion}
+\end{figure}

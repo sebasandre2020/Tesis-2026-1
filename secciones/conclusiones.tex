@@ -1,0 +1,31 @@
+\customchapter{CONCLUSIONES Y RECOMENDACIONES} 
+
+\section{Conclusiones}
+
+\begin{itemize}
+    \item \textbf{Diseño de la arquitectura de red IoT y software:} Se diseñó una arquitectura para la red IoT como para la aplicación de monitoreo, empleando una topología estrella para las conexiones entre los nodos sensores y el gateway. La integración de nodos sensores con comunicación LoRa y una plataforma de visualización basada en tecnologías web modernas garantiza la escalabilidad y facilidad de mantenimiento del sistema.
+    
+    \item \textbf{Implementación de la red de nodos sensores:} Los nodos sensores se implementaron con éxito utilizando módulos LoRa para la transmisión de datos y sensores de CO\(_2\) de alta precisión. Este diseño permite capturar y transmitir datos de forma eficiente y remota, validando la funcionalidad de los sensores y la transmisión en condiciones controladas.
+    
+    \item \textbf{Desarrollo de la plataforma de software:} Se desarrolló una aplicación web funcional para la visualización y almacenamiento de los datos en tiempo real, con un sistema de alertas que notifica al usuario cuando los niveles de CO\(_2\) superan los límites definidos. La implementación de gráficos históricos y un dashboard centralizado facilita el monitoreo y la toma de decisiones informadas.
+    
+    \item \textbf{Configuración del gateway Kona Mega:} Aunque no se logró completar la configuración del gateway Kona Mega, se avanzó en la documentación y comprensión de sus requisitos y protocolos de comunicación. Esto permitirá que la integración final sea más eficiente en futuros trabajos.
+    
+    \item \textbf{Pruebas individuales exitosas:} Las pruebas individuales de los nodos sensores y de la plataforma de software demostraron que cada componente del sistema cumple con sus requisitos de diseño. Sin embargo, la falta de pruebas del sistema completamente integrado limita la validación del flujo de datos entre los nodos sensores, el gateway y la aplicación web.
+    
+    \item \textbf{Limitaciones y próximos pasos:} La ausencia de pruebas de integración debido a la falta de configuración del gateway no permitió culminar el trabajo verificando la funcionalidad total del sistema; sin embargo, se logró documentar parte de esta configuración.
+\end{itemize}
+
+\section{Recomendaciones}
+
+\begin{itemize}
+    \item \textbf{Priorizar la configuración del gateway Kona Mega:} Completar la configuración del gateway Kona Mega es esencial para realizar pruebas de integración y validar el flujo de datos desde los nodos sensores hasta la plataforma web. Se recomienda seguir las guías del fabricante y estableces comunicación con el soporte técnico debido a que el material disponible en la web es escaso y/o de difícil acceso.
+    
+    \item \textbf{Pruebas de integración del sistema completo:} Una vez configurado el gateway, es crucial realizar pruebas exhaustivas de todo el sistema, desde la captura de datos en los nodos sensores hasta su visualización en la plataforma web. Esto permitirá identificar y resolver problemas potenciales de conectividad o procesamiento; así como reconocer áreas de mejora del proyecto.
+    
+    \item \textbf{Documentar las configuraciones y resultados:} Es importante mantener una documentación clara de las configuraciones realizadas en el gateway y los nodos sensores, así como de los resultados de las pruebas de integración. Esto facilitará futuras implementaciones y replicación del proyecto.
+    
+    \item \textbf{Optimización del sistema de alertas:} Evaluar y mejorar el sistema de alertas, incluyendo ajustes en los umbrales de CO\(_2\) mediante un perfil de administrador dentro de la aplicación, y pruebas de diferentes formas de notificación (ventanas emergentes, correos electrónicos, notificaciones móviles), para garantizar que las alertas sean efectivas y rápidas.
+    
+    \item \textbf{Ampliación del sistema:} Una vez que el sistema esté completamente integrado y probado, se recomienda explorar la posibilidad de agregar más nodos sensores y extender el alcance de la red IoT para monitorear múltiples aulas o espacios de manera simultánea. Si bien el coste del tipo de sensor utilizado es alto, el proyecto claramente documentado es altamente replicable para otro tipo de aplicaciones que involucren recolección de data de sensores y comunicación inalámbrica. Por otra parte, sería recomendable hacer un presupuesto y mostrar la arquitectura que se utilizaría en caso de escalar el proyecto para múltiples áreas de la universidad.
+\end{itemize}

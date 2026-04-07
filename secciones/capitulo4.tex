@@ -1,0 +1,39 @@
+\chapter{RESULTADOS}
+En el presente capítulo, se muestra el análisis de los resultados obtenidos en el marco metodológico.
+
+\section{Conexiones del nodo sensor}
+
+Se realizaron las conexiones entre la placa de prototipado Arduino UNO, el sensor MH-Z19B y el módulo LoRa E220-900T30D como se muestra en la figura \ref{fig:diagrama_conexiones}. Los pines utilizados para cada componente se detallan en la tabla \ref{tabla:conexiones}.
+
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/capitulo4/diagrama_conexiones.png}
+    \caption{Diagrama de conexiones del nodo sensor}
+    \label{fig:diagrama_conexiones}
+\end{figure}
+
+
+
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.5}
+\caption{Conexiones para el nodo sensor}
+\label{tabla:conexiones}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Pines del Arduino UNO} & \textbf{Pines del MH-Z19B} & \textbf{Pines del E220-900T30D} \\ \hline
+GND                           & GND                        & GND                             \\ \hline
+5V                            & VCC                        & VCC                             \\ \hline
+D6                            & PWM                        & -                               \\ \hline
+RX (D0)                       & -                          & TX                              \\ \hline
+TX (D1)                       & -                          & RX                              \\ \hline
+\end{tabular}
+\end{table}
+
+
+\section{Página web para la lectura de los sensores}
+
+
