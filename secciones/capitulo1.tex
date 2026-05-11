@@ -36,6 +36,32 @@ La tecnología LoRa (Long Range) es una modulación de espectro ensanchado que p
 En \cite{Low_Cost_LoRa_Based_IoT_Edge_Device_for_Indoor_Air_Quality_Management_in_Schools}, se propone un sistema LoRaWAN para gestionar IAQ en escuelas, midiendo CO\(_2\) (estimado con SGP30), VOCs (SGP30), PM (SPS30), temperatura y humedad (DHT22). Los datos se transmiten a un servidor en la nube y se visualizan en Grafana.
 La viabilidad de implementar redes LoRaWAN en campus universitarios se ha estudiado para reducir interferencias, maximizar alcance y disminuir costos \cite{universidad_sevilla_nodate, masache_cabrera_2022}. Un proyecto piloto en un campus buscó desplegar una red LoRa para recoger datos de sensores y transmitirlos de forma segura para crear un campus inteligente y sostenible \cite{alai_secure_nodate}. LoRa es considerada una opción adecuada y costo-efectiva para soluciones de monitoreo ambiental en estos entornos \cite{mokolo_2022}.
 
+
+\section{Estrategias de mitigación activa del CO$_2$ en ambientes interiores}
+\subsection{Ventilación controlada por concentración de CO$_2$}
+
+La concentración de dióxido de carbono en ambientes interiores no solo constituye un indicador del nivel de ventilación, sino que también puede emplearse como variable de control para regular sistemas de renovación de aire. En este enfoque, conocido como ventilación controlada por demanda basada en CO$_2$, el caudal de aire exterior o la capacidad de extracción se ajusta en función de la ocupación real del espacio y de la concentración medida en el ambiente. Este tipo de estrategia ha sido estudiado y aplicado en edificios comerciales, institucionales y educativos, debido a su potencial para mantener condiciones aceptables de calidad del aire interior y, al mismo tiempo, optimizar el consumo energético del sistema de ventilación.
+
+\subsection{Sistemas de mitigación activa mediante ventiladores o extractores}
+
+A diferencia de los sistemas orientados únicamente al monitoreo, los sistemas de mitigación activa buscan reducir la concentración de CO$_2$ mediante la renovación del aire interior. En espacios como aulas, oficinas y otros recintos cerrados, esta reducción puede lograrse a través de ventilación natural, ventilación mecánica o extracción forzada. Diversos estudios han mostrado que la configuración del flujo de aire y la ubicación de extractores o ventiladores influyen directamente en la disminución de los niveles de CO$_2$ y en la efectividad de ventilación del ambiente.
+
+En entornos educativos, la ventilación mecánica descentralizada ha demostrado ser una alternativa útil para mantener concentraciones de CO$_2$ más bajas que las obtenidas únicamente mediante apertura manual de ventanas. Esto resulta especialmente relevante en aulas con alta ocupación o con limitaciones arquitectónicas que dificultan la ventilación natural continua.
+
+\subsection{Soluciones descentralizadas y de bajo costo para ambientes interiores}
+
+Gran parte de las soluciones reportadas en la literatura se implementan sobre infraestructura HVAC existente o requieren sistemas de ventilación mecánica de mayor escala. Sin embargo, en espacios donde no existe infraestructura especializada o donde el presupuesto es limitado, surge la necesidad de desarrollar propuestas descentralizadas de menor costo, compuestas por sensores de CO$_2$, lógica de control y actuadores de ventilación de fácil integración.
+
+En este contexto, el uso de ventiladores controlados por PWM representa una alternativa viable para modular el caudal de aire de acuerdo con la concentración medida en el ambiente. Este enfoque permite plantear estrategias de mitigación activa accesibles y escalables, especialmente en espacios universitarios o académicos donde se busca complementar el monitoreo con acciones correctivas automáticas.
+
+\subsection{Brecha identificada y aporte de la tesis}
+
+A partir de la revisión de la literatura, se observa que muchas propuestas se concentran en el monitoreo de la calidad ambiental interior, la transmisión de datos en tiempo real y la visualización de variables como CO$_2$, temperatura y humedad. No obstante, existe menor desarrollo de soluciones de bajo costo que integren, en un mismo sistema, monitoreo, comunicación IoT y mitigación activa mediante ventiladores controlados automáticamente en función de la concentración de CO$_2$.
+
+En ese sentido, la presente tesis busca complementar el enfoque de monitoreo con un subsistema de actuación basado en ventiladores PWM, orientado a reducir la concentración de CO$_2$ en espacios universitarios de manera automática y económicamente accesible. Esta integración pretende aportar una solución práctica para mejorar la calidad ambiental interior más allá de la simple generación de alertas.
+
+
+
 \section{Índices de Calidad Ambiental Interior y Aplicaciones en Entornos Universitarios}
 
 \subsection{Desarrollo y Aplicación de Índices de IEQ}
