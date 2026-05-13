@@ -60,18 +60,21 @@ Dado el impacto de los altos niveles de CO\(_2\) en la salud y el rendimiento ac
 En esta sección se presentan los objetivos de este Trabajo Final de Ingeniería Mecatrónica. Sobre ellos se estructuró la investigación y los resultados presentados.
 
 \subsubsection*{Objetivo general}
+
 Diseñar e implementar un sistema de monitoreo y alerta IoT para niveles de CO\(_2\) basado en comunicación LoRa mediante gateways personalizados, integrando tres nodos sensores para espacios universitarios en la UTEC, y desarrollar un control automatizado de ventilación en función de una tendencia predictiva de niveles peligrosos de CO\(_2\).
 
-\subsection*{Objetivos Específicos}
+\subsection*{Objetivos específicos}
 
 \begin{itemize}
-    \item Diseñar la arquitectura de hardware y software de una red de sensores IoT basada en tecnología LoRa para el monitoreo de niveles de CO\(_2\), integrando tres nodos sensores y un gateway personalizado.
-    \item Configurar e implementar la comunicación inalámbrica LoRa entre los nodos sensores y el gateway, asegurando una transmisión de datos confiable y de bajo consumo energético dentro de las instalaciones universitarias.
-    \item Desarrollar e integrar una plataforma en la nube o servidor local para el almacenamiento, procesamiento y visualización en tiempo real de los datos de concentración de CO\(_2\) adquiridos por la red de sensores.
-    \item Diseñar e implementar un algoritmo de control predictivo capaz de anticipar niveles peligrosos de CO\(_2\) en función de tendencias históricas y datos en tiempo real.
-    \item Integrar el algoritmo de control predictivo con el sistema IoT para comandar la activación automatizada de un sistema de ventilación antes de que se superen los umbrales de salubridad.
-    \item Ejecutar pruebas funcionales y validar el desempeño del sistema de monitoreo y el control de ventilación predictiva en espacios seleccionados del campus universitario (UTEC).
-    \item Elaborar la documentación técnica detallada que incluya el diseño de la red LoRa, el desarrollo del algoritmo predictivo, los resultados de las pruebas funcionales y las consideraciones para la escalabilidad del sistema.
+   \item Diseñar la arquitectura de hardware y software de una red de sensores IoT basada en tecnología LoRa para el monitoreo de niveles de CO\(_2\), integrando tres nodos sensores y un gateway personalizado.
+   \item Configurar e implementar la comunicación inalámbrica LoRa entre los nodos sensores y el gateway, asegurando una transmisión de datos confiable y de bajo consumo energético dentro de las instalaciones universitarias.
+   \item Desarrollar e integrar una plataforma en la nube o servidor local para el almacenamiento, procesamiento y visualización en tiempo real de los datos de concentración de CO\(_2\) adquiridos por la red de sensores.
+    \item Implementar un subsistema de ventilación activa basado en ventiladores PWM.
+    \item Diseñar y comparar controladores PID y Fuzzy para la regulación de la concentración de CO$_2$.
+    \item Validar experimentalmente el desempeño del sistema propuesto en condiciones representativas de uso.
+    \item Elaborar la documentación técnica detallada que incluya el diseño de la red LoRa, el desarrollo del algoritmo de control, los resultados de las pruebas funcionales y las consideraciones para la escalabilidad del sistema.
+
+
 \end{itemize}
 
 
