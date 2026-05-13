@@ -14,10 +14,10 @@ El trabajo de investigación se divide en los siguientes tres frentes: nodo sens
 Para el desarrollo de la aplicación web, se ha escogido la metodología V model. Esta metodología permite estructurar y gestionar de manera eficaz el proceso de desarrollo y prueba, asegurando que cada fase de construcción esté alineada con un proceso de validación correspondiente. A continuación se describe la adaptación de este modelo al desarrollo de la aplicación web de monitoreo de datos de CO\(_2\).
 
 \begin{figure}[H]
-	\centering
-    	\includegraphics[width=0.9\linewidth]{images/capitulo3/vmodel.png}
-	\caption{\centering Metodología V model \cite{vmodel}.}
-	\label{fig:vmodel}
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo3/vmodel.png}
+    \caption{\centering Metodología V model \cite{vmodel}.}
+    \label{fig:vmodel}
 \end{figure}
 
 
@@ -66,10 +66,10 @@ El modelo V incluye una fase de mantenimiento, donde se abordan posibles mejoras
 Para el desarrollo del nodo sensor y la configuración del gateway, se ha optado por emplear la metodología PPDIOO. Esta metodología se adapta bien a la implementación de sistemas de hardware y redes, pues permite una planificación detallada en cada fase, asegurando la fiabilidad y eficiencia del sistema desde la concepción hasta la operación y mejora continua. A continuación, se describe la aplicación de esta metodología en los dos frentes del proyecto: el nodo sensor y el gateway.
 
 \begin{figure}[H]
-	\centering
-    	\includegraphics[width=0.5\linewidth]{images/capitulo3/PPDIOO.png}
-	\caption{\centering Metodología PPDIOO \cite{PPDIOO}.}
-	\label{fig:PPDIOO}
+    \centering
+    \includegraphics[width=0.5\linewidth]{images/capitulo3/PPDIOO.png}
+    \caption{\centering Metodología PPDIOO \cite{PPDIOO}.}
+    \label{fig:PPDIOO}
 \end{figure}
 
 
@@ -137,24 +137,24 @@ En la figura \ref{fig:DF_frontend} se observa la metodología seguida para del d
 \end{itemize}
 
 
-Así mismo, la página web cuenta con dos páginas que funcionan como dashboards. La primera es una landing page en la cual se detallan los datos más relevantes en la aplicaciónl, la segunda es una vista detallada para cada uno de los sensores. Las principales funciones de cada una se detallan a continuación. 
+Así mismo, la página web cuenta con dos páginas que funcionan como dashboards. La primera es una landing page en la cual se detallan los datos más relevantes en la aplicaciónl, la segunda es una vista detallada para cada uno de los sensores. Las principales funciones de cada una se detallan a continuación.
 
 
 
 \begin{itemize}
     \item \textbf{Landing page (Dashboard)}:
-    \begin{itemize}
-        \item Mostrar las últimas lecturas de CO\(_2\) de tres sensores en tiempo real.
-        \item Incluir detalles de la ubicación de cada sensor.
-        \item Visualizar las alertas cuando los valores de CO\(_2\) superen el umbral permitido (mediante ventanas emergentes y sonidos de alerta).
-    \end{itemize}
-    
+          \begin{itemize}
+              \item Mostrar las últimas lecturas de CO\(_2\) de tres sensores en tiempo real.
+              \item Incluir detalles de la ubicación de cada sensor.
+              \item Visualizar las alertas cuando los valores de CO\(_2\) superen el umbral permitido (mediante ventanas emergentes y sonidos de alerta).
+          \end{itemize}
+
     \item \textbf{Vista de Detalle de Sensor}:
-    \begin{itemize}
-        \item Mostrar información detallada de cada sensor, como el nombre y la ubicación.
-        \item Incluir un gráfico interactivo con las lecturas de CO\(_2\) de las últimas 8 horas.
-        \item Acceso desde un menú lateral que permite la navegación entre sensores.
-    \end{itemize}
+          \begin{itemize}
+              \item Mostrar información detallada de cada sensor, como el nombre y la ubicación.
+              \item Incluir un gráfico interactivo con las lecturas de CO\(_2\) de las últimas 8 horas.
+              \item Acceso desde un menú lateral que permite la navegación entre sensores.
+          \end{itemize}
 \end{itemize}
 
 \subsubsection{Operaciones entre Frontend y Backend}
@@ -194,17 +194,17 @@ Así mismo, la página web cuenta con dos páginas que funcionan como dashboards
 \subsection{Selección de la arquitectura de software}
 
 \begin{table}[h!]
-\centering
-\renewcommand{\arraystretch}{1.5}
-\caption{Comparación de Arquitecturas de Software para Aplicaciones de Monitoreo IoT \cite{software_arquitectura}}
-\label{tabla:software_arquitecturas}
-\begin{tabular}{|p{3cm}|p{2.5cm}|p{2.8cm}|p{2.5cm}|p{3cm}|}
-\hline
-\textbf{Arquitectura} & \textbf{Escalabilidad} & \textbf{Facilidad de Implementación} & \textbf{Manejo de Datos en Tiempo Real} & \textbf{Capacidad de Procesamiento} \\ \hline
-\textbf{Por capas} & Moderada: adecuada para aplicaciones pequeñas y medianas & Alta: diseño claro y comúnmente usado en frameworks como ASP.NET y Django & Limitada: requiere de modificaciones para soporte en tiempo real  & Distribución de lógica de negocio en el backend; buena para procesamiento en servidor \\ \hline
-\textbf{Microservicios} & Muy alta: ideal para aplicaciones grandes y escalables, permite añadir servicios independientes & Moderada: requiere experiencia en la gestión de múltiples servicios, comunicación y despliegue & Muy buena: servicios independientes pueden manejar eventos en tiempo real & Procesamiento distribuido: cada servicio maneja una funcionalidad específica, óptimo para alto rendimiento \\ \hline
-\textbf{Serverless} & Alta: escalabilidad automática y flexible, óptima para aplicaciones con carga variable & Alta: simplifica la implementación al no requerir gestión de servidores & Buena: respuesta en tiempo real gestionada por eventos; adecuado para procesamiento en base a umbrales & Limitada al evento y tiempo de ejecución; más eficiente para tareas eventuales o de corta duración \\ \hline
-\end{tabular}
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \caption{Comparación de Arquitecturas de Software para Aplicaciones de Monitoreo IoT \cite{software_arquitectura}}
+    \label{tabla:software_arquitecturas}
+    \begin{tabular}{|p{3cm}|p{2.5cm}|p{2.8cm}|p{2.5cm}|p{3cm}|}
+        \hline
+        \textbf{Arquitectura}   & \textbf{Escalabilidad}                                                                          & \textbf{Facilidad de Implementación}                                                           & \textbf{Manejo de Datos en Tiempo Real}                                                                & \textbf{Capacidad de Procesamiento}                                                                        \\ \hline
+        \textbf{Por capas}      & Moderada: adecuada para aplicaciones pequeñas y medianas                                        & Alta: diseño claro y comúnmente usado en frameworks como ASP.NET y Django                      & Limitada: requiere de modificaciones para soporte en tiempo real                                       & Distribución de lógica de negocio en el backend; buena para procesamiento en servidor                      \\ \hline
+        \textbf{Microservicios} & Muy alta: ideal para aplicaciones grandes y escalables, permite añadir servicios independientes & Moderada: requiere experiencia en la gestión de múltiples servicios, comunicación y despliegue & Muy buena: servicios independientes pueden manejar eventos en tiempo real                              & Procesamiento distribuido: cada servicio maneja una funcionalidad específica, óptimo para alto rendimiento \\ \hline
+        \textbf{Serverless}     & Alta: escalabilidad automática y flexible, óptima para aplicaciones con carga variable          & Alta: simplifica la implementación al no requerir gestión de servidores                        & Buena: respuesta en tiempo real gestionada por eventos; adecuado para procesamiento en base a umbrales & Limitada al evento y tiempo de ejecución; más eficiente para tareas eventuales o de corta duración         \\ \hline
+    \end{tabular}
 \end{table}
 
 Se decidió que la arquitectura por capas es ideal para este trabajo de investigación, dado su enfoque accesible, escalable y educativo, adecuado para el monitoreo IoT, ya que ofrece una estructura clara y modular que facilita el aprendizaje práctico de los estudiantes de cada componente en el desarrollo web. La separación en Modelo, Vista y Controlador permite a los estudiantes entender el flujo de datos desde la captura de los sensores hasta la visualización en tiempo real, y aprender de manera segmentada las responsabilidades de cada capa.
@@ -221,19 +221,19 @@ Además, la arquitectura por capas es escalable para aplicaciones de mediana com
 
 \subsubsection{Selección de tecnologías de diseño}
 \begin{table}[h!]
-\centering
-\renewcommand{\arraystretch}{1.5}
-\caption{Comparación de Tecnologías Frontend para Aplicaciones de Monitoreo IoT}
-\label{tabla:comparativa}
-\begin{tabular}{|p{2.1cm}|p{2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{3.7cm}|}
-\hline
-\textbf{Tecnología} & \textbf{Facilidad de Uso} & \textbf{Rendimiento} & \textbf{Soporte de Componentes de Visualización} & \textbf{Escalabilidad} & \textbf{Enfoque} \\ \hline
-\textbf{React} & Alta: gran documentación y comunidad & Alto, gracias a su DOM virtual optimizado & Amplio: compatible con bibliotecas como Chart.js y D3.js & Alta: compatible con arquitecturas modulares & Creado para construir interfaces de usuario y gestionar el estado de aplicaciones de una sola página (SPA) \\ \hline
-\textbf{Vue.js} & Muy alta: curva de aprendizaje rápida & Moderado-Alto: buen manejo de cambios & Amplio: compatible con bibliotecas gráficas & Moderado: adecuado para proyectos pequeños-medianos & Enfoque progresivo, diseñado para ser adaptable y escalable según las necesidades del proyecto \\ \hline
-\textbf{Angular} & Media: curva de aprendizaje más pronunciada & Alto: rendimiento robusto en aplicaciones grandes & Muy amplio: incluye gráficos y componentes integrados & Alta: ideal para proyectos grandes y escalables & Framework completo orientado a aplicaciones empresariales de gran tamaño y aplicaciones SPA complejas \\ \hline
-\textbf{Svelte} & Muy alta: sintaxis intuitiva y directa & Muy alto: menos carga de procesamiento en tiempo de ejecución & Moderado: soporte de bibliotecas externas & Moderado-Alto: más adecuado para aplicaciones ligeras & Diseño enfocado en la eficiencia, compila código en tiempo de desarrollo para optimizar el rendimiento en tiempo de ejecución \\ \hline
-\textbf{Blazor (para C\#)} & Media: requiere familiaridad con .NET & Alto: ejecuta WebAssembly & Moderado: integrable con bibliotecas .NET & Alta: conveniente para aplicaciones basadas en .NET & Orientado a la ejecución de aplicaciones .NET en el navegador usando WebAssembly \\ \hline
-\end{tabular}
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \caption{Comparación de Tecnologías Frontend para Aplicaciones de Monitoreo IoT}
+    \label{tabla:comparativa}
+    \begin{tabular}{|p{2.1cm}|p{2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{3.7cm}|}
+        \hline
+        \textbf{Tecnología}        & \textbf{Facilidad de Uso}                   & \textbf{Rendimiento}                                          & \textbf{Soporte de Componentes de Visualización}         & \textbf{Escalabilidad}                                & \textbf{Enfoque}                                                                                                              \\ \hline
+        \textbf{React}             & Alta: gran documentación y comunidad        & Alto, gracias a su DOM virtual optimizado                     & Amplio: compatible con bibliotecas como Chart.js y D3.js & Alta: compatible con arquitecturas modulares          & Creado para construir interfaces de usuario y gestionar el estado de aplicaciones de una sola página (SPA)                    \\ \hline
+        \textbf{Vue.js}            & Muy alta: curva de aprendizaje rápida       & Moderado-Alto: buen manejo de cambios                         & Amplio: compatible con bibliotecas gráficas              & Moderado: adecuado para proyectos pequeños-medianos   & Enfoque progresivo, diseñado para ser adaptable y escalable según las necesidades del proyecto                                \\ \hline
+        \textbf{Angular}           & Media: curva de aprendizaje más pronunciada & Alto: rendimiento robusto en aplicaciones grandes             & Muy amplio: incluye gráficos y componentes integrados    & Alta: ideal para proyectos grandes y escalables       & Framework completo orientado a aplicaciones empresariales de gran tamaño y aplicaciones SPA complejas                         \\ \hline
+        \textbf{Svelte}            & Muy alta: sintaxis intuitiva y directa      & Muy alto: menos carga de procesamiento en tiempo de ejecución & Moderado: soporte de bibliotecas externas                & Moderado-Alto: más adecuado para aplicaciones ligeras & Diseño enfocado en la eficiencia, compila código en tiempo de desarrollo para optimizar el rendimiento en tiempo de ejecución \\ \hline
+        \textbf{Blazor (para C\#)} & Media: requiere familiaridad con .NET       & Alto: ejecuta WebAssembly                                     & Moderado: integrable con bibliotecas .NET                & Alta: conveniente para aplicaciones basadas en .NET   & Orientado a la ejecución de aplicaciones .NET en el navegador usando WebAssembly                                              \\ \hline
+    \end{tabular}
 \end{table}
 \FloatBarrier
 
@@ -251,21 +251,21 @@ Dado que el trabajo de investigación tiene un enfoque educativo y como objetivo
 A continuación se presentan los componentes creados e implementados en el diseño, tanto en el dashboard de la landing page, así como en la página de detalle de cada sensor, y la página de configuración del administrador. El código para estos componentes se puede visualizar en el anexo \ref{an:componentes_front}.
 
 \begin{itemize}
-    
+
     \item \texttt{Sidebar.tsx}: Menú lateral de navegación que permite acceder rápidamente a diferentes secciones de la aplicación, como el Dashboard, detalles de sensores, configuración y ayuda. Incluye iconos para mejorar la usabilidad y el diseño.
-    
+
     \item \texttt{SensorOverview.tsx}: Muestra un resumen en tiempo real del estado de los sensores de CO\(_2\). Cada sensor tiene su propia tarjeta con información sobre el nivel actual de CO\(_2\), ubicación, estado (normal, elevado, crítico) y última actualización.
-    
+
     \item \texttt{ComparativeChart.tsx}: Componente que muestra una gráfica comparativa de los niveles de CO\(_2\) de varios sensores a lo largo del tiempo. Permite visualizar las tendencias de CO\(_2\) para cada sensor y ayuda a identificar patrones o picos.
-    
+
     \item \texttt{Filters.tsx}: Card que permite seleccionar el período de tiempo (última hora, últimas 3 horas, etc.) para filtrar los datos que se muestran en la gráfica comparativa (\texttt{ComparativeChart}). Incluye un selector desplegable para ajustar el rango de tiempo.
-    
+
     \item \texttt{Statistics.tsx}: Card que muestra las estadísticas generales de los sensores, como el nivel promedio de CO\(_2\), el máximo alcanzado, el tiempo total en alerta y el número de alertas generadas. Está diseñado para adaptarse a la altura de su contenido y optimizar el uso del espacio.
-    
+
     \item \texttt{AlertHistory.tsx}: Card que muestra un historial de alertas, con información sobre la hora de cada alerta y el nivel de CO\(_2\) registrado. Ayuda a rastrear incidentes pasados y evaluar la frecuencia de las alertas.
-    
+
     \item \texttt{Alerts.tsx}: Card que muestra las alertas activas en el sistema. Cada alerta tiene información sobre la ubicación, el nivel de CO\(_2\) y el estado (elevado, crítico). Incluye botones de acción (como "Reconocer" y "Silenciar") para gestionar las alertas.
-    
+
     \item \texttt{CampusMap.tsx} (Opcional): Muestra un mapa del campus con las ubicaciones de los sensores de CO\(_2\) resaltadas. Este componente fue eliminado en la última versión del Dashboard para liberar espacio, pero puede reinsertarse según sea necesario.
 \end{itemize}
 
@@ -285,59 +285,58 @@ A continuación se presentan los componentes creados e implementados en el dise�
 
 
 \begin{landscape}
-\begin{table}[h!]
-\centering
-\renewcommand{\arraystretch}{1.2} % Ajusta la altura de las filas
-\fontsize{9}{10}\selectfont % Reduce aún más el tamaño de la fuente dentro de la tabla
-\caption{Patrones de Diseño Utilizados en el Proyecto \cite{design_patterns} \cite{design_patterns}}
-\label{tabla:patrones-diseno}
-\begin{tabular}{|p{2cm}|p{3cm}|p{3cm}|p{5cm}|p{2cm}|}
-\hline
-\textbf{Patrón de Diseño} & \textbf{Descripción} & \textbf{Función en el Proyecto} & \textbf{Beneficios} & \textbf{Capa(s) de la Arquitectura} \\ \hline
+    \begin{table}[h!]
+        \centering
+        \renewcommand{\arraystretch}{1.2} % Ajusta la altura de las filas
+        \fontsize{9}{10}\selectfont % Reduce aún más el tamaño de la fuente dentro de la tabla
+        \caption{Patrones de Diseño Utilizados en el Proyecto \cite{design_patterns} \cite{design_patterns}}
+        \label{tabla:patrones-diseno}
+        \begin{tabular}{|p{2cm}|p{3cm}|p{3cm}|p{5cm}|p{2cm}|}
+            \hline
+            \textbf{Patrón de Diseño}                                                                                                                                                      & \textbf{Descripción} & \textbf{Función en el Proyecto} & \textbf{Beneficios} & \textbf{Capa(s) de la Arquitectura} \\ \hline
 
-\textbf{DTO (Data Transfer Object)} & 
-Objeto simple que encapsula datos para transferir entre capas, evitando exponer directamente las entidades del dominio. & 
-Facilita la transferencia de datos de las lecturas de sensores y alertas al frontend, asegurando que solo se transmita la información necesaria. & 
-\begin{itemize}[leftmargin=*, nosep]
-    \item Reduce el acoplamiento entre capas.
-    \item Mejora la seguridad al no exponer entidades internas.
-    \item Optimiza el rendimiento al transferir solo datos esenciales.
-\end{itemize} & 
-Capa de Aplicación $\leftrightarrow$ Capa de Presentación \\ \hline
+            \textbf{DTO (Data Transfer Object)}                                                                                                                                            &
+            Objeto simple que encapsula datos para transferir entre capas, evitando exponer directamente las entidades del dominio.                                                        &
+            Facilita la transferencia de datos de las lecturas de sensores y alertas al frontend, asegurando que solo se transmita la información necesaria.                               &
+            \begin{itemize}[leftmargin=*, nosep]
+                \item Reduce el acoplamiento entre capas.
+                \item Mejora la seguridad al no exponer entidades internas.
+                \item Optimiza el rendimiento al transferir solo datos esenciales.
+            \end{itemize}                                                                                                         &
+            Capa de Aplicación $\leftrightarrow$ Capa de Presentación                                                                                                                                                                                                                                           \\ \hline
 
-\textbf{Repository Pattern} & 
-Abstracción que maneja las operaciones de acceso a datos, proporcionando una interfaz para realizar operaciones CRUD. & 
-Gestiona la interacción con la base de datos para almacenar y recuperar lecturas de sensores, así como verificar umbrales para generar alertas. & 
-\begin{itemize}[leftmargin=*, nosep]
-    \item Aísla la lógica de acceso a datos de la lógica de negocio.
-    \item Facilita la prueba y mantenimiento del código.
-    \item Permite cambiar el proveedor de datos sin afectar otras capas.
-\end{itemize} & 
-Capa de Persistencia \\ \hline
+            \textbf{Repository Pattern}                                                                                                                                                    &
+            Abstracción que maneja las operaciones de acceso a datos, proporcionando una interfaz para realizar operaciones CRUD.                                                          &
+            Gestiona la interacción con la base de datos para almacenar y recuperar lecturas de sensores, así como verificar umbrales para generar alertas.                                &
+            \begin{itemize}[leftmargin=*, nosep]
+                \item Aísla la lógica de acceso a datos de la lógica de negocio.
+                \item Facilita la prueba y mantenimiento del código.
+                \item Permite cambiar el proveedor de datos sin afectar otras capas.
+            \end{itemize}                                                                                                       &
+            Capa de Persistencia                                                                                                                                                                                                                                                                                \\ \hline
 
-\textbf{Entity Framework (ORM)} & 
-Herramienta de mapeo objeto-relacional que permite interactuar con la base de datos utilizando modelos de entidad en lugar de consultas SQL directas. & 
-Simplifica la gestión de la base de datos, permitiendo mapear las lecturas de sensores y alertas a entidades de C\#. & 
-\begin{itemize}[leftmargin=*, nosep]
-    \item Reduce la complejidad del acceso a datos.
-    \item Facilita la gestión de cambios en el esquema de la base de datos.
-    \item Mejora la productividad al eliminar la necesidad de escribir consultas SQL manualmente.
-\end{itemize} & 
-Capa de Persistencia \\ \hline
+            \textbf{Entity Framework (ORM)}                                                                                                                                                &
+            Herramienta de mapeo objeto-relacional que permite interactuar con la base de datos utilizando modelos de entidad en lugar de consultas SQL directas.                          &
+            Simplifica la gestión de la base de datos, permitiendo mapear las lecturas de sensores y alertas a entidades de C\#.                                                           &
+            \begin{itemize}[leftmargin=*, nosep]
+                \item Reduce la complejidad del acceso a datos.
+                \item Facilita la gestión de cambios en el esquema de la base de datos.
+                \item Mejora la productividad al eliminar la necesidad de escribir consultas SQL manualmente.
+            \end{itemize}                                                                              &
+            Capa de Persistencia                                                                                                                                                                                                                                                                                \\ \hline
 
-\textbf{Service Pattern} & 
-Organiza la lógica de negocio en servicios independientes y reutilizables que encapsulan operaciones específicas. & 
-Centraliza la lógica de procesamiento de datos de sensores, evaluación de umbrales y generación de alertas, manteniendo la lógica de negocio separada de otras preocupaciones. & 
-\begin{itemize}[leftmargin=*, nosep]
-    \item Promueve la reutilización de código.
-    \item Mejora la mantenibilidad y escalabilidad del sistema.
-    \item Facilita la implementación de pruebas unitarias.
-\end{itemize} & 
-Capa de Aplicación \\ \hline
-
-\end{tabular}
-\end{table}
-\FloatBarrier % Evita que las tablas floten por encima de este punto
+            \textbf{Service Pattern}                                                                                                                                                       &
+            Organiza la lógica de negocio en servicios independientes y reutilizables que encapsulan operaciones específicas.                                                              &
+            Centraliza la lógica de procesamiento de datos de sensores, evaluación de umbrales y generación de alertas, manteniendo la lógica de negocio separada de otras preocupaciones. &
+            \begin{itemize}[leftmargin=*, nosep]
+                \item Promueve la reutilización de código.
+                \item Mejora la mantenibilidad y escalabilidad del sistema.
+                \item Facilita la implementación de pruebas unitarias.
+            \end{itemize}                                                                                                                &
+            Capa de Aplicación                                                                                                                                                                                                                                                                                  \\ \hline
+        \end{tabular}
+    \end{table}
+    \FloatBarrier % Evita que las tablas floten por encima de este punto
 \end{landscape}
 \FloatBarrier
 
@@ -373,6 +372,35 @@ Las pruebas unitarias e integración aseguran la calidad y funcionamiento del si
 
 \section{Desarrollo del nodo sensor}
 
+\subsection{Selección de la tecnología de comunicación}
+
+Antes de definir los componentes electrónicos específicos del nodo sensor, es fundamental seleccionar la tecnología de comunicación inalámbrica que mejor se adapte a los requerimientos del proyecto. En la Tabla \ref{tabla:comparativa_comunicacion} se presenta una comparativa entre las principales tecnologías IoT disponibles en el mercado, evaluadas según los criterios de diseño específicos de esta investigación.
+
+\begin{landscape}
+    \begin{table}[h!]
+        \centering
+        \renewcommand{\arraystretch}{1.3}
+        \fontsize{9}{10}\selectfont
+        \caption{Comparación de Tecnologías de Comunicación Inalámbrica para Nodos Sensores}
+        \label{tabla:comparativa_comunicacion}
+        \begin{tabular}{|p{2.5cm}|p{2.5cm}|p{2cm}|p{2cm}|p{2.5cm}|p{2.5cm}|p{4.5cm}|p{2cm}|}
+            \hline
+            \textbf{Característica}     & \textbf{LoRa}                & \textbf{Zigbee}           & \textbf{Wi-Fi}           & \textbf{Bluetooth (BLE)}        & \textbf{NB-IoT / LTE-M (Celular IoT)} & \textbf{Criterio de Diseño (Lo que busca tu Proyecto)}                                                            & \textbf{Mejor Opción}                       \\ \hline
+            \textbf{Frecuencia}         & Sub-GHz (915 MHz en Perú)    & 2.4 GHz                   & 2.4 GHz y 5 GHz          & 2.4 GHz                         & Bandas Licenciadas LTE                & Se busca una frecuencia libre (ISM) y legal en Perú, preferiblemente Sub-GHz para evitar interferencia en 2.4GHz. & LoRa (915 MHz)                              \\ \hline
+            \textbf{Alcance (Urbano)}   & Alto (1–5 km con obstáculos) & Bajo (10–100 m)           & Medio (30–100 m)         & Muy Bajo (<10 m)                & Alto (>5 km)                          & Se busca cubrir múltiples laboratorios en un campus universitario con un solo gateway central.                    & LoRa / Wi-Fi (ya se cuenta con repetidores) \\ \hline
+            \textbf{Consumo Energía}    & Muy Bajo (Años con baterías) & Bajo (Meses con baterías) & Alto (Días con baterías) & Muy Bajo (Meses/Años con pilas) & Bajo/Medio                            & Se busca que los nodos sensores puedan funcionar con baterías durante meses sin mantenimiento.                    & LoRa / BLE                                  \\ \hline
+            \textbf{Tasa de Datos}      & Muy Baja (<50 kbps)          & Baja (250 kbps)           & Muy Alta (>50 Mbps)      & Media (1–2 Mbps)                & Baja/Media                            & Se busca enviar solo unos pocos bytes (valor de CO$_2$) cada varios minutos.                                      & LoRa                                        \\ \hline
+            \textbf{Penetración Muros}  & Excelente                    & Mala                      & Regular/Mala             & Muy Mala                        & Excelente                             & Se busca atravesar muros de concreto armado densos típicos de laboratorios y aulas.                               & LoRa / NB-IoT                               \\ \hline
+            \textbf{Costo del Nodo}     & Bajo (\$5–\$15)              & Bajo (\$3–\$10)           & Muy Bajo (\$3–\$8)       & Muy Bajo (\$2–\$5)              & Medio (\$15–\$30)                     & Se busca minimizar el costo por nodo sensor para un despliegue de tesis.                                          & Wi-Fi / BLE                                 \\ \hline
+            \textbf{¿Necesita Gateway?} & Sí                           & Sí                        & No (Router directo)      & No (Directo a móvil/PC)         & No (Base celular)                     & -                                                                                                                 & LoRa                                        \\ \hline
+            \textbf{Costos Operativos}  & Nulos (Dueño de la red)      & Nulos (Dueño de la red)   & Nulos (Red de la U)      & Nulos                           & Suscripción Mensual                   & Se busca un costo mensual cero por tráfico de datos para sostenibilidad.                                          & LoRa / Wi-Fi / Zigbee                       \\ \hline
+        \end{tabular}
+    \end{table}
+\end{landscape}
+\FloatBarrier
+
+De acuerdo con el análisis presentado en la Tabla \ref{tabla:comparativa_comunicacion}, la tecnología \textbf{LoRa} destaca como la solución más viable y que mejor cumple con los criterios de diseño del proyecto. Su alcance superior en zonas urbanas permite conectar múltiples laboratorios en el campus utilizando un solo gateway, y su excelente penetración de muros resulta indispensable en infraestructuras con concreto armado. Además, opera en la banda libre de 915 MHz, idónea en Perú para evitar la congestión típica de la banda de 2.4 GHz. Sumado a su bajo consumo energético y nulos costos operativos mensuales, LoRa se convierte en la opción ideal para un despliegue sostenible a largo plazo, a pesar de su baja tasa de datos, la cual es suficiente para transmitir lecturas esporádicas de CO$_2$.
+
 \subsection{Selección de componentes}
 
 \begin{table}[htbp]
@@ -387,19 +415,19 @@ Para determinar la combinación de componentes más óptima para el proyecto, de
 
 
 %\begin{itemize}
-    %\item \textbf{Opción CS 1: Arduino UNO + SCD30 + SX1276.} Esta combinación obtuvo buenos resultados técnicos (0.86) y económicos (0.85), destacándose en precisión y facilidad de integración.
-    %\item \textbf{Opción CS 2: STM32F103C8T6 + MH-Z19B + RA-01H.} Aunque es económica (0.81), su puntuación técnica es la menor entre todas las alternativas (0.81) debido a menor precisión y facilidad de integración.
-    %\item \textbf{Opción CS 3: Arduino MKR WAN 1310 + SCD30 + E32-915T30D.} Es la opción más robusta y precisa, con un valor técnico elevado (0.90), pero su alto costo lo hace menos económico (0.83).
-    %\item \textbf{Opción CS4: Arduino UNO + MH-Z19B + E220-900T30D.} Esta combinación equilibra el costo y rendimiento, siendo la más económica (0.94) y con un valor técnico alto (0.90), ideal si se prioriza alcance y eficiencia.
+%\item \textbf{Opción CS 1: Arduino UNO + SCD30 + SX1276.} Esta combinación obtuvo buenos resultados técnicos (0.86) y económicos (0.85), destacándose en precisión y facilidad de integración.
+%\item \textbf{Opción CS 2: STM32F103C8T6 + MH-Z19B + RA-01H.} Aunque es económica (0.81), su puntuación técnica es la menor entre todas las alternativas (0.81) debido a menor precisión y facilidad de integración.
+%\item \textbf{Opción CS 3: Arduino MKR WAN 1310 + SCD30 + E32-915T30D.} Es la opción más robusta y precisa, con un valor técnico elevado (0.90), pero su alto costo lo hace menos económico (0.83).
+%\item \textbf{Opción CS4: Arduino UNO + MH-Z19B + E220-900T30D.} Esta combinación equilibra el costo y rendimiento, siendo la más económica (0.94) y con un valor técnico alto (0.90), ideal si se prioriza alcance y eficiencia.
 %\end{itemize}
 
 \begin{itemize}
     \item \textbf{Opción CS 1: Arduino UNO + SCD30 + SX1276.} Esta combinación obtuvo un desempeño técnico aceptable (0.86), destacándose en precisión y facilidad de integración. Sin embargo, su valor económico es relativamente bajo (0.63), debido a su menor disponibilidad en el mercado y costos de mantenimiento.
-    
+
     \item \textbf{Opción CS 2: STM32F103C8T6 + MH-Z19B + RA-01H.} Aunque es la opción más económica (0.60), su puntuación técnica es la más baja entre todas las alternativas (0.81). Esto se debe a su menor facilidad de integración y escalabilidad, lo que la hace menos adecuada para proyectos que requieran flexibilidad y soporte técnico.
-    
+
     \item \textbf{Opción CS 3: Arduino MKR WAN 1310 + SCD30 + E32-915T30D.} Esta alternativa presenta un equilibrio entre robustez y precisión, con un valor técnico alto (0.88). Su disponibilidad en el mercado y durabilidad son puntos fuertes, pero su costo lo hace menos competitivo económicamente (0.80).
-    
+
     \item \textbf{Opción CS4: Arduino UNO + MH-Z19B + E220-900T30D.} Esta combinación equilibra el costo y rendimiento, siendo la mejor opción económica (0.90) y destacándose técnicamente (0.86). Su alta disponibilidad en el mercado, combinado con su durabilidad y compatibilidad, la hace ideal para proyectos con un enfoque en eficiencia y alcance.
 \end{itemize}
 
@@ -416,27 +444,27 @@ Para determinar la combinación de componentes más óptima para el proyecto, de
     \label{tabla:valor_tecnico}
     \begin{tabular}{|p{0.8cm}|p{3cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|}
         \hline
-        \multicolumn{11}{|c|}{\textbf{Diseño electrónico - Evaluación de Proyectos Valor Técnico (Xi)}} \\ \hline
-        \multicolumn{11}{|c|}{\textbf{p: puntaje de 0 al 4 (escala por la norma VDI 2225)}} \\ \hline
-        \multicolumn{11}{|c|}{\textbf{0=No satisface; 1=Aceptable; 2=Suficiente; 3=Bien; 4=Muy bien}} \\ \hline
-        \multicolumn{11}{|c|}{\textbf{g: ponderado, basado en los criterios de evaluación}} \\ \hline
-        \textbf{Nro.} & \textbf{Criterio de Evaluación} & \textbf{g (\%)} & 
-        \multicolumn{2}{c|}{\textbf{CS 1}} & 
-        \multicolumn{2}{c|}{\textbf{CS 2}} & 
-        \multicolumn{2}{c|}{\textbf{CS 3}} & 
-        \multicolumn{2}{c|}{\textbf{CS 4}} \\ \hline
-        & & & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} \\ \hline
-        1 & Precisión en medición de CO$_2$ & 20 & 4 & 80 & 3 & 60 & 4 & 80 & 4 & 80 \\ \hline
-        2 & Consumo energético & 15 & 3 & 45 & 4 & 60 & 3 & 45 & 2 & 30 \\ \hline
-        3 & Facilidad de integración & 15 & 4 & 60 & 3 & 45 & 4 & 60 & 4 & 60 \\ \hline
-        4 & Alcance de comunicación & 15 & 3 & 45 & 3 & 45 & 4 & 60 & 4 & 60 \\ \hline
-        5 & Costo de implementación & 10 & 3 & 30 & 4 & 40 & 2 & 20 & 3 & 30 \\ \hline
-        6 & Robustez y durabilidad & 10 & 3 & 30 & 3 & 30 & 4 & 40 & 4 & 40 \\ \hline
-        7 & Escalabilidad & 10 & 4 & 40 & 3 & 30 & 4 & 40 & 2 & 20 \\ \hline
-        8 & Mantenimiento y soporte & 10 & 3 & 30 & 3 & 30 & 3 & 30 & 4 & 40 \\ \hline
-        \multicolumn{3}{|c|}{\textbf{Total}} & & \textbf{360} & & \textbf{340} & & \textbf{375} & & \textbf{360} \\ \hline
-        \multicolumn{3}{|c|}{\textbf{Puntaje Unitario}} & & 3.60 & & 3.40 & & 3.75 & & 3.60 \\ \hline
-        \multicolumn{3}{|c|}{\textbf{Valor Técnico Xi}} & & 0.86 & & 0.81 & & 0.88 & & 0.86 \\ \hline
+        \multicolumn{11}{|c|}{\textbf{Diseño electrónico - Evaluación de Proyectos Valor Técnico (Xi)}}                                                                                                                     \\ \hline
+        \multicolumn{11}{|c|}{\textbf{p: puntaje de 0 al 4 (escala por la norma VDI 2225)}}                                                                                                                                 \\ \hline
+        \multicolumn{11}{|c|}{\textbf{0=No satisface; 1=Aceptable; 2=Suficiente; 3=Bien; 4=Muy bien}}                                                                                                                       \\ \hline
+        \multicolumn{11}{|c|}{\textbf{g: ponderado, basado en los criterios de evaluación}}                                                                                                                                 \\ \hline
+        \textbf{Nro.}                                   & \textbf{Criterio de Evaluación} & \textbf{g (\%)} &
+        \multicolumn{2}{c|}{\textbf{CS 1}}              &
+        \multicolumn{2}{c|}{\textbf{CS 2}}              &
+        \multicolumn{2}{c|}{\textbf{CS 3}}              &
+        \multicolumn{2}{c|}{\textbf{CS 4}}                                                                                                                                                                                  \\ \hline
+                                                        &                                 &                 & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} \\ \hline
+        1                                               & Precisión en medición de CO$_2$ & 20              & 4          & 80           & 3          & 60           & 4          & 80           & 4          & 80           \\ \hline
+        2                                               & Consumo energético              & 15              & 3          & 45           & 4          & 60           & 3          & 45           & 2          & 30           \\ \hline
+        3                                               & Facilidad de integración        & 15              & 4          & 60           & 3          & 45           & 4          & 60           & 4          & 60           \\ \hline
+        4                                               & Alcance de comunicación         & 15              & 3          & 45           & 3          & 45           & 4          & 60           & 4          & 60           \\ \hline
+        5                                               & Costo de implementación         & 10              & 3          & 30           & 4          & 40           & 2          & 20           & 3          & 30           \\ \hline
+        6                                               & Robustez y durabilidad          & 10              & 3          & 30           & 3          & 30           & 4          & 40           & 4          & 40           \\ \hline
+        7                                               & Escalabilidad                   & 10              & 4          & 40           & 3          & 30           & 4          & 40           & 2          & 20           \\ \hline
+        8                                               & Mantenimiento y soporte         & 10              & 3          & 30           & 3          & 30           & 3          & 30           & 4          & 40           \\ \hline
+        \multicolumn{3}{|c|}{\textbf{Total}}            &                                 & \textbf{360}    &            & \textbf{340} &            & \textbf{375} &            & \textbf{360}                             \\ \hline
+        \multicolumn{3}{|c|}{\textbf{Puntaje Unitario}} &                                 & 3.60            &            & 3.40         &            & 3.75         &            & 3.60                                     \\ \hline
+        \multicolumn{3}{|c|}{\textbf{Valor Técnico Xi}} &                                 & 0.86            &            & 0.81         &            & 0.88         &            & 0.86                                     \\ \hline
     \end{tabular}
 \end{table}
 
@@ -445,37 +473,37 @@ Para determinar la combinación de componentes más óptima para el proyecto, de
 
 
 \begin{table}[h!]
-\centering
-\renewcommand{\arraystretch}{1.5}
-\caption{Diseño de Proyecto - Evaluación de Proyectos Valor Económico (Yi) Ajustado}
-\label{tabla:valor_economico}
-\begin{tabular}{|p{0.8cm}|p{3cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|}
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \caption{Diseño de Proyecto - Evaluación de Proyectos Valor Económico (Yi) Ajustado}
+    \label{tabla:valor_economico}
+    \begin{tabular}{|p{0.8cm}|p{3cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|}
         \hline
-        \multicolumn{11}{|c|}{\textbf{Diseño electrónico - Evaluación de Proyectos Valor Económico (Yi)}} \\ \hline
-        \multicolumn{11}{|c|}{\textbf{p: puntaje de 0 al 4 (escala por la norma VDI 2225)}} \\ \hline
-        \multicolumn{11}{|c|}{\textbf{0=No satisface; 1=Aceptable; 2=Suficiente; 3=Bien; 4=Muy bien}} \\ \hline
-        \multicolumn{11}{|c|}{\textbf{g: ponderado, basado en los criterios de evaluación}} \\ \hline
-        \textbf{Nro.} & \textbf{Criterio de Evaluación} & \textbf{g (\%)} & 
-        \multicolumn{2}{c|}{\textbf{CS 1}} & 
-        \multicolumn{2}{c|}{\textbf{CS 2}} & 
-        \multicolumn{2}{c|}{\textbf{CS 3}} & 
-        \multicolumn{2}{c|}{\textbf{CS 4}} \\ \hline
-        & & & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} \\ \hline
-1 & Disponibilidad en el mercado & 35 & 2 & 70 & 2 & 70 & 3 & 105 & 4 & 140 \\ \hline
-2 & Costos de Mantenimiento & 20 & 2 & 40 & 2 & 40 & 3 & 60 & 3 & 60 \\ \hline
-3 & Durabilidad & 20 & 3 & 60 & 3 & 60 & 4 & 80 & 4 & 80 \\ \hline
-4 & Flexibilidad de Expansión & 15 & 2 & 30 & 2 & 30 & 3 & 45 & 3 & 45 \\ \hline
-5 & Compatibilidad y Soporte Técnico & 10 & 3 & 30 & 2 & 20 & 3 & 30 & 4 & 40 \\ \hline
- & \textbf{Total} & \textbf{100} & & \textbf{230} & & \textbf{220} & & \textbf{320} & & \textbf{365} \\ \hline
- & \textbf{Puntaje Unitario} & & & 2.30 & & 2.20 & & 3.20 & & 3.65 \\ \hline
- & \textbf{Valor Económico Yi} & & & 0.63 & & 0.60 & & 0.80 & & 0.90 \\ \hline
-\end{tabular}
+        \multicolumn{11}{|c|}{\textbf{Diseño electrónico - Evaluación de Proyectos Valor Económico (Yi)}}                                                                                                       \\ \hline
+        \multicolumn{11}{|c|}{\textbf{p: puntaje de 0 al 4 (escala por la norma VDI 2225)}}                                                                                                                     \\ \hline
+        \multicolumn{11}{|c|}{\textbf{0=No satisface; 1=Aceptable; 2=Suficiente; 3=Bien; 4=Muy bien}}                                                                                                           \\ \hline
+        \multicolumn{11}{|c|}{\textbf{g: ponderado, basado en los criterios de evaluación}}                                                                                                                     \\ \hline
+        \textbf{Nro.}                      & \textbf{Criterio de Evaluación}  & \textbf{g (\%)} &
+        \multicolumn{2}{c|}{\textbf{CS 1}} &
+        \multicolumn{2}{c|}{\textbf{CS 2}} &
+        \multicolumn{2}{c|}{\textbf{CS 3}} &
+        \multicolumn{2}{c|}{\textbf{CS 4}}                                                                                                                                                                      \\ \hline
+                                           &                                  &                 & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} \\ \hline
+        1                                  & Disponibilidad en el mercado     & 35              & 2          & 70           & 2          & 70           & 3          & 105          & 4          & 140          \\ \hline
+        2                                  & Costos de Mantenimiento          & 20              & 2          & 40           & 2          & 40           & 3          & 60           & 3          & 60           \\ \hline
+        3                                  & Durabilidad                      & 20              & 3          & 60           & 3          & 60           & 4          & 80           & 4          & 80           \\ \hline
+        4                                  & Flexibilidad de Expansión        & 15              & 2          & 30           & 2          & 30           & 3          & 45           & 3          & 45           \\ \hline
+        5                                  & Compatibilidad y Soporte Técnico & 10              & 3          & 30           & 2          & 20           & 3          & 30           & 4          & 40           \\ \hline
+                                           & \textbf{Total}                   & \textbf{100}    &            & \textbf{230} &            & \textbf{220} &            & \textbf{320} &            & \textbf{365} \\ \hline
+                                           & \textbf{Puntaje Unitario}        &                 &            & 2.30         &            & 2.20         &            & 3.20         &            & 3.65         \\ \hline
+                                           & \textbf{Valor Económico Yi}      &                 &            & 0.63         &            & 0.60         &            & 0.80         &            & 0.90         \\ \hline
+    \end{tabular}
 \end{table}
 
 
 
 \FloatBarrier
-De acuerdo con las matrices \ref{tabla:valor_tecnico} y \ref{tabla:valor_economico}, la solución más óptima para el proyecto es la número 4. Esta solución consiste en los componentes Arduino UNO + MH-Z19B + E220-900T30D, y se destaca por su equilibrio entre valor técnico (\( X_i = 0.86 \)) y valor económico (\( Y_i = 0.90 \)). 
+De acuerdo con las matrices \ref{tabla:valor_tecnico} y \ref{tabla:valor_economico}, la solución más óptima para el proyecto es la número 4. Esta solución consiste en los componentes Arduino UNO + MH-Z19B + E220-900T30D, y se destaca por su equilibrio entre valor técnico (\( X_i = 0.86 \)) y valor económico (\( Y_i = 0.90 \)).
 
 En términos técnicos, esta configuración sobresale por su facilidad de integración, robustez, y un alcance de comunicación superior, aunque el consumo energético (\( p = 2 \)) es moderado en comparación con otras alternativas. La precisión del MH-Z19B es adecuada para aplicaciones de monitoreo estándar, lo que lo hace funcional para los requisitos del proyecto.
 
