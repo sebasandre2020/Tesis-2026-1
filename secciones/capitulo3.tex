@@ -590,6 +590,35 @@ En cuanto a los requisitos no funcionales, el subsistema debe emplear componente
 \end{itemize}
 
 \subsection{Selección de actuadores y fuente de alimentación}
+
+\subsection{Selección de actuadores y fuente de alimentación}
+
+En esta subsección se evalúan las alternativas de actuadores consideradas para el subsistema de mitigación activa, así como los requerimientos de alimentación asociados a su implementación. La selección se realiza considerando criterios como compatibilidad con control PWM, caudal de aire, presión estática, consumo de corriente, facilidad de integración y disponibilidad comercial. A partir de esta comparación, se determina la alternativa más adecuada para el prototipo y la fuente de alimentación necesaria para garantizar una operación estable del sistema de ventilación.
+
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \caption{Comparación de alternativas de ventiladores para el subsistema de mitigación activa}
+    \label{tab:comparacion_ventiladores}
+    \begin{tabular}{|p{3.6cm}|p{1.4cm}|p{1.9cm}|p{1.8cm}|p{1.8cm}|p{1.8cm}|p{3.4cm}|}
+        \hline
+        \textbf{Modelo} & \textbf{Voltaje} & \textbf{Control} & \textbf{Caudal} & \textbf{Presión estática} & \textbf{Corriente nominal} & \textbf{Observación} \\ \hline
+
+        Cooler Master SickleFlow 120 ARGB (MFX-B2DN-18NPA-R1) & 12 V & PWM (4 pines) & 62 CFM & 2.5 mmH$_2$O & 0.15 A & Buena integración con PWM, bajo consumo y presión estática adecuada. \\ \hline
+
+        Cooler Master MasterFan MF120 Halo (MFL-B2DN-18NPA-R1) & 12 V & PWM (4 pines) & 47.2 CFM & 1.6 mmH$_2$O & 0.25 A & Integración sencilla, pero menor caudal y menor presión estática. \\ \hline
+
+        Cooler Master MasterFan MF120 Lite ARGB (MFW-B2DN-17NPA-R1) & 12 V & PWM (4 pines) & 70.5 CFM & 2.0 mmH$_2$O & 0.45 A & Mayor caudal entre las opciones de 12 V, aunque con mayor consumo. \\ \hline
+
+        Delta PFB1224UHEP0 & 24 V & PWM + Tacómetro & --- & --- & 2.00 A & Opción industrial de alto desempeño, pero con mayor requerimiento de potencia y menor conveniencia para un prototipo universitario. \\ \hline
+    \end{tabular}
+\end{table}
+
+
+De acuerdo con la comparación realizada, las alternativas de 12 V con control PWM presentan una integración más sencilla para el prototipo experimental, debido a su compatibilidad con señales de control por microcontrolador y a la disponibilidad de fuentes comerciales accesibles. Entre ellas, el modelo SickleFlow 120 ARGB ofrece un equilibrio favorable entre caudal, presión estática, consumo y facilidad de integración, mientras que el MF120 Lite destaca por su mayor caudal, aunque a costa de un mayor consumo de corriente. Por otro lado, la alternativa Delta representa una solución de mayor exigencia eléctrica, por lo que resulta menos conveniente para la implementación del sistema propuesto a escala de tesis.
+
+
 \subsection{Diseño de la arquitectura de control}
 \subsection{Modelado de la dinámica de CO$_2$ en ambientes interiores}
 \subsection{Diseño e implementación de controladores PID y Fuzzy}
