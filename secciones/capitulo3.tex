@@ -1,6 +1,6 @@
 \chapter{MARCO METODOLÓGICO}
 
-El trabajo de investigación se divide en los siguientes tres frentes: nodo sensor, aplicación web y gateway. En este sentido, se ha optado por dividir la metodología para tener una mejor documentación del proceso a seguir en cada frente del proyecto, tanto en la selección de los componentes electrónicos empleados y los protocolos de comunicación inalámbrica más eficientes, así como de las tecnologías empleadas para la selección.
+El trabajo de investigación se divide en los siguientes cuatro frentes: nodo sensor, aplicación web, gateway y subsistema de mitigación activa. En este sentido, se ha optado por dividir la metodología para tener una mejor documentación del proceso a seguir en cada frente del proyecto, tanto en la selección de los componentes electrónicos empleados y los protocolos de comunicación inalámbrica más eficientes, así como de las tecnologías empleadas para la selección.
 
 \begin{itemize}
     \item \textbf{Desarrollo de nodo sensor}
@@ -386,15 +386,15 @@ Antes de definir los componentes electrónicos específicos del nodo sensor, es 
         \label{tabla:comparativa_comunicacion}
         \begin{tabular}{|p{2.5cm}|p{2.5cm}|p{2cm}|p{2cm}|p{2.5cm}|p{2.5cm}|p{4.5cm}|p{2cm}|}
             \hline
-            \textbf{Característica}     & \textbf{LoRa}                & \textbf{Zigbee}           & \textbf{Wi-Fi}           & \textbf{Bluetooth (BLE)}        & \textbf{NB-IoT / LTE-M (Celular IoT)} & \textbf{Criterio de Diseño (Lo que busca tu Proyecto)}                                                            & \textbf{Mejor Opción}                       \\ \hline
-            \textbf{Frecuencia}         & Sub-GHz (915 MHz en Perú)    & 2.4 GHz                   & 2.4 GHz y 5 GHz          & 2.4 GHz                         & Bandas Licenciadas LTE                & Se busca una frecuencia libre (ISM) y legal en Perú, preferiblemente Sub-GHz para evitar interferencia en 2.4GHz. & LoRa (915 MHz)                              \\ \hline
-            \textbf{Alcance (Urbano)}   & Alto (1--5 km con obstáculos) & Bajo (10--100 m)           & Bajo (30--100 m)         & Muy Bajo ($<$10 m)                & Muy Alto ($>$5 km)                          & Se busca cubrir múltiples laboratorios en un campus universitario con un solo gateway central.                    & LoRa / Wi-Fi (ya se cuenta con repetidores) \\ \hline
-            \textbf{Consumo Energía}    & Muy Bajo ($\sim$40 mA TX, pero ciclo de trabajo $<$1\%) & Bajo ($\sim$30 mA TX, pero mayor overhead en red mesh) & Alto ($\sim$200 mA TX, conexión constante $>$1 mA) & Muy Bajo ($<$15 mA TX, ráfagas muy cortas) & Medio ($\sim$200 mA TX, pero usa PSM de $\sim$3 $\mu$A)                            & Se busca que los nodos sensores puedan funcionar con baterías durante meses sin mantenimiento.                    & LoRa / BLE                                  \\ \hline
-            \textbf{Tasa de Datos}      & Muy Baja (0.3--50 kbps)          & Baja (250 kbps)           & Muy Alta ($>$50 Mbps)      & Media (1--2 Mbps)                & Baja ($<$250 kbps)                            & Se busca enviar solo unos pocos bytes (valor de CO$_2$) cada varios minutos.                                      & LoRa                                        \\ \hline
-            \textbf{Penetración Muros}  & Muy Alta (Link Budget $\sim$157 dB) & Baja ($\sim$104 dB) & Baja ($\sim$100 dB) & Muy Baja ($\sim$90 dB) & Muy Alta ($\sim$164 dB) & Se busca atravesar muros de concreto armado densos típicos de laboratorios y aulas.                               & LoRa / NB-IoT                               \\ \hline
-            \textbf{Costo del Nodo}     & Medio (\$5--\$15)              & Muy Bajo (\$3--\$10)           & Muy Bajo (\$3--\$8)       & Muy Bajo (\$2--\$5)              & Alto (\$15--\$30)                     & Se busca minimizar el costo por nodo sensor para un despliegue de tesis.                                          & Wi-Fi / BLE                                 \\ \hline
-            \textbf{¿Necesita Gateway?} & Sí                           & Sí                        & No (Router directo)      & No (Directo a móvil/PC)         & No (Base celular)                     & -                                                                                                                 & LoRa                                        \\ \hline
-            \textbf{Costos Operativos}  & Muy Bajos (Nulos, red propia) & Muy Bajos (Nulos, red propia) & Muy Bajos (Nulos, red U) & Muy Bajos (Nulos)               & Altos (Suscripción mensual)           & Se busca un costo mensual cero por tráfico de datos para sostenibilidad.                                          & LoRa / Wi-Fi / Zigbee                       \\ \hline
+            \textbf{Característica}     & \textbf{LoRa}                                           & \textbf{Zigbee}                                        & \textbf{Wi-Fi}                                     & \textbf{Bluetooth (BLE)}                   & \textbf{NB-IoT / LTE-M (Celular IoT)}                   & \textbf{Criterio de Diseño (Lo que busca tu Proyecto)}                                                            & \textbf{Mejor Opción}                       \\ \hline
+            \textbf{Frecuencia}         & Sub-GHz (915 MHz en Perú)                               & 2.4 GHz                                                & 2.4 GHz y 5 GHz                                    & 2.4 GHz                                    & Bandas Licenciadas LTE                                  & Se busca una frecuencia libre (ISM) y legal en Perú, preferiblemente Sub-GHz para evitar interferencia en 2.4GHz. & LoRa (915 MHz)                              \\ \hline
+            \textbf{Alcance (Urbano)}   & Alto (1--5 km con obstáculos)                           & Bajo (10--100 m)                                       & Bajo (30--100 m)                                   & Muy Bajo ($<$10 m)                         & Muy Alto ($>$5 km)                                      & Se busca cubrir múltiples laboratorios en un campus universitario con un solo gateway central.                    & LoRa / Wi-Fi (ya se cuenta con repetidores) \\ \hline
+            \textbf{Consumo Energía}    & Muy Bajo ($\sim$40 mA TX, pero ciclo de trabajo $<$1\%) & Bajo ($\sim$30 mA TX, pero mayor overhead en red mesh) & Alto ($\sim$200 mA TX, conexión constante $>$1 mA) & Muy Bajo ($<$15 mA TX, ráfagas muy cortas) & Medio ($\sim$200 mA TX, pero usa PSM de $\sim$3 $\mu$A) & Se busca que los nodos sensores puedan funcionar con baterías durante meses sin mantenimiento.                    & LoRa / BLE                                  \\ \hline
+            \textbf{Tasa de Datos}      & Muy Baja (0.3--50 kbps)                                 & Baja (250 kbps)                                        & Muy Alta ($>$50 Mbps)                              & Media (1--2 Mbps)                          & Baja ($<$250 kbps)                                      & Se busca enviar solo unos pocos bytes (valor de CO$_2$) cada varios minutos.                                      & LoRa                                        \\ \hline
+            \textbf{Penetración Muros}  & Muy Alta (Link Budget $\sim$157 dB)                     & Baja ($\sim$104 dB)                                    & Baja ($\sim$100 dB)                                & Muy Baja ($\sim$90 dB)                     & Muy Alta ($\sim$164 dB)                                 & Se busca atravesar muros de concreto armado densos típicos de laboratorios y aulas.                               & LoRa / NB-IoT                               \\ \hline
+            \textbf{Costo del Nodo}     & Medio (\$5--\$15)                                       & Muy Bajo (\$3--\$10)                                   & Muy Bajo (\$3--\$8)                                & Muy Bajo (\$2--\$5)                        & Alto (\$15--\$30)                                       & Se busca minimizar el costo por nodo sensor para un despliegue de tesis.                                          & Wi-Fi / BLE                                 \\ \hline
+            \textbf{¿Necesita Gateway?} & Sí                                                      & Sí                                                     & No (Router directo)                                & No (Directo a móvil/PC)                    & No (Base celular)                                       & -                                                                                                                 & LoRa                                        \\ \hline
+            \textbf{Costos Operativos}  & Muy Bajos (Nulos, red propia)                           & Muy Bajos (Nulos, red propia)                          & Muy Bajos (Nulos, red U)                           & Muy Bajos (Nulos)                          & Altos (Suscripción mensual)                             & Se busca un costo mensual cero por tráfico de datos para sostenibilidad.                                          & LoRa / Wi-Fi / Zigbee                       \\ \hline
         \end{tabular}
     \end{table}
 \end{landscape}
@@ -435,12 +435,12 @@ Se evaluaron cuatro opciones predominantes:
     \label{tabla:evaluacion_mcu}
     \begin{tabular}{|p{4.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}
         \hline
-        \textbf{Criterio de Evaluación} & \textbf{Peso} & \textbf{MCU 1} & \textbf{MCU 2} & \textbf{MCU 3} & \textbf{MCU 4} \\ \hline
-        Disponibilidad local & 35\% & 4 (1.40) & 4 (1.40) & 2 (0.70) & 1 (0.35) \\ \hline
-        Facilidad de configuración & 30\% & 4 (1.20) & 4 (1.20) & 3 (0.90) & 2 (0.60) \\ \hline
-        Capacidad de procesamiento/RAM & 20\% & 1 (0.20) & 3 (0.60) & 4 (0.80) & 2 (0.40) \\ \hline
-        Costo & 15\% & 3 (0.45) & 4 (0.60) & 3 (0.45) & 2 (0.30) \\ \hline
-        \textbf{Puntaje Total} & \textbf{100\%} & \textbf{3.25} & \textbf{3.80} & \textbf{2.85} & \textbf{1.65} \\ \hline
+        \textbf{Criterio de Evaluación} & \textbf{Peso}  & \textbf{MCU 1} & \textbf{MCU 2} & \textbf{MCU 3} & \textbf{MCU 4} \\ \hline
+        Disponibilidad local            & 35\%           & 4 (1.40)       & 4 (1.40)       & 2 (0.70)       & 1 (0.35)       \\ \hline
+        Facilidad de configuración      & 30\%           & 4 (1.20)       & 4 (1.20)       & 3 (0.90)       & 2 (0.60)       \\ \hline
+        Capacidad de procesamiento/RAM  & 20\%           & 1 (0.20)       & 3 (0.60)       & 4 (0.80)       & 2 (0.40)       \\ \hline
+        Costo                           & 15\%           & 3 (0.45)       & 4 (0.60)       & 3 (0.45)       & 2 (0.30)       \\ \hline
+        \textbf{Puntaje Total}          & \textbf{100\%} & \textbf{3.25}  & \textbf{3.80}  & \textbf{2.85}  & \textbf{1.65}  \\ \hline
     \end{tabular}
 \end{table}
 
@@ -461,12 +461,12 @@ Las alternativas para la capa física de radiofrecuencia (transceptores/concentr
     \label{tabla:evaluacion_lora}
     \begin{tabular}{|p{4.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}
         \hline
-        \textbf{Criterio de Evaluación} & \textbf{Peso} & \textbf{LoRa 1} & \textbf{LoRa 2} & \textbf{LoRa 3} & \textbf{LoRa 4} \\ \hline
-        Disponibilidad local & 35\% & 4 (1.40) & 1 (0.35) & 1 (0.35) & 2 (0.70) \\ \hline
-        Facilidad de configuración & 30\% & 4 (1.20) & 3 (0.90) & 3 (0.90) & 2 (0.60) \\ \hline
-        Capacidad multicanal / SNR & 20\% & 2 (0.40) & 4 (0.80) & 4 (0.80) & 3 (0.60) \\ \hline
-        Costo & 15\% & 4 (0.60) & 2 (0.30) & 3 (0.45) & 3 (0.45) \\ \hline
-        \textbf{Puntaje Total} & \textbf{100\%} & \textbf{3.60} & \textbf{2.35} & \textbf{2.50} & \textbf{2.35} \\ \hline
+        \textbf{Criterio de Evaluación} & \textbf{Peso}  & \textbf{LoRa 1} & \textbf{LoRa 2} & \textbf{LoRa 3} & \textbf{LoRa 4} \\ \hline
+        Disponibilidad local            & 35\%           & 4 (1.40)        & 1 (0.35)        & 1 (0.35)        & 2 (0.70)        \\ \hline
+        Facilidad de configuración      & 30\%           & 4 (1.20)        & 3 (0.90)        & 3 (0.90)        & 2 (0.60)        \\ \hline
+        Capacidad multicanal / SNR      & 20\%           & 2 (0.40)        & 4 (0.80)        & 4 (0.80)        & 3 (0.60)        \\ \hline
+        Costo                           & 15\%           & 4 (0.60)        & 2 (0.30)        & 3 (0.45)        & 3 (0.45)        \\ \hline
+        \textbf{Puntaje Total}          & \textbf{100\%} & \textbf{3.60}   & \textbf{2.35}   & \textbf{2.50}   & \textbf{2.35}   \\ \hline
     \end{tabular}
 \end{table}
 
@@ -487,12 +487,12 @@ Para la transmisión del lado del gateway o nodos que cuenten con enlace directo
     \label{tabla:evaluacion_wifi}
     \begin{tabular}{|p{4.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}
         \hline
-        \textbf{Criterio de Evaluación} & \textbf{Peso} & \textbf{Wi-Fi 1} & \textbf{Wi-Fi 2} & \textbf{Wi-Fi 3} & \textbf{Wi-Fi 4} \\ \hline
-        Disponibilidad local & 35\% & 3 (1.05) & 4 (1.40) & 2 (0.70) & 3 (1.05) \\ \hline
-        Facilidad de configuración & 30\% & 3 (0.90) & 4 (1.20) & 3 (0.90) & 4 (1.20) \\ \hline
-        Ancho de banda & 20\% & 3 (0.60) & 2 (0.40) & 4 (0.80) & 4 (0.80) \\ \hline
-        Integración y tamaño & 15\% & 2 (0.30) & 4 (0.60) & 3 (0.45) & 2 (0.30) \\ \hline
-        \textbf{Puntaje Total} & \textbf{100\%} & \textbf{2.85} & \textbf{3.60} & \textbf{2.85} & \textbf{3.35} \\ \hline
+        \textbf{Criterio de Evaluación} & \textbf{Peso}  & \textbf{Wi-Fi 1} & \textbf{Wi-Fi 2} & \textbf{Wi-Fi 3} & \textbf{Wi-Fi 4} \\ \hline
+        Disponibilidad local            & 35\%           & 3 (1.05)         & 4 (1.40)         & 2 (0.70)         & 3 (1.05)         \\ \hline
+        Facilidad de configuración      & 30\%           & 3 (0.90)         & 4 (1.20)         & 3 (0.90)         & 4 (1.20)         \\ \hline
+        Ancho de banda                  & 20\%           & 3 (0.60)         & 2 (0.40)         & 4 (0.80)         & 4 (0.80)         \\ \hline
+        Integración y tamaño            & 15\%           & 2 (0.30)         & 4 (0.60)         & 3 (0.45)         & 2 (0.30)         \\ \hline
+        \textbf{Puntaje Total}          & \textbf{100\%} & \textbf{2.85}    & \textbf{3.60}    & \textbf{2.85}    & \textbf{3.35}    \\ \hline
     \end{tabular}
 \end{table}
 
@@ -509,7 +509,7 @@ Por otro lado, aunque los concentradores multicanal basados en el SX1302 (como e
 Para garantizar la fiabilidad y representatividad de las mediciones de dióxido de carbono (CO$_2$) en espacios universitarios, como laboratorios y aulas, es imperativo fundamentar la instalación física de los nodos sensores en normativas y estándares internacionales reconocidos. Un posicionamiento incorrecto puede derivar en lecturas sesgadas o la aparición de puntos ciegos. A partir de la revisión de literatura, se detallan los siguientes criterios estandarizados adoptados para este proyecto:
 
 \subsubsection{Altura de Colocación Respecto a la Zona de Respiración}
-Las normativas convergen en que los sensores deben situarse de manera que capturen el aire en la ``zona de respiración'' típica de los ocupantes. El estándar \textit{RESET} y el estándar \textit{WELL} recomiendan el montaje vertical en paredes a una altura comprendida entre 1.1 y 1.7 metros (o de 900 a 1800 mm) desde el nivel del suelo \cite{reset_standard_v2, well_performance_guidebook}. Por su parte, la normativa ASHRAE 62.1-2022 define esta zona de respiración en un rango similar, desde 75 hasta 1800 mm de altura \cite{ashrae_62_1_2022}. En el contexto específico de entornos educativos y de cuidado infantil, el gobierno británico aconseja de forma práctica posicionar los sensores a la altura de las mesas o de las cabezas de los estudiantes cuando se encuentran sentados \cite{gov_uk_ventilation_education}. 
+Las normativas convergen en que los sensores deben situarse de manera que capturen el aire en la ``zona de respiración'' típica de los ocupantes. El estándar \textit{RESET} y el estándar \textit{WELL} recomiendan el montaje vertical en paredes a una altura comprendida entre 1.1 y 1.7 metros (o de 900 a 1800 mm) desde el nivel del suelo \cite{reset_standard_v2, well_performance_guidebook}. Por su parte, la normativa ASHRAE 62.1-2022 define esta zona de respiración en un rango similar, desde 75 hasta 1800 mm de altura \cite{ashrae_62_1_2022}. En el contexto específico de entornos educativos y de cuidado infantil, el gobierno británico aconseja de forma práctica posicionar los sensores a la altura de las mesas o de las cabezas de los estudiantes cuando se encuentran sentados \cite{gov_uk_ventilation_education}.
 
 \subsubsection{Distancia Mínima a Fuentes de Ventilación y Aperturas}
 La proximidad a flujos de aire directo puede alterar las mediciones reales del ambiente, generando subestimaciones del riesgo. En este sentido, el estándar \textit{RESET} indica una separación mínima de 5 metros respecto a ventanas operables, filtros y difusores de aire fresco \cite{reset_standard_v2}. En caso de que el espacio sea demasiado pequeño, el sensor no debe instalarse a una distancia menor a la mitad del ancho de la habitación respecto a las ventanas. Asimismo, normativas como \textit{WELL} y \textit{RESET} dictaminan un alejamiento mínimo de 1 metro de puertas interiores, ventanas, sistemas mecánicos de suministro de aire y cualquier fuente significativa de calor o frío \cite{well_performance_guidebook, reset_standard_v2}. En el caso de puertas que den al exterior, se requieren precauciones adicionales, debiendo mantener una separación de 3 a 5 metros para evitar corrientes de aire irregulares al abrirse \cite{well_performance_guidebook}. El gobierno británico también es explícito en este punto, recomendando alejar los sensores de salidas de ventilación \cite{gov_uk_ventilation_education}.
@@ -528,13 +528,13 @@ Con base en las normativas expuestas, se ha consolidado un conjunto de reglas pr
     \label{tabla:criterios_instalacion}
     \begin{tabular}{|p{4cm}|p{5.5cm}|p{4.5cm}|}
         \hline
-        \textbf{Criterio de Instalación} & \textbf{Recomendación de la Literatura} & \textbf{Valor Seleccionado para el Proyecto} \\ \hline
-        Altura de colocación & 1.1 a 1.7 m (RESET, WELL); 0.75 a 1.8 m (ASHRAE); Altura de cabeza sentado (GOV.UK) & \textbf{1.2 metros} (Altura promedio de respiración de estudiantes sentados) \\ \hline
-        Distancia a fuentes de aire directo (ventanas, difusores) & 5 m ideal, o mínimo mitad del ancho de la habitación (RESET) & \textbf{$\geq$ 2.5 metros} (Adaptado al tamaño de las aulas universitarias) \\ \hline
-        Distancia a puertas y ventanas cerradas & Mínimo 1 m (WELL, RESET) & \textbf{1.5 metros} \\ \hline
-        Distancia a puertas exteriores & 3 a 5 metros (WELL) & \textbf{$\geq$ 4 metros} \\ \hline
-        Distancia a ocupantes & Mínimo 0.5 metros (GOV.UK) & \textbf{1 metro} de separación del escritorio más cercano \\ \hline
-        Posicionamiento espacial & Central en la habitación (RESET) o en techo si H $<$ 3.7 m y aire mixto (WELL) & \textbf{Pared central}, sin interferencias u obstáculos directos \\ \hline
+        \textbf{Criterio de Instalación}                          & \textbf{Recomendación de la Literatura}                                             & \textbf{Valor Seleccionado para el Proyecto}                                 \\ \hline
+        Altura de colocación                                      & 1.1 a 1.7 m (RESET, WELL); 0.75 a 1.8 m (ASHRAE); Altura de cabeza sentado (GOV.UK) & \textbf{1.2 metros} (Altura promedio de respiración de estudiantes sentados) \\ \hline
+        Distancia a fuentes de aire directo (ventanas, difusores) & 5 m ideal, o mínimo mitad del ancho de la habitación (RESET)                        & \textbf{$\geq$ 2.5 metros} (Adaptado al tamaño de las aulas universitarias)  \\ \hline
+        Distancia a puertas y ventanas cerradas                   & Mínimo 1 m (WELL, RESET)                                                            & \textbf{1.5 metros}                                                          \\ \hline
+        Distancia a puertas exteriores                            & 3 a 5 metros (WELL)                                                                 & \textbf{$\geq$ 4 metros}                                                     \\ \hline
+        Distancia a ocupantes                                     & Mínimo 0.5 metros (GOV.UK)                                                          & \textbf{1 metro} de separación del escritorio más cercano                    \\ \hline
+        Posicionamiento espacial                                  & Central en la habitación (RESET) o en techo si H $<$ 3.7 m y aire mixto (WELL)      & \textbf{Pared central}, sin interferencias u obstáculos directos             \\ \hline
     \end{tabular}
 \end{table}
 
@@ -590,22 +590,21 @@ En esta subsección se evalúan las alternativas de actuadores consideradas para
 \begin{table}[H]
     \centering
     \renewcommand{\arraystretch}{1.3}
-    \caption{Comparación de alternativas de ventiladores para el subsistema de mitigación activa}
+    \caption{Comparación de alternativas de ventiladores para el subsistema de mitigación activa \cite{cm_sickleflow_2026, cm_mf120_halo_2026, cm_mf120_lite_2026, delta_pfb1224uhep0_2026}}
     \label{tab:comparacion_ventiladores}
     \begin{tabular}{|p{3.6cm}|p{1.4cm}|p{1.9cm}|p{1.8cm}|p{1.8cm}|p{1.8cm}|p{3.4cm}|}
         \hline
-        \textbf{Modelo} & \textbf{Voltaje} & \textbf{Control} & \textbf{Caudal} & \textbf{Presión estática} & \textbf{Corriente nominal} & \textbf{Observación} \\ \hline
+        \textbf{Modelo}                                             & \textbf{Voltaje} & \textbf{Control} & \textbf{Caudal} & \textbf{Presión estática} & \textbf{Corriente nominal} & \textbf{Observación}                                                                                                                \\ \hline
 
-        Cooler Master SickleFlow 120 ARGB (MFX-B2DN-18NPA-R1) & 12 V & PWM (4 pines) & 62 CFM & 2.5 mmH$_2$O & 0.15 A & Buena integración con PWM, bajo consumo y presión estática adecuada. \\ \hline
+        Cooler Master SickleFlow 120 ARGB (MFX-B2DN-18NPA-R1)       & 12 V             & PWM (4 pines)    & 62 CFM          & 2.5 mmH$_2$O              & 0.15 A                     & Buena integración con PWM, bajo consumo y presión estática adecuada.                                                                \\ \hline
 
-        Cooler Master MasterFan MF120 Halo (MFL-B2DN-18NPA-R1) & 12 V & PWM (4 pines) & 47.2 CFM & 1.6 mmH$_2$O & 0.25 A & Integración sencilla, pero menor caudal y menor presión estática. \\ \hline
+        Cooler Master MasterFan MF120 Halo (MFL-B2DN-18NPA-R1)      & 12 V             & PWM (4 pines)    & 47.2 CFM        & 1.6 mmH$_2$O              & 0.25 A                     & Integración sencilla, pero menor caudal y menor presión estática.                                                                   \\ \hline
 
-        Cooler Master MasterFan MF120 Lite ARGB (MFW-B2DN-17NPA-R1) & 12 V & PWM (4 pines) & 70.5 CFM & 2.0 mmH$_2$O & 0.45 A & Mayor caudal entre las opciones de 12 V, aunque con mayor consumo. \\ \hline
+        Cooler Master MasterFan MF120 Lite ARGB (MFW-B2DN-17NPA-R1) & 12 V             & PWM (4 pines)    & 70.5 CFM        & 2.0 mmH$_2$O              & 0.45 A                     & Mayor caudal entre las opciones de 12 V, aunque con mayor consumo.                                                                  \\ \hline
 
-        Delta PFB1224UHEP0 & 24 V & PWM + Tacómetro & --- & --- & 2.00 A & Opción industrial de alto desempeño, pero con mayor requerimiento de potencia y menor conveniencia para un prototipo universitario. \\ \hline
+        Delta PFB1224UHEP0                                          & 24 V             & PWM + Tacómetro  & ---             & ---                       & 2.00 A                     & Opción industrial de alto desempeño, pero con mayor requerimiento de potencia y menor conveniencia para un prototipo universitario. \\ \hline
     \end{tabular}
 \end{table}
-\caption{Comparación de alternativas de ventiladores para el subsistema de mitigación activa \cite{cm_sickleflow_2026, cm_mf120_halo_2026, cm_mf120_lite_2026, delta_pfb1224uhep0_2026}}
 
 De acuerdo con la comparación realizada, las alternativas de 12 V con control PWM presentan una integración más sencilla para el prototipo experimental, debido a su compatibilidad con señales de control por microcontrolador y a la disponibilidad de fuentes comerciales accesibles. Entre ellas, el modelo SickleFlow 120 ARGB ofrece un equilibrio favorable entre caudal, presión estática, consumo y facilidad de integración, mientras que el MF120 Lite destaca por su mayor caudal, aunque a costa de un mayor consumo de corriente. Por otro lado, la alternativa Delta representa una solución de mayor exigencia eléctrica, por lo que resulta menos conveniente para la implementación del sistema propuesto a escala de tesis \cite{cm_sickleflow_2026, cm_mf120_halo_2026, cm_mf120_lite_2026, delta_pfb1224uhep0_2026}.
 
@@ -629,7 +628,7 @@ Bajo estas consideraciones, la variación temporal de la concentración de CO$_2
 La ecuación general utilizada para representar esta dinámica es la siguiente:
 
 \begin{equation}
-\frac{dC(t)}{dt} = \frac{G(t)}{V} - \frac{Q(t)}{V}\left(C(t)-C_{out}\right)
+    \frac{dC(t)}{dt} = \frac{G(t)}{V} - \frac{Q(t)}{V}\left(C(t)-C_{out}\right)
 \end{equation}
 
 donde \(C(t)\) es la concentración de CO$_2$ en el ambiente interior, \(C_{out}\) es la concentración de CO$_2$ del aire exterior, \(G(t)\) representa la tasa de generación de CO$_2$ por los ocupantes, \(Q(t)\) es el caudal de ventilación y \(V\) es el volumen del recinto. En este modelo, la variable manipulada es el caudal de ventilación, el cual depende de la velocidad de los ventiladores controlados por PWM, mientras que la variable controlada es la concentración interior de CO$_2$.
@@ -653,7 +652,7 @@ Con el fin de evaluar distintas estrategias de mitigación activa de CO$_2$ en a
 En el caso del controlador PID, la acción de control se calcula a partir del error entre la concentración medida y el valor de referencia establecido. Este esquema combina una acción proporcional, una integral y una derivativa, con el objetivo de reducir el error en estado estacionario, mejorar la rapidez de respuesta y atenuar oscilaciones en la salida. La ley de control utilizada se expresa de la siguiente manera:
 
 \begin{equation}
-u(t) = K_p e(t) + K_i \int e(t)\,dt + K_d \frac{de(t)}{dt}
+    u(t) = K_p e(t) + K_i \int e(t)\,dt + K_d \frac{de(t)}{dt}
 \end{equation}
 
 donde \(e(t)\) representa el error entre la concentración medida de CO$_2$ y el setpoint definido, mientras que \(u(t)\) corresponde a la señal de control que posteriormente se traduce en un duty cycle PWM aplicado a los ventiladores. La sintonización de los parámetros \(K_p\), \(K_i\) y \(K_d\) se realiza buscando un compromiso entre rapidez de corrección, estabilidad y ausencia de sobreimpulso excesivo.
