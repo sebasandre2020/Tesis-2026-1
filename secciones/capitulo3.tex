@@ -372,6 +372,41 @@ El ciclo de procesamiento inicia cuando los controladores reciben el JSON vía p
 
 Las pruebas unitarias y de integración aseguran la robustez de la lógica de evaluación y las consultas a Cosmos DB antes de empaquetar la aplicación en su contenedor Docker y ser desplegada a producción. El proceso de Quality Assessment verifica que todos los componentes cumplen con los estándares de calidad antes de finalizar el desarrollo.
 
+\subsection{Diagrama de Arquitectura de Interconexión Cloud-Gateway}
+
+A continuación, se presenta el diagrama de bloques que sintetiza la arquitectura de red y el flujo de datos del sistema, conectando el entorno físico con los recursos desplegados en la nube.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[
+        >=Stealth,
+        box/.style={rectangle, draw=black, thick, fill=blue!5, text width=3.8cm, align=center, minimum height=1.6cm, rounded corners, font=\small},
+        arrow/.style={->, thick},
+        biarrow/.style={<->, thick}
+    ]
+
+    % Nodos
+    \node[box] (gateway) at (0, 2) {\textbf{Gateway ESP32}\\(Origen físico)};
+    \node[box] (container) at (6.5, 2) {\textbf{Azure Container Apps}\\(Backend / Lógica)};
+    \node[box] (cosmos) at (12.5, 0) {\textbf{Azure Cosmos DB}\\(Base de Datos)};
+    \node[box] (static) at (6.5, -2) {\textbf{Azure Static Web Apps}\\Managed Functions\\(API Serverless)};
+    \node[box] (cliente) at (0, -2) {\textbf{Cliente Web / React.js}\\(Frontend)};
+
+    % Flechas
+    \draw[arrow] (gateway) -- node[above, font=\footnotesize] {HTTP POST (JSON)} (container);
+    \draw[biarrow] (container.east) -- node[above right, font=\footnotesize, align=center, xshift=-0.3cm] {Escritura/\\Validación} (cosmos.150);
+    \draw[arrow] (static.east) -- node[below right, font=\footnotesize, align=center, xshift=-0.3cm] {Lectura/\\Consulta} (cosmos.210);
+    \draw[biarrow] (cliente) -- node[above, font=\footnotesize, align=center] {Petición HTTP\\/ Polling} (static);
+
+    \end{tikzpicture}
+    \caption{Diagrama de Arquitectura de Interconexión Cloud-Gateway.}
+    \label{fig:arquitectura_nube}
+\end{figure}
+
+El diagrama de la Figura \ref{fig:arquitectura_nube} ilustra visualmente la Arquitectura Client-Server Desacoplada propuesta para el sistema de monitoreo. Como se observa, existe una separación estricta entre el flujo de ingesta de datos y el flujo de consumo. Por un lado, el Gateway ESP32 emite la telemetría hacia un backend dedicado exclusivamente a la recepción y evaluación (Azure Container Apps), el cual persiste la información en Cosmos DB validando el \textit{Repository Pattern}.
+
+Por otro lado, la interacción con el usuario está completamente aislada de la lógica de ingesta. El Cliente Web desarrollado en React.js, aplicando los patrones \textit{Observer} y \textit{Smart vs. Dumb Components}, consume los datos históricos y las alertas interactuando únicamente con una API Serverless (Azure Static Web Apps), la cual se encarga de consultar a Cosmos DB de manera independiente. Esta división de responsabilidades valida de manera integral los patrones de diseño previamente mencionados y garantiza la escalabilidad del proyecto, evitando que un volumen masivo de ingesta de datos por parte de los sensores comprometa el rendimiento de la interfaz gráfica y viceversa.
+
 
 
 \section{Desarrollo del nodo sensor}
