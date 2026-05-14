@@ -620,7 +620,43 @@ De acuerdo con la comparación realizada, las alternativas de 12 V con control P
 
 
 \subsection{Diseño de la arquitectura de control}
+
+\subsection{Diseño de la arquitectura de control}
+
+La arquitectura de control del subsistema de mitigación activa se plantea como un sistema de lazo cerrado, en el cual la variable controlada es la concentración de CO$_2$ en el ambiente interior y la variable manipulada es la velocidad de los ventiladores. El sistema recibe como entrada la concentración de CO$_2$ medida en tiempo real por el sensor, la compara con un valor de referencia o setpoint, y calcula una acción de control orientada a reducir la diferencia entre ambas señales. De esta manera, la ventilación del ambiente puede ajustarse automáticamente en función de las condiciones reales del recinto.
+
+Desde el punto de vista funcional, la arquitectura está conformada por cuatro bloques principales: sensado, procesamiento, control y actuación. En el bloque de sensado, el sensor de CO$_2$ adquiere la concentración presente en el ambiente y envía dicha información al sistema de procesamiento. En el bloque de procesamiento, la señal medida es acondicionada y utilizada como entrada para el algoritmo de control. Posteriormente, en el bloque de control, se genera una señal de mando a partir del error entre la concentración medida y la referencia establecida. Finalmente, en el bloque de actuación, dicha señal se traduce en una modulación PWM aplicada a los ventiladores, ajustando su velocidad y, por tanto, el caudal de aire introducido o extraído del recinto.
+
+Esta arquitectura permite implementar distintas estrategias de control sobre una misma estructura física, facilitando la comparación entre controladores PID y Fuzzy. Asimismo, el uso de una configuración de lazo cerrado permite que el sistema responda de manera automática frente a variaciones en la ocupación del ambiente o en la concentración de CO$_2$, favoreciendo una operación más estable y adaptable que un esquema de activación basado únicamente en umbrales fijos.
+
 \subsection{Modelado de la dinámica de CO$_2$ en ambientes interiores}
+
+\subsection{Modelado de la dinámica de CO$_2$ en ambientes interiores}
+
+Para el diseño del subsistema de mitigación activa, es necesario contar con un modelo que represente la evolución de la concentración de CO$_2$ en el ambiente interior a lo largo del tiempo. En este trabajo, dicha dinámica se modela a partir de un balance de masa, considerando como principales factores la generación de CO$_2$ por parte de los ocupantes, la concentración de CO$_2$ del aire exterior y la renovación de aire producida por el sistema de ventilación. Este enfoque permite describir de manera simplificada el comportamiento del contaminante dentro del recinto y constituye la base para el diseño y evaluación de las estrategias de control.
+
+Bajo estas consideraciones, la variación temporal de la concentración de CO$_2$ puede expresarse mediante una ecuación diferencial de primer orden, en la cual la concentración interior aumenta debido a la generación asociada a la ocupación y disminuye en función del caudal de ventilación y de la diferencia entre la concentración interior y la exterior. De esta manera, el modelo permite analizar cómo distintos niveles de ocupación y diferentes velocidades de ventilación influyen en la calidad del aire interior.
+
+La ecuación general utilizada para representar esta dinámica es la siguiente:
+
+\begin{equation}
+\frac{dC(t)}{dt} = \frac{G(t)}{V} - \frac{Q(t)}{V}\left(C(t)-C_{out}\right)
+\end{equation}
+
+donde \(C(t)\) es la concentración de CO$_2$ en el ambiente interior, \(C_{out}\) es la concentración de CO$_2$ del aire exterior, \(G(t)\) representa la tasa de generación de CO$_2$ por los ocupantes, \(Q(t)\) es el caudal de ventilación y \(V\) es el volumen del recinto. En este modelo, la variable manipulada es el caudal de ventilación, el cual depende de la velocidad de los ventiladores controlados por PWM, mientras que la variable controlada es la concentración interior de CO$_2$.
+
+A partir de esta formulación, es posible simular distintos escenarios de operación y analizar la respuesta del sistema ante cambios en la ocupación o en las condiciones de ventilación. Asimismo, este modelo proporciona una base adecuada para la implementación y comparación de controladores PID y Fuzzy, al permitir evaluar la evolución de la concentración de CO$_2$ frente a diferentes acciones de control.
+
+
+\begin{itemize}
+    \item \(C(t)\): concentración de CO$_2$ en el ambiente interior.
+    \item \(C_{out}\): concentración de CO$_2$ del aire exterior.
+    \item \(G(t)\): tasa de generación de CO$_2$ por los ocupantes.
+    \item \(Q(t)\): caudal de ventilación.
+    \item \(V\): volumen del recinto.
+\end{itemize}
+
+
 \subsection{Diseño e implementación de controladores PID y Fuzzy}
 \subsection{Criterios de evaluación y validación experimental}
 
