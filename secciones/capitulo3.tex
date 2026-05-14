@@ -402,115 +402,107 @@ Antes de definir los componentes electrónicos específicos del nodo sensor, es 
 
 De acuerdo con el análisis presentado en la Tabla \ref{tabla:comparativa_comunicacion}, la tecnología \textbf{LoRa} destaca como la solución más viable y que mejor cumple con los criterios de diseño del proyecto. Su alcance en zonas urbanas (clasificado como Alto) permite conectar múltiples laboratorios en el campus utilizando un solo gateway, y su muy alta capacidad de penetración de muros resulta indispensable en infraestructuras con concreto armado. Además, opera en la banda libre de 915 MHz, idónea en Perú para evitar la congestión típica de la banda de 2.4 GHz. Un factor decisivo es su muy bajo consumo energético general; aunque su corriente pico de transmisión es comparable a la de tecnologías como Zigbee, la arquitectura de red en estrella de LoRa permite que los nodos sensores permanezcan en reposo profundo la mayor parte del tiempo (ciclo de trabajo inferior al 1\%), evitando el constante enrutamiento de datos y el alto overhead característicos de las redes en malla (mesh). Sumado a sus costos operativos muy bajos (prácticamente nulos al ser red propia), LoRa se convierte en la opción ideal para un despliegue sostenible a largo plazo, a pesar de su muy baja tasa de datos, la cual es suficiente para transmitir lecturas esporádicas de CO$_2$.
 
+\subsection{Gateways comerciales frente a la implementación de gateways personalizados}
+
+Para el despliegue de redes LoRaWAN enfocadas en Internet de las Cosas (IoT), la literatura resalta tres enfoques principales para la capa de borde (Edge): gateways comerciales de grado operador, gateways comerciales de bajo costo (prosumer) y gateways personalizados construidos a medida (Do-It-Yourself o DIY).
+
+Los \textbf{gateways comerciales de grado operador (Carrier-Grade)}, como el Kona Mega Gateway, representan el estándar de infraestructura masiva. Cuentan con multiplexación avanzada para manejar entre 64 y 72 canales simultáneos, erradicando virtualmente las colisiones en el aire \cite{nb_gateway_commercial_1}, y poseen filtros físicos que logran sensibilidades excepcionales de -142 dBm \cite{nb_gateway_commercial_4}. Sin embargo, sus elevados costos (CAPEX) y la inflexibilidad de su ecosistema cerrado los hacen inviables e incompatibles con arquitecturas atípicas requeridas en proyectos universitarios de pequeña escala \cite{nb_gateway_commercial_6, nb_gateway_commercial_7}.
+
+Por otro lado, los \textbf{gateways comerciales de bajo costo (Prosumer)}, como el RAK7268V2 o SenseCAP M2, buscan democratizar el acceso con costos entre \$89 y \$500 USD \cite{nb_gateway_commercial_6}. Integran criptografía robusta en hardware (ATECC608A) y procesadores digitales de señal (DSP) \cite{nb_gateway_prosumer_29}. A pesar de estos beneficios, su limitación a 8 canales físicos genera riesgos de congestión, forzando la dependencia de mecanismos como la Tasa de Datos Adaptativa (ADR) \cite{nb_gateway_prosumer_32, nb_gateway_prosumer_34}, además de incurrir en costos ocultos de importación y periféricos adicionales \cite{nb_gateway_prosumer_41}.
+
+Finalmente, los \textbf{gateways personalizados (Custom/DIY)} se ensamblan acoplando microcontroladores o computadoras de placa única (SBC) a módulos concentradores LoRa o transceptores \cite{nb_gateway_custom_9}. Este enfoque ofrece flexibilidad absoluta de software y control total sobre las rutinas de enrutamiento \cite{nb_gateway_custom_7}. Su principal virtud es la posibilidad de operar en modo ``promiscuo'', lo que permite interactuar con nodos de ultra bajo costo que carecen de la pila LoRaWAN completa, además de reducir dramáticamente el presupuesto de implementación \cite{nb_gateway_custom_10}. Si bien presentan riesgos asociados a la alta complejidad técnica y soporte fragmentado, estos desafíos son coherentes y deseables en el marco de una investigación de tesis en Ingeniería Mecatrónica, donde se busca precisamente el dominio de la integración hardware-software a bajo nivel.
+
+En conclusión, para este proyecto universitario desarrollado en Lima, Perú, se determina la viabilidad técnica y académica de optar por el diseño e implementación de un \textbf{gateway personalizado}. La priorización de la flexibilidad para configurar nodos simples, la reducción contundente del CAPEX y la alineación con los objetivos de diseño embebido respaldan sólidamente esta decisión frente al sobredimensionamiento y rigidez de los equipos comerciales. Esta elección fundamenta, a su vez, la necesidad de una evaluación exhaustiva de microcontroladores y módulos de comunicación para el ensamble tanto del nodo sensor como del gateway.
+
 \subsection{Selección de componentes}
 
-\begin{table}[htbp]
-    \centering
-    \includegraphics[width=0.8\textwidth]{images//capitulo3/comparacion_electronica.png}
-    \caption{Comparación de componentes electrónicos utilizados para el nodo sensor.}
-    \label{tab:comparacion_electronica}
-\end{table}
+Para determinar los elementos electrónicos y de comunicación que compondrán tanto los nodos sensores como el gateway personalizado, se evalúan las principales alternativas reportadas en la literatura. Dado que el proyecto requiere viabilidad para un prototipado realista y replicable en el entorno universitario (Lima, Perú), se han ajustado los criterios de evaluación otorgando un peso preponderante del 35\% a la ``Disponibilidad en el mercado local'' y 30\% a la ``Facilidad de configuración / Abundancia de documentación''. A continuación, se presentan las matrices de evaluación para microcontroladores, módulos LoRa y módulos Wi-Fi.
 
+\subsubsection{Evaluación de Microcontroladores}
 
-Para determinar la combinación de componentes más óptima para el proyecto, de acuerdo a los componentes mostrados en la tabla \ref{tab:comparacion_electronica}, se emplean las matrices de la metodología VDI 2225 para diseño electrónico. En primer lugar, deben seleccionarse al menos 4 alternativas para la solución electrónica en función de los componentes evaluados. Estas alternativas se muestran a continuación:
-
-
-%\begin{itemize}
-%\item \textbf{Opción CS 1: Arduino UNO + SCD30 + SX1276.} Esta combinación obtuvo buenos resultados técnicos (0.86) y económicos (0.85), destacándose en precisión y facilidad de integración.
-%\item \textbf{Opción CS 2: STM32F103C8T6 + MH-Z19B + RA-01H.} Aunque es económica (0.81), su puntuación técnica es la menor entre todas las alternativas (0.81) debido a menor precisión y facilidad de integración.
-%\item \textbf{Opción CS 3: Arduino MKR WAN 1310 + SCD30 + E32-915T30D.} Es la opción más robusta y precisa, con un valor técnico elevado (0.90), pero su alto costo lo hace menos económico (0.83).
-%\item \textbf{Opción CS4: Arduino UNO + MH-Z19B + E220-900T30D.} Esta combinación equilibra el costo y rendimiento, siendo la más económica (0.94) y con un valor técnico alto (0.90), ideal si se prioriza alcance y eficiencia.
-%\end{itemize}
-
+Se evaluaron cuatro opciones predominantes:
 \begin{itemize}
-    \item \textbf{Opción CS 1: Arduino UNO + SCD30 + SX1276.} Esta combinación obtuvo un desempeño técnico aceptable (0.86), destacándose en precisión y facilidad de integración. Sin embargo, su valor económico es relativamente bajo (0.63), debido a su menor disponibilidad en el mercado y costos de mantenimiento.
-
-    \item \textbf{Opción CS 2: STM32F103C8T6 + MH-Z19B + RA-01H.} Aunque es la opción más económica (0.60), su puntuación técnica es la más baja entre todas las alternativas (0.81). Esto se debe a su menor facilidad de integración y escalabilidad, lo que la hace menos adecuada para proyectos que requieran flexibilidad y soporte técnico.
-
-    \item \textbf{Opción CS 3: Arduino MKR WAN 1310 + SCD30 + E32-915T30D.} Esta alternativa presenta un equilibrio entre robustez y precisión, con un valor técnico alto (0.88). Su disponibilidad en el mercado y durabilidad son puntos fuertes, pero su costo lo hace menos competitivo económicamente (0.80).
-
-    \item \textbf{Opción CS4: Arduino UNO + MH-Z19B + E220-900T30D.} Esta combinación equilibra el costo y rendimiento, siendo la mejor opción económica (0.90) y destacándose técnicamente (0.86). Su alta disponibilidad en el mercado, combinado con su durabilidad y compatibilidad, la hace ideal para proyectos con un enfoque en eficiencia y alcance.
+    \item \textbf{MCU 1: ATmega328P.} Microcontrolador base de Arduino UNO. Su severa limitación de memoria SRAM provoca inestabilidad al intentar implementar una pila LoRaWAN completa \cite{nb_mcu_1, nb_mcu_3}.
+    \item \textbf{MCU 2: ESP32.} Microcontrolador de muy bajo costo con conectividad Wi-Fi nativa, altamente versátil para nodos sensores austeros y tareas de enrutamiento en gateways minimalistas \cite{nb_mcu_4, nb_mcu_6}.
+    \item \textbf{MCU 3: ESP32-S3.} Variante de doble núcleo, utilizada en gateways comerciales de bajo costo para compilar lógicas de reenvío digital \cite{nb_mcu_6}.
+    \item \textbf{MCU 4: Microchip ATECC608A.} Coprocesador criptográfico utilizado para cifrado de hardware, pero que no actúa como unidad de procesamiento general \cite{nb_mcu_8}.
 \end{itemize}
 
-
-
-
-
-
-
-\begin{table}[h!]
-    \centering
-    \renewcommand{\arraystretch}{1.5} % Aumenta la altura de las filas
-    \caption{Diseño de Proyecto - Evaluación de Proyectos Valor Técnico (Xi)}
-    \label{tabla:valor_tecnico}
-    \begin{tabular}{|p{0.8cm}|p{3cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|}
-        \hline
-        \multicolumn{11}{|c|}{\textbf{Diseño electrónico - Evaluación de Proyectos Valor Técnico (Xi)}}                                                                                                                     \\ \hline
-        \multicolumn{11}{|c|}{\textbf{p: puntaje de 0 al 4 (escala por la norma VDI 2225)}}                                                                                                                                 \\ \hline
-        \multicolumn{11}{|c|}{\textbf{0=No satisface; 1=Aceptable; 2=Suficiente; 3=Bien; 4=Muy bien}}                                                                                                                       \\ \hline
-        \multicolumn{11}{|c|}{\textbf{g: ponderado, basado en los criterios de evaluación}}                                                                                                                                 \\ \hline
-        \textbf{Nro.}                                   & \textbf{Criterio de Evaluación} & \textbf{g (\%)} &
-        \multicolumn{2}{c|}{\textbf{CS 1}}              &
-        \multicolumn{2}{c|}{\textbf{CS 2}}              &
-        \multicolumn{2}{c|}{\textbf{CS 3}}              &
-        \multicolumn{2}{c|}{\textbf{CS 4}}                                                                                                                                                                                  \\ \hline
-                                                        &                                 &                 & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} \\ \hline
-        1                                               & Precisión en medición de CO$_2$ & 20              & 4          & 80           & 3          & 60           & 4          & 80           & 4          & 80           \\ \hline
-        2                                               & Consumo energético              & 15              & 3          & 45           & 4          & 60           & 3          & 45           & 2          & 30           \\ \hline
-        3                                               & Facilidad de integración        & 15              & 4          & 60           & 3          & 45           & 4          & 60           & 4          & 60           \\ \hline
-        4                                               & Alcance de comunicación         & 15              & 3          & 45           & 3          & 45           & 4          & 60           & 4          & 60           \\ \hline
-        5                                               & Costo de implementación         & 10              & 3          & 30           & 4          & 40           & 2          & 20           & 3          & 30           \\ \hline
-        6                                               & Robustez y durabilidad          & 10              & 3          & 30           & 3          & 30           & 4          & 40           & 4          & 40           \\ \hline
-        7                                               & Escalabilidad                   & 10              & 4          & 40           & 3          & 30           & 4          & 40           & 2          & 20           \\ \hline
-        8                                               & Mantenimiento y soporte         & 10              & 3          & 30           & 3          & 30           & 3          & 30           & 4          & 40           \\ \hline
-        \multicolumn{3}{|c|}{\textbf{Total}}            &                                 & \textbf{360}    &            & \textbf{340} &            & \textbf{375} &            & \textbf{360}                             \\ \hline
-        \multicolumn{3}{|c|}{\textbf{Puntaje Unitario}} &                                 & 3.60            &            & 3.40         &            & 3.75         &            & 3.60                                     \\ \hline
-        \multicolumn{3}{|c|}{\textbf{Valor Técnico Xi}} &                                 & 0.86            &            & 0.81         &            & 0.88         &            & 0.86                                     \\ \hline
-    \end{tabular}
-\end{table}
-
-
-
-
-
-\begin{table}[h!]
+\begin{table}[H]
     \centering
     \renewcommand{\arraystretch}{1.5}
-    \caption{Diseño de Proyecto - Evaluación de Proyectos Valor Económico (Yi) Ajustado}
-    \label{tabla:valor_economico}
-    \begin{tabular}{|p{0.8cm}|p{3cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|p{1cm}|}
+    \caption{Evaluación Comparativa de Microcontroladores}
+    \label{tabla:evaluacion_mcu}
+    \begin{tabular}{|p{4.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}
         \hline
-        \multicolumn{11}{|c|}{\textbf{Diseño electrónico - Evaluación de Proyectos Valor Económico (Yi)}}                                                                                                       \\ \hline
-        \multicolumn{11}{|c|}{\textbf{p: puntaje de 0 al 4 (escala por la norma VDI 2225)}}                                                                                                                     \\ \hline
-        \multicolumn{11}{|c|}{\textbf{0=No satisface; 1=Aceptable; 2=Suficiente; 3=Bien; 4=Muy bien}}                                                                                                           \\ \hline
-        \multicolumn{11}{|c|}{\textbf{g: ponderado, basado en los criterios de evaluación}}                                                                                                                     \\ \hline
-        \textbf{Nro.}                      & \textbf{Criterio de Evaluación}  & \textbf{g (\%)} &
-        \multicolumn{2}{c|}{\textbf{CS 1}} &
-        \multicolumn{2}{c|}{\textbf{CS 2}} &
-        \multicolumn{2}{c|}{\textbf{CS 3}} &
-        \multicolumn{2}{c|}{\textbf{CS 4}}                                                                                                                                                                      \\ \hline
-                                           &                                  &                 & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} & \textbf{p} & \textbf{g*p} \\ \hline
-        1                                  & Disponibilidad en el mercado     & 35              & 2          & 70           & 2          & 70           & 3          & 105          & 4          & 140          \\ \hline
-        2                                  & Costos de Mantenimiento          & 20              & 2          & 40           & 2          & 40           & 3          & 60           & 3          & 60           \\ \hline
-        3                                  & Durabilidad                      & 20              & 3          & 60           & 3          & 60           & 4          & 80           & 4          & 80           \\ \hline
-        4                                  & Flexibilidad de Expansión        & 15              & 2          & 30           & 2          & 30           & 3          & 45           & 3          & 45           \\ \hline
-        5                                  & Compatibilidad y Soporte Técnico & 10              & 3          & 30           & 2          & 20           & 3          & 30           & 4          & 40           \\ \hline
-                                           & \textbf{Total}                   & \textbf{100}    &            & \textbf{230} &            & \textbf{220} &            & \textbf{320} &            & \textbf{365} \\ \hline
-                                           & \textbf{Puntaje Unitario}        &                 &            & 2.30         &            & 2.20         &            & 3.20         &            & 3.65         \\ \hline
-                                           & \textbf{Valor Económico Yi}      &                 &            & 0.63         &            & 0.60         &            & 0.80         &            & 0.90         \\ \hline
+        \textbf{Criterio de Evaluación} & \textbf{Peso} & \textbf{MCU 1} & \textbf{MCU 2} & \textbf{MCU 3} & \textbf{MCU 4} \\ \hline
+        Disponibilidad local & 35\% & 4 (1.40) & 4 (1.40) & 2 (0.70) & 1 (0.35) \\ \hline
+        Facilidad de configuración & 30\% & 4 (1.20) & 4 (1.20) & 3 (0.90) & 2 (0.60) \\ \hline
+        Capacidad de procesamiento/RAM & 20\% & 1 (0.20) & 3 (0.60) & 4 (0.80) & 2 (0.40) \\ \hline
+        Costo & 15\% & 3 (0.45) & 4 (0.60) & 3 (0.45) & 2 (0.30) \\ \hline
+        \textbf{Puntaje Total} & \textbf{100\%} & \textbf{3.25} & \textbf{3.80} & \textbf{2.85} & \textbf{1.65} \\ \hline
     \end{tabular}
 \end{table}
 
+\subsubsection{Evaluación de Módulos LoRa}
 
+Las alternativas para la capa física de radiofrecuencia (transceptores/concentradores) incluyen:
+\begin{itemize}
+    \item \textbf{LoRa 1: Ebyte E220-900T30D.} Transceptor UART de bajo costo basado en el chip LLCC68, ideal para nodos y gateways monocanal simples, aunque requiere que la estructura de red sea gestionada por software \cite{nb_lora_1}.
+    \item \textbf{LoRa 2: RAKwireless RAK2287.} Módulo concentrador impulsado por el chip SX1302 con escudo EMI, excelente para gateways multicanal robustos \cite{nb_lora_13}.
+    \item \textbf{LoRa 3: Seeed Studio Wio-WM1302.} Tarjeta concentradora SX1302 con certificaciones industriales, optimizada en consumo y costo \cite{nb_lora_13_seeed}.
+    \item \textbf{LoRa 4: Dragino PG1302.} Módulo tipo Pi HAT orientado a presupuestos ajustados, pero con soporte técnico limitado \cite{nb_lora_13_dragino}.
+\end{itemize}
 
-\FloatBarrier
-De acuerdo con las matrices \ref{tabla:valor_tecnico} y \ref{tabla:valor_economico}, la solución más óptima para el proyecto es la número 4. Esta solución consiste en los componentes Arduino UNO + MH-Z19B + E220-900T30D, y se destaca por su equilibrio entre valor técnico (\( X_i = 0.86 \)) y valor económico (\( Y_i = 0.90 \)).
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \caption{Evaluación Comparativa de Módulos LoRa}
+    \label{tabla:evaluacion_lora}
+    \begin{tabular}{|p{4.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}
+        \hline
+        \textbf{Criterio de Evaluación} & \textbf{Peso} & \textbf{LoRa 1} & \textbf{LoRa 2} & \textbf{LoRa 3} & \textbf{LoRa 4} \\ \hline
+        Disponibilidad local & 35\% & 4 (1.40) & 1 (0.35) & 1 (0.35) & 2 (0.70) \\ \hline
+        Facilidad de configuración & 30\% & 4 (1.20) & 3 (0.90) & 3 (0.90) & 2 (0.60) \\ \hline
+        Capacidad multicanal / SNR & 20\% & 2 (0.40) & 4 (0.80) & 4 (0.80) & 3 (0.60) \\ \hline
+        Costo & 15\% & 4 (0.60) & 2 (0.30) & 3 (0.45) & 3 (0.45) \\ \hline
+        \textbf{Puntaje Total} & \textbf{100\%} & \textbf{3.60} & \textbf{2.35} & \textbf{2.50} & \textbf{2.35} \\ \hline
+    \end{tabular}
+\end{table}
 
-En términos técnicos, esta configuración sobresale por su facilidad de integración, robustez, y un alcance de comunicación superior, aunque el consumo energético (\( p = 2 \)) es moderado en comparación con otras alternativas. La precisión del MH-Z19B es adecuada para aplicaciones de monitoreo estándar, lo que lo hace funcional para los requisitos del proyecto.
+\subsubsection{Evaluación de Módulos Wi-Fi}
 
-En términos económicos, esta opción es la más favorable debido a su alta disponibilidad en el mercado peruano, donde el módulo E220-900T30D, que opera en la banda australiana de 915 MHz, se encuentra por debajo de los 200 soles. Su costo accesible, combinado con su compatibilidad y soporte técnico, refuerzan su idoneidad para proyectos que prioricen tanto la eficiencia como la relación costo-beneficio.
+Para la transmisión del lado del gateway o nodos que cuenten con enlace directo al servidor:
+\begin{itemize}
+    \item \textbf{Wi-Fi 1: Módulo Wi-Fi 4 Estándar (802.11 b/g/n).} Componente externo genérico presente en gateways comerciales, idóneo para 2.4 GHz y entornos urbanos \cite{nb_wifi_16}.
+    \item \textbf{Wi-Fi 2: Wi-Fi Nativo ESP32.} Circuitería embebida en el encapsulado del microcontrolador ESP32. Provee un puente directo e ininterrumpido al enrutador sin requerir hardware físico adicional \cite{nb_mcu_4, nb_mcu_6}.
+    \item \textbf{Wi-Fi 3: Wi-Fi 5 de Orange Pi Zero 3.} Módulo embebido en la SBC, con alta conectividad para arquitecturas de Edge Computing.
+    \item \textbf{Wi-Fi 4: Wi-Fi 5 de Raspberry Pi 4.} Integración inalámbrica de alta velocidad apta para albergar bases de datos locales complejas.
+\end{itemize}
 
-Por estas razones, la solución número 4 se considera la más adecuada para cumplir con los objetivos del proyecto, garantizando un balance óptimo entre desempeño técnico y económico.
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \caption{Evaluación Comparativa de Soluciones Wi-Fi}
+    \label{tabla:evaluacion_wifi}
+    \begin{tabular}{|p{4.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}
+        \hline
+        \textbf{Criterio de Evaluación} & \textbf{Peso} & \textbf{Wi-Fi 1} & \textbf{Wi-Fi 2} & \textbf{Wi-Fi 3} & \textbf{Wi-Fi 4} \\ \hline
+        Disponibilidad local & 35\% & 3 (1.05) & 4 (1.40) & 2 (0.70) & 3 (1.05) \\ \hline
+        Facilidad de configuración & 30\% & 3 (0.90) & 4 (1.20) & 3 (0.90) & 4 (1.20) \\ \hline
+        Ancho de banda & 20\% & 3 (0.60) & 2 (0.40) & 4 (0.80) & 4 (0.80) \\ \hline
+        Integración y tamaño & 15\% & 2 (0.30) & 4 (0.60) & 3 (0.45) & 2 (0.30) \\ \hline
+        \textbf{Puntaje Total} & \textbf{100\%} & \textbf{2.85} & \textbf{3.60} & \textbf{2.85} & \textbf{3.35} \\ \hline
+    \end{tabular}
+\end{table}
+
+\subsubsection{Justificación Cualitativa de Resultados}
+
+Con base en la evaluación de los tres dominios presentados, la selección final converge de manera natural y transparente hacia el ecosistema del \textbf{ESP32 (MCU 2 y Wi-Fi 2)} en conjunto con el \textbf{módulo Ebyte E220-900T30D (LoRa 1)}.
+
+Debido a que el proyecto se contextualiza como un desarrollo universitario en Lima y se ha priorizado el modelo de diseño "Custom/DIY", la ponderación asignada a la "Disponibilidad en el mercado local" y la "Facilidad de configuración" ha sido decisiva. El ESP32 lidera sólidamente frente a alternativas limitadas como el ATmega328P o escasas como el ESP32-S3, brindando memoria holgada para gestionar las rutinas de transmisión e integrando sin costo adicional ni ocupación de espacio físico una interfaz Wi-Fi completamente funcional.
+
+Por otro lado, aunque los concentradores multicanal basados en el SX1302 (como el RAK2287) presentan un puntaje técnico superior en capacidad de radio, su nula disponibilidad en el mercado local, sus altos aranceles de importación y su exigente curva de aprendizaje penalizan severamente su puntaje final. En contraste, el módulo E220-900T30D (915 MHz) domina el mercado nacional peruano de prototipado, resulta extremadamente accesible y es plenamente compatible con el ESP32 mediante su interfaz serial UART. Esta sinergia ESP32 + E220-900T30D permite construir nodos y un gateway base altamente viables, respaldados por una inmensa comunidad técnica que garantiza el cumplimiento de los objetivos de la tesis.
 
 \subsection{Criterios Normativos para la Ubicación Espacial de los Nodos Sensores}
 
