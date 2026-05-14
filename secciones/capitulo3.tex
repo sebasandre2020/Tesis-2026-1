@@ -568,7 +568,7 @@ Para la configuración del gateway Kona Mega, primero se debe confirmar que tant
 En esta sección se presenta el desarrollo del subsistema de mitigación activa y control, incorporado con el propósito de extender la funcionalidad del sistema más allá del monitoreo pasivo de la concentración de CO$_2$. Este subsistema se basa en la actuación automática de ventiladores modulados por PWM, de modo que la ventilación del ambiente pueda ajustarse de acuerdo con las condiciones medidas en tiempo real. Para ello, se considera la definición de requisitos del subsistema, la selección de actuadores y fuente de alimentación, el diseño de la arquitectura de control, el modelado del comportamiento dinámico del CO$_2$ en ambientes interiores y la implementación de controladores PID y Fuzzy. Finalmente, se establecen los criterios de validación experimental para comparar ambas estrategias y determinar su conveniencia dentro del sistema propuesto.
 
 
-\subsection{Definición de requisitos del subsistema de ventilación}
+
 
 \subsection{Definición de requisitos del subsistema de ventilación}
 
@@ -589,7 +589,7 @@ En cuanto a los requisitos no funcionales, el subsistema debe emplear componente
     \item Integración con la arquitectura IoT general del sistema.
 \end{itemize}
 
-\subsection{Selección de actuadores y fuente de alimentación}
+
 
 \subsection{Selección de actuadores y fuente de alimentación}
 
@@ -619,7 +619,7 @@ En esta subsección se evalúan las alternativas de actuadores consideradas para
 De acuerdo con la comparación realizada, las alternativas de 12 V con control PWM presentan una integración más sencilla para el prototipo experimental, debido a su compatibilidad con señales de control por microcontrolador y a la disponibilidad de fuentes comerciales accesibles. Entre ellas, el modelo SickleFlow 120 ARGB ofrece un equilibrio favorable entre caudal, presión estática, consumo y facilidad de integración, mientras que el MF120 Lite destaca por su mayor caudal, aunque a costa de un mayor consumo de corriente. Por otro lado, la alternativa Delta representa una solución de mayor exigencia eléctrica, por lo que resulta menos conveniente para la implementación del sistema propuesto a escala de tesis.
 
 
-\subsection{Diseño de la arquitectura de control}
+
 
 \subsection{Diseño de la arquitectura de control}
 
