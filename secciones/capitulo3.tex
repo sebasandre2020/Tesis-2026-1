@@ -201,6 +201,7 @@ Así mismo, la página web cuenta con dos páginas que funcionan como dashboards
     \renewcommand{\arraystretch}{1.5}
     \caption{Comparación de Arquitecturas de Software para Aplicaciones de Monitoreo IoT \cite{software_arquitectura}}
     \label{tabla:software_arquitecturas}
+    \resizebox{\textwidth}{!}{
     \begin{tabular}{|p{3.2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.8cm}|}
         \hline
         \textbf{Arquitectura}   & \textbf{Escalabilidad}                                                                          & \textbf{Mantenibilidad}                                                           & \textbf{Manejo de Datos IoT}                                                                & \textbf{Capacidad de Despliegue}                                                                        \\ \hline
@@ -208,6 +209,7 @@ Así mismo, la página web cuenta con dos páginas que funcionan como dashboards
         \textbf{Microservicios} & Muy alta: ideal para aplicaciones inmensas, permite escalar y desplegar servicios independientes & Baja: requiere alta experiencia para orquestar contenedores, gestionar redes y despliegues complejos & Muy buena: ingesta y consultas pueden separarse en microservicios dedicados                              & Requiere orquestadores como Kubernetes, elevando significativamente el costo y la complejidad operativa \\ \hline
         \textbf{Client-Server Desacoplada} & Alta: permite separar los recursos de ingesta de datos de los recursos de visualización del frontend          & Alta: frontend y backend evolucionan de forma independiente usando las tecnologías más aptas                        & Excelente: permite integrar un pipeline de datos optimizado (Ingesta, Almacenamiento, API Serverless) & Óptima para la nube moderna, permitiendo usar Container Apps para backend y Static Web Apps para frontend         \\ \hline
     \end{tabular}
+    }
 \end{table}
 
 Para este trabajo de investigación, se determinó que la \textbf{Arquitectura Client-Server Desacoplada} es la idónea. Esta arquitectura rige el desarrollo separando estrictamente el frontend del backend, lo que permite un despliegue optimizado en la nube de Azure y un pipeline de datos robusto para el procesamiento de telemetría IoT.
@@ -233,6 +235,7 @@ Bajo este modelo, la solución se estructura en tres capas principales de despli
     \renewcommand{\arraystretch}{1.5}
     \caption{Comparación de Tecnologías Frontend para Aplicaciones de Monitoreo IoT}
     \label{tabla:comparativa}
+    \resizebox{\textwidth}{!}{
     \begin{tabular}{|p{2.1cm}|p{2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{3.7cm}|}
         \hline
         \textbf{Tecnología}        & \textbf{Facilidad de Uso}                   & \textbf{Rendimiento}                                          & \textbf{Soporte de Componentes de Visualización}         & \textbf{Escalabilidad}                                & \textbf{Enfoque}                                                                                                              \\ \hline
@@ -242,6 +245,7 @@ Bajo este modelo, la solución se estructura en tres capas principales de despli
         \textbf{Svelte}            & Muy alta: sintaxis intuitiva y directa      & Muy alto: menos carga de procesamiento en tiempo de ejecución & Moderado: soporte de bibliotecas externas                & Moderado-Alto: más adecuado para aplicaciones ligeras & Diseño enfocado en la eficiencia, compila código en tiempo de desarrollo para optimizar el rendimiento en tiempo de ejecución \\ \hline
         \textbf{Blazor (para C\#)} & Media: requiere familiaridad con .NET       & Alto: ejecuta WebAssembly                                     & Moderado: integrable con bibliotecas .NET                & Alta: conveniente para aplicaciones basadas en .NET   & Orientado a la ejecución de aplicaciones .NET en el navegador usando WebAssembly                                              \\ \hline
     \end{tabular}
+    }
 \end{table}
 \FloatBarrier
 
@@ -304,7 +308,7 @@ A continuación se presentan los componentes creados e implementados en el dise�
         \centering
         \renewcommand{\arraystretch}{1.2} % Ajusta la altura de las filas
         \fontsize{9}{10}\selectfont % Reduce aún más el tamaño de la fuente dentro de la tabla
-        \caption{Patrones de Diseño Utilizados en el Backend \cite{design_patterns} \cite{design_patterns}}
+        \caption{Patrones de Diseño Utilizados en el Backend \cite{design_patterns}}
         \label{tabla:patrones-diseno}
         \begin{tabular}{|p{2cm}|p{3cm}|p{3cm}|p{5cm}|p{2cm}|}
             \hline
@@ -564,6 +568,7 @@ Con base en las normativas expuestas, se ha consolidado un conjunto de reglas pr
     \renewcommand{\arraystretch}{1.5}
     \caption{Selección de Criterios para la Instalación de Nodos Sensores de CO$_2$}
     \label{tabla:criterios_instalacion}
+    \resizebox{\textwidth}{!}{
     \begin{tabular}{|p{4cm}|p{5.5cm}|p{4.5cm}|}
         \hline
         \textbf{Criterio de Instalación}                          & \textbf{Recomendación de la Literatura}                                             & \textbf{Valor Seleccionado para el Proyecto}                                 \\ \hline
@@ -574,6 +579,7 @@ Con base en las normativas expuestas, se ha consolidado un conjunto de reglas pr
         Distancia a ocupantes                                     & Mínimo 0.5 metros (GOV.UK)                                                          & \textbf{1 metro} de separación del escritorio más cercano                    \\ \hline
         Posicionamiento espacial                                  & Central en la habitación (RESET) o en techo si H $<$ 3.7 m y aire mixto (WELL)      & \textbf{Pared central}, sin interferencias u obstáculos directos             \\ \hline
     \end{tabular}
+    }
 \end{table}
 
 La justificación de los valores definidos en la Tabla \ref{tabla:criterios_instalacion} responde directamente a la dinámica del flujo de aire y al comportamiento habitual en las aulas. Al seleccionar una altura de 1.2 metros, se asegura que las lecturas reflejen de manera precisa la concentración de dióxido de carbono que los estudiantes están inhalando mientras permanecen sentados durante las clases teóricas, evitando la recolección de aire estancado a nivel del suelo o bolsas de calor cerca del techo. Por otro lado, establecer distancias mínimas estrictas frente a ventanas operables (2.5 metros) y puertas (1.5 metros) previene que corrientes puntuales de aire fresco diluyan artificialmente las mediciones, lo que podría retrasar la activación del sistema de mitigación predictiva. Finalmente, mantener una distancia prudente de 1 metro respecto a los estudiantes y centralizar los sensores en las paredes laterales permite evaluar el estado volumétrico real de la masa de aire del aula, garantizando una caracterización homogénea y confiable del entorno evaluado.
@@ -637,6 +643,7 @@ En esta subsección se evalúan las alternativas de actuadores consideradas para
     \renewcommand{\arraystretch}{1.3}
     \caption{Comparación de alternativas de ventiladores para el subsistema de mitigación activa \cite{cm_sickleflow_2026, cm_mf120_halo_2026, cm_mf120_lite_2026, delta_pfb1224uhep0_2026}}
     \label{tab:comparacion_ventiladores}
+    \resizebox{\textwidth}{!}{
     \begin{tabular}{|p{3.6cm}|p{1.4cm}|p{1.9cm}|p{1.8cm}|p{1.8cm}|p{1.8cm}|p{3.4cm}|}
         \hline
         \textbf{Modelo}                                             & \textbf{Voltaje} & \textbf{Control} & \textbf{Caudal} & \textbf{Presión estática} & \textbf{Corriente nominal} & \textbf{Observación}                                                                                                                \\ \hline
@@ -649,6 +656,7 @@ En esta subsección se evalúan las alternativas de actuadores consideradas para
 
         Delta PFB1224UHEP0                                          & 24 V             & PWM + Tacómetro  & ---             & ---                       & 2.00 A                     & Opción industrial de alto desempeño, pero con mayor requerimiento de potencia y menor conveniencia para un prototipo universitario. \\ \hline
     \end{tabular}
+    }
 \end{table}
 
 De acuerdo con la comparación realizada, las alternativas de 12 V con control PWM presentan una integración más sencilla para el prototipo experimental, debido a su compatibilidad con señales de control por microcontrolador y a la disponibilidad de fuentes comerciales accesibles. Entre ellas, el modelo SickleFlow 120 ARGB ofrece un equilibrio favorable entre caudal, presión estática, consumo y facilidad de integración, mientras que el MF120 Lite destaca por su mayor caudal, aunque a costa de un mayor consumo de corriente. Por otro lado, la alternativa Delta representa una solución de mayor exigencia eléctrica, por lo que resulta menos conveniente para la implementación del sistema propuesto a escala de tesis \cite{cm_sickleflow_2026, cm_mf120_halo_2026, cm_mf120_lite_2026, delta_pfb1224uhep0_2026}.
