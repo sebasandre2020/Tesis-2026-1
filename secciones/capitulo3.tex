@@ -170,20 +170,20 @@ Así mismo, la página web cuenta con dos páginas que funcionan como dashboards
 \subsubsection{Requisitos de Hardware e Interacción con el Gateway Personalizado}
 
 \begin{itemize}
-    \item \textbf{Interacción y comunicación:} El gateway personalizado recibirá los datos de los sensores mediante comunicación LoRa y los enviará al backend alojado en Azure utilizando el protocolo MQTT a través de una conexión Wi-Fi.
+    \item \textbf{Interfaz Gateway - Nube (Ingesta de Datos):} El gateway (basado en ESP32) funciona como el puente entre el entorno LoRa local y la infraestructura en Azure. La comunicación se realiza mediante peticiones HTTP (REST) sobre una conexión segura (HTTPS).
     \item \textbf{Compatibilidad de interfaces:} El microcontrolador del gateway debe interconectarse de manera eficiente con el módulo transceptor LoRa y disponer de hardware para conexión a internet (Wi-Fi).
-    \item \textbf{Capacidad de procesamiento:} El gateway debe contar con los recursos computacionales suficientes para recibir las tramas LoRa, empaquetar los datos en formato JSON y gestionar el envío a los servicios en la nube (Azure Container Apps).
+    \item \textbf{Capacidad de procesamiento:} El gateway debe contar con los recursos computacionales suficientes para recibir las tramas LoRa, empaquetar los datos recopilados de los nodos (ID, CO\(_2\), timestamp) en formato JSON y enviarlos mediante un método POST hacia el endpoint de la nube.
     \item \textbf{Requerimientos de alimentación:} El dispositivo deberá operar de manera continua mediante una fuente de alimentación conectada a la red eléctrica del aula, garantizando un voltaje estable.
-    \item \textbf{Recepción en Backend:} El backend debe estar configurado para recibir, autenticar y procesar los mensajes MQTT enviados por el gateway personalizado.
-    \item \textbf{Almacenamiento y alertas:} Los datos recibidos deben almacenarse en la base de datos CosmosDB para su consulta histórica. Si las lecturas superan el umbral de CO\(_2\), el backend activará de inmediato el sistema de alertas.
+    \item \textbf{Recepción en Backend (Capa de Ingesta):} El backend debe estar configurado para recibir el HTTP POST, validar la trama JSON, evaluar los umbrales de alerta de CO\(_2\) y ejecutar la orden de guardado.
+    \item \textbf{Almacenamiento y alertas:} Los datos recibidos deben almacenarse en la base de datos Azure Cosmos DB (NoSQL) para su consulta histórica. Si las lecturas superan el umbral de CO\(_2\), el backend activará el sistema de alertas.
 \end{itemize}
 
 \subsubsection{Requisitos de Almacenamiento y Persistencia de Datos}
 
 \begin{itemize}
-    \item Los datos de lectura de los sensores deben almacenarse en una base de datos SQL para permitir consultas en tiempo real y acceso a registros históricos.
-    \item La base de datos debe registrar la fecha, hora, ubicación y nivel de CO\(_2\) de cada lectura.
-    \item Los datos históricos deben poder ser visualizados por el usuario a través de gráficos en la interfaz de detalle de cada sensor.
+    \item Los datos de telemetría de los sensores deben almacenarse en Azure Cosmos DB (NoSQL), justificado por su alta eficiencia y escalabilidad para almacenar telemetría rápida y no estructurada típica de sensores IoT.
+    \item La base de datos debe registrar el identificador del nodo (ID), la marca de tiempo (timestamp), la ubicación y el nivel de CO\(_2\) de cada lectura.
+    \item Los datos históricos deben poder ser visualizados por el usuario a través de gráficos en la interfaz de detalle de cada sensor mediante consultas a la API del backend.
 \end{itemize}
 
 
@@ -201,18 +201,23 @@ Así mismo, la página web cuenta con dos páginas que funcionan como dashboards
     \renewcommand{\arraystretch}{1.5}
     \caption{Comparación de Arquitecturas de Software para Aplicaciones de Monitoreo IoT \cite{software_arquitectura}}
     \label{tabla:software_arquitecturas}
-    \begin{tabular}{|p{3cm}|p{2.5cm}|p{2.8cm}|p{2.5cm}|p{3cm}|}
+    \begin{tabular}{|p{3.2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.8cm}|}
         \hline
-        \textbf{Arquitectura}   & \textbf{Escalabilidad}                                                                          & \textbf{Facilidad de Implementación}                                                           & \textbf{Manejo de Datos en Tiempo Real}                                                                & \textbf{Capacidad de Procesamiento}                                                                        \\ \hline
-        \textbf{Por capas}      & Moderada: adecuada para aplicaciones pequeñas y medianas                                        & Alta: diseño claro y comúnmente usado en frameworks como ASP.NET y Django                      & Limitada: requiere de modificaciones para soporte en tiempo real                                       & Distribución de lógica de negocio en el backend; buena para procesamiento en servidor                      \\ \hline
-        \textbf{Microservicios} & Muy alta: ideal para aplicaciones grandes y escalables, permite añadir servicios independientes & Moderada: requiere experiencia en la gestión de múltiples servicios, comunicación y despliegue & Muy buena: servicios independientes pueden manejar eventos en tiempo real                              & Procesamiento distribuido: cada servicio maneja una funcionalidad específica, óptimo para alto rendimiento \\ \hline
-        \textbf{Serverless}     & Alta: escalabilidad automática y flexible, óptima para aplicaciones con carga variable          & Alta: simplifica la implementación al no requerir gestión de servidores                        & Buena: respuesta en tiempo real gestionada por eventos; adecuado para procesamiento en base a umbrales & Limitada al evento y tiempo de ejecución; más eficiente para tareas eventuales o de corta duración         \\ \hline
+        \textbf{Arquitectura}   & \textbf{Escalabilidad}                                                                          & \textbf{Mantenibilidad}                                                           & \textbf{Manejo de Datos IoT}                                                                & \textbf{Capacidad de Despliegue}                                                                        \\ \hline
+        \textbf{Monolítica (MVC o Capas)} & Moderada: frontend y backend acoplados dificultan escalar componentes por separado                                        & Alta al inicio, pero compleja si el proyecto crece y requiere tecnologías distintas                      & Limitada: el procesamiento sincrónico puede generar cuellos de botella con alta telemetría                                       & Despliegue en un único servidor, limitando la adopción de servicios Serverless o PaaS en la nube                      \\ \hline
+        \textbf{Microservicios} & Muy alta: ideal para aplicaciones inmensas, permite escalar y desplegar servicios independientes & Baja: requiere alta experiencia para orquestar contenedores, gestionar redes y despliegues complejos & Muy buena: ingesta y consultas pueden separarse en microservicios dedicados                              & Requiere orquestadores como Kubernetes, elevando significativamente el costo y la complejidad operativa \\ \hline
+        \textbf{Client-Server Desacoplada} & Alta: permite separar los recursos de ingesta de datos de los recursos de visualización del frontend          & Alta: frontend y backend evolucionan de forma independiente usando las tecnologías más aptas                        & Excelente: permite integrar un pipeline de datos optimizado (Ingesta, Almacenamiento, API Serverless) & Óptima para la nube moderna, permitiendo usar Container Apps para backend y Static Web Apps para frontend         \\ \hline
     \end{tabular}
 \end{table}
 
-Se decidió que la arquitectura por capas es ideal para este trabajo de investigación, dado su enfoque accesible, escalable y educativo, adecuado para el monitoreo IoT, ya que ofrece una estructura clara y modular que facilita el aprendizaje práctico de los estudiantes de cada componente en el desarrollo web. La separación en Modelo, Vista y Controlador permite a los estudiantes entender el flujo de datos desde la captura de los sensores hasta la visualización en tiempo real, y aprender de manera segmentada las responsabilidades de cada capa.
+Para este trabajo de investigación, se determinó que la \textbf{Arquitectura Client-Server Desacoplada} es la idónea. Esta arquitectura rige el desarrollo separando estrictamente el frontend del backend, lo que permite un despliegue optimizado en la nube de Azure y un pipeline de datos robusto para el procesamiento de telemetría IoT.
 
-Además, la arquitectura por capas es escalable para aplicaciones de mediana complejidad, por lo que, a medida que el proyecto crezca (añadiendo sensores o funciones adicionales), podrá expandirse sin una reestructuración significativa. Su compatibilidad con frameworks educativos, como ASP.NET, el cual es utilizado para este trabajo, facilita la implementación y permite que los estudiantes se enfoquen en la lógica de negocio y el diseño de la interfaz sin la complejidad de arquitecturas más avanzadas.
+Bajo este modelo, la solución se estructura en tres capas principales de despliegue en la nube:
+\begin{itemize}
+    \item \textbf{Capa de Ingesta y Lógica:} Un backend ligero desarrollado en C\# (.NET Core) alojado en Azure Container Apps. Su función es recibir el tráfico HTTP POST desde el gateway, validar la trama JSON, evaluar los umbrales de alerta de CO\(_2\) y ejecutar la orden de guardado.
+    \item \textbf{Capa de Almacenamiento:} Se utiliza Azure Cosmos DB (NoSQL), justificado por su alta eficiencia y baja latencia para almacenar series temporales y telemetría rápida y no estructurada típica de sensores IoT.
+    \item \textbf{Capa de Visualización:} Un panel web alojado en Azure Static Web Apps. Utiliza Managed Functions (API Serverless) para abstraer la consulta del historial almacenado en Cosmos DB y alimentar el frontend de forma escalable y segura.
+\end{itemize}
 \FloatBarrier
 
 
@@ -241,7 +246,14 @@ Además, la arquitectura por capas es escalable para aplicaciones de mediana com
 \FloatBarrier
 
 
-Dado que el trabajo de investigación tiene un enfoque educativo y como objetivo principal establecer un flujo de trabajo sencillo para estudiantes, se considera que React es la opción más adecuada para la aplicación de monitoreo IoT. Esto debido a que permite la creación de componentes reutilizables, manteniendo un desarrollo ágil y modular, lo cual es prioritario para que el proyecto sea replicable y fácil de comprender en un entorno educativo, mientras que, a su vez, da margen suficiente para que los estudiantes puedan ajustar la aplicación en torno a sus necesidades específicas y explorar sus propios conceptos.
+Dado que el trabajo de investigación requiere una interfaz dinámica capaz de procesar telemetría en tiempo real, se considera que React es la opción más adecuada. Su ecosistema facilita la integración con APIs y la gestión de estados complejos en aplicaciones Single Page Application (SPA).
+
+En el desarrollo del frontend (React.js), se aplican patrones de diseño clave para asegurar el desacoplamiento y la reactividad de la interfaz:
+\begin{itemize}
+    \item \textbf{Smart vs. Dumb Components (Contenedor / Presentación):} Se separan estrictamente los componentes que manejan la lógica de negocio y llamadas a la API (Smart) de aquellos dedicados exclusivamente a la renderización gráfica de los datos (Dumb).
+    \item \textbf{Patrón Observer:} Implementado a través de librerías como React Query para gestionar el \textit{polling} o las suscripciones. Esto permite que la interfaz escuche y se actualice en tiempo real ante nuevos registros de CO\(_2\), manteniendo los datos sincronizados con la nube.
+    \item \textbf{Provider Pattern (Context API):} Utilizado para el manejo eficiente del estado global de la aplicación. Facilita la propagación de datos transversales, como la sesión del usuario o el nodo sensor actualmente seleccionado, sin necesidad de perforación de propiedades (\textit{prop drilling}).
+\end{itemize}
 
 
 
@@ -292,51 +304,40 @@ A continuación se presentan los componentes creados e implementados en el dise�
         \centering
         \renewcommand{\arraystretch}{1.2} % Ajusta la altura de las filas
         \fontsize{9}{10}\selectfont % Reduce aún más el tamaño de la fuente dentro de la tabla
-        \caption{Patrones de Diseño Utilizados en el Proyecto \cite{design_patterns} \cite{design_patterns}}
+        \caption{Patrones de Diseño Utilizados en el Backend \cite{design_patterns} \cite{design_patterns}}
         \label{tabla:patrones-diseno}
         \begin{tabular}{|p{2cm}|p{3cm}|p{3cm}|p{5cm}|p{2cm}|}
             \hline
-            \textbf{Patrón de Diseño}                                                                                                                                                      & \textbf{Descripción} & \textbf{Función en el Proyecto} & \textbf{Beneficios} & \textbf{Capa(s) de la Arquitectura} \\ \hline
+            \textbf{Patrón de Diseño} & \textbf{Descripción} & \textbf{Función en el Proyecto} & \textbf{Beneficios} & \textbf{Capa(s) de la Arquitectura} \\ \hline
 
-            \textbf{DTO (Data Transfer Object)}                                                                                                                                            &
-            Objeto simple que encapsula datos para transferir entre capas, evitando exponer directamente las entidades del dominio.                                                        &
-            Facilita la transferencia de datos de las lecturas de sensores y alertas al frontend, asegurando que solo se transmita la información necesaria.                               &
+            \textbf{Repository Pattern} &
+            Abstracción que maneja las operaciones de acceso a datos aislando la capa de persistencia. &
+            Abstrae y centraliza todas las consultas e inserciones hacia Azure Cosmos DB, separando la base de datos de los controladores. &
             \begin{itemize}[leftmargin=*, nosep]
-                \item Reduce el acoplamiento entre capas.
-                \item Mejora la seguridad al no exponer entidades internas.
-                \item Optimiza el rendimiento al transferir solo datos esenciales.
-            \end{itemize}                                                                                                         &
-            Capa de Aplicación $\leftrightarrow$ Capa de Presentación                                                                                                                                                                                                                                           \\ \hline
+                \item Desacopla la lógica de negocio del proveedor NoSQL.
+                \item Centraliza las consultas, evitando duplicidad.
+                \item Facilita \textit{mocks} para pruebas unitarias.
+            \end{itemize} &
+            Capa de Ingesta (Repositorios) \\ \hline
 
-            \textbf{Repository Pattern}                                                                                                                                                    &
-            Abstracción que maneja las operaciones de acceso a datos, proporcionando una interfaz para realizar operaciones CRUD.                                                          &
-            Gestiona la interacción con la base de datos para almacenar y recuperar lecturas de sensores, así como verificar umbrales para generar alertas.                                &
+            \textbf{Inyección de Dependencias} &
+            Patrón donde los objetos reciben sus dependencias en lugar de instanciarlas directamente. &
+            Gestiona y suministra de forma eficiente los recursos (ej. clientes Cosmos DB) en los controladores de la API. &
             \begin{itemize}[leftmargin=*, nosep]
-                \item Aísla la lógica de acceso a datos de la lógica de negocio.
-                \item Facilita la prueba y mantenimiento del código.
-                \item Permite cambiar el proveedor de datos sin afectar otras capas.
-            \end{itemize}                                                                                                       &
-            Capa de Persistencia                                                                                                                                                                                                                                                                                \\ \hline
+                \item Garantiza un código altamente testeable y modular.
+                \item Optimiza el ciclo de vida de los servicios.
+                \item Reduce el acoplamiento fuerte.
+            \end{itemize} &
+            Capa de Ingesta (Controladores) \\ \hline
 
-            \textbf{Entity Framework (ORM)}                                                                                                                                                &
-            Herramienta de mapeo objeto-relacional que permite interactuar con la base de datos utilizando modelos de entidad en lugar de consultas SQL directas.                          &
-            Simplifica la gestión de la base de datos, permitiendo mapear las lecturas de sensores y alertas a entidades de C\#.                                                           &
+            \textbf{DTO (Data Transfer Object)} &
+            Objeto que encapsula datos para la transferencia en red sin exponer modelos de dominio. &
+            Mapea la trama JSON del POST del gateway a C\#, validando campos como ID, nivel de CO\(_2\) y timestamp. &
             \begin{itemize}[leftmargin=*, nosep]
-                \item Reduce la complejidad del acceso a datos.
-                \item Facilita la gestión de cambios en el esquema de la base de datos.
-                \item Mejora la productividad al eliminar la necesidad de escribir consultas SQL manualmente.
-            \end{itemize}                                                                              &
-            Capa de Persistencia                                                                                                                                                                                                                                                                                \\ \hline
-
-            \textbf{Service Pattern}                                                                                                                                                       &
-            Organiza la lógica de negocio en servicios independientes y reutilizables que encapsulan operaciones específicas.                                                              &
-            Centraliza la lógica de procesamiento de datos de sensores, evaluación de umbrales y generación de alertas, manteniendo la lógica de negocio separada de otras preocupaciones. &
-            \begin{itemize}[leftmargin=*, nosep]
-                \item Promueve la reutilización de código.
-                \item Mejora la mantenibilidad y escalabilidad del sistema.
-                \item Facilita la implementación de pruebas unitarias.
-            \end{itemize}                                                                                                                &
-            Capa de Aplicación                                                                                                                                                                                                                                                                                  \\ \hline
+                \item Previene vulnerabilidades de sobre-publicación.
+                \item Define contratos claros en la API HTTP.
+            \end{itemize} &
+            Capa de Ingesta \\ \hline
         \end{tabular}
     \end{table}
     \FloatBarrier % Evita que las tablas floten por encima de este punto
@@ -356,7 +357,7 @@ A continuación se presentan los componentes creados e implementados en el dise�
 
 
 
-\subsubsection{Desarrollo de REST API}
+\subsubsection{Desarrollo de REST API y Pipeline en la Nube}
 \begin{figure}
     \centering
     \includegraphics[width=0.8\linewidth]{images/capitulo3/DF_backend.png}
@@ -365,11 +366,11 @@ A continuación se presentan los componentes creados e implementados en el dise�
 \end{figure}
 
 
-El desarrollo backend sigue una arquitectura de capas en la que cada sección tiene un rol específico para gestionar las operaciones de datos de los sensores. La configuración inicial incluye la base de datos y el entorno en C\# con Entity Framework, permitiendo un acceso simplificado a MySQL mediante mapeo de objetos.
+Como se ilustra en la Figura \ref{fig:df_backend}, el flujo de desarrollo del backend se adapta al nuevo pipeline de datos alojado en Azure. La implementación del backend (Capa de Ingesta), alojado como un contenedor ligero en Azure Container Apps, está construida en C\# (.NET Core). Su configuración inicial establece las políticas de seguridad para exponer un endpoint HTTPS público que recepciona la información.
 
-Las entidades representan las tablas en la base de datos, y los DTOs permiten transferir datos de forma controlada entre capas, protegiendo la estructura de la base de datos. La capa de repositorio usa el \textit{Repository Pattern} para manejar las operaciones \textit{CRUD} de manera aislada. La capa de servicios aplica la lógica de negocio, como verificar los umbrales de CO\(_2\) y gestionar alertas. Finalmente, los controladores gestionan las solicitudes \texttt{HTTP} y \texttt{MQTT}, proporcionando los datos al frontend mediante endpoints bien definidos.
+El ciclo de procesamiento inicia cuando los controladores reciben el JSON vía petición \texttt{HTTP POST} desde el gateway ESP32. Tras la inyección de dependencias, los DTOs validan la estructura del mensaje. Posteriormente, la capa de servicios evalúa la lógica de negocio, verificando si el nivel de CO\(_2\) amerita la activación de alertas. Finalmente, mediante el \textit{Repository Pattern}, el servicio interactúa de forma directa y eficiente con Azure Cosmos DB (NoSQL) para registrar el evento histórico de la telemetría, reemplazando el uso de bases de datos relacionales tradicionales como MySQL.
 
-Las pruebas unitarias e integración aseguran la calidad y funcionamiento del sistema antes del despliegue. El proceso de Quality Assessment verifica que todos los componentes cumplen con los estándares de calidad antes de finalizar el desarrollo.
+Las pruebas unitarias y de integración aseguran la robustez de la lógica de evaluación y las consultas a Cosmos DB antes de empaquetar la aplicación en su contenedor Docker y ser desplegada a producción. El proceso de Quality Assessment verifica que todos los componentes cumplen con los estándares de calidad antes de finalizar el desarrollo.
 
 
 
@@ -691,7 +692,7 @@ A partir de estos criterios, la validación experimental permitirá determinar c
 \newpage
 \section{Integración del sistema}
 
-El diagrama de flujo muestra el funcionamiento general del sistema integrado. Entre los pasos mencionados, proceso como la validación y formateo de datos en el gateway antes de enviarlos a la base de datos, si bien son brevemente mencionado en el diagrama, son esenciales para asegurar integridad y evitar errores. Además, el gateway debe gestionar eficientemente la conexión MQTT para asegurar que no haya pérdida de datos durante la transmisión. Cuando se genera una alerta por niveles de CO$_2$ altos, esta no solo se envía al frontend, sino que también puede almacenarse en la base de datos para un historial.
+El diagrama de flujo muestra el funcionamiento general del sistema integrado. Entre los pasos mencionados, procesos como la validación y el empaquetado de datos en formato JSON en el gateway antes de enviarlos a la base de datos, si bien son brevemente mencionados en el diagrama, son esenciales para asegurar la integridad y evitar errores. Además, el gateway debe gestionar eficientemente la petición HTTP POST sobre la conexión segura HTTPS para asegurar que no haya pérdida de datos hacia Azure Container Apps. Cuando se genera una alerta por niveles de CO$_2$ altos, esta no solo se envía al frontend mediante el polling de la API Serverless, sino que también queda debidamente almacenada en Cosmos DB para el historial.
 
 \begin{figure}[H]
     \centering
