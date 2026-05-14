@@ -512,12 +512,41 @@ En términos económicos, esta opción es la más favorable debido a su alta dis
 
 Por estas razones, la solución número 4 se considera la más adecuada para cumplir con los objetivos del proyecto, garantizando un balance óptimo entre desempeño técnico y económico.
 
+\subsection{Criterios Normativos para la Ubicación Espacial de los Nodos Sensores}
+
+Para garantizar la fiabilidad y representatividad de las mediciones de dióxido de carbono (CO$_2$) en espacios universitarios, como laboratorios y aulas, es imperativo fundamentar la instalación física de los nodos sensores en normativas y estándares internacionales reconocidos. Un posicionamiento incorrecto puede derivar en lecturas sesgadas o la aparición de puntos ciegos. A partir de la revisión de literatura, se detallan los siguientes criterios estandarizados adoptados para este proyecto:
+
+\subsubsection{Altura de Colocación Respecto a la Zona de Respiración}
+Las normativas convergen en que los sensores deben situarse de manera que capturen el aire en la ``zona de respiración'' típica de los ocupantes. El estándar \textit{RESET} y el estándar \textit{WELL} recomiendan el montaje vertical en paredes a una altura comprendida entre 1.1 y 1.7 metros (o de 900 a 1800 mm) desde el nivel del suelo \cite{reset_standard_v2, well_performance_guidebook}. Por su parte, la normativa ASHRAE 62.1-2022 define esta zona de respiración en un rango similar, desde 75 hasta 1800 mm de altura \cite{ashrae_62_1_2022}. En el contexto específico de entornos educativos y de cuidado infantil, el gobierno británico aconseja de forma práctica posicionar los sensores a la altura de las mesas o de las cabezas de los estudiantes cuando se encuentran sentados \cite{gov_uk_ventilation_education}. 
+
+\subsubsection{Distancia Mínima a Fuentes de Ventilación y Aperturas}
+La proximidad a flujos de aire directo puede alterar las mediciones reales del ambiente, generando subestimaciones del riesgo. En este sentido, el estándar \textit{RESET} indica una separación mínima de 5 metros respecto a ventanas operables, filtros y difusores de aire fresco \cite{reset_standard_v2}. En caso de que el espacio sea demasiado pequeño, el sensor no debe instalarse a una distancia menor a la mitad del ancho de la habitación respecto a las ventanas. Asimismo, normativas como \textit{WELL} y \textit{RESET} dictaminan un alejamiento mínimo de 1 metro de puertas interiores, ventanas, sistemas mecánicos de suministro de aire y cualquier fuente significativa de calor o frío \cite{well_performance_guidebook, reset_standard_v2}. En el caso de puertas que den al exterior, se requieren precauciones adicionales, debiendo mantener una separación de 3 a 5 metros para evitar corrientes de aire irregulares al abrirse \cite{well_performance_guidebook}. El gobierno británico también es explícito en este punto, recomendando alejar los sensores de salidas de ventilación \cite{gov_uk_ventilation_education}.
+
+\subsubsection{Posicionamiento Estratégico y Representatividad Espacial}
+Para que las lecturas sean útiles en un sistema de mitigación, los monitores deben estar instalados de manera representativa. \textit{RESET} exige que se ubiquen centralmente en el espacio \cite{reset_standard_v2}. Además, para evitar lecturas distorsionadas causadas por la exhalación directa de una persona, el gobierno británico aconseja colocar los sensores a una distancia de al menos 0.5 metros de cualquier ocupante \cite{gov_uk_ventilation_education}. Como regla general para aulas escolares típicas, un único sensor ubicado según estas directrices es suficiente para obtener medidas precisas de la sala completa \cite{gov_uk_ventilation_education}. En casos de ambientes más amplios y diáfanos, \textit{WELL} permite utilizar un solo monitor por cada 2500 metros cuadrados si existen evidencias de un volumen de aire bien mezclado sin puntos ciegos \cite{well_performance_guidebook}. De forma excepcional, \textit{WELL} habilita la instalación horizontal en techos solo si su altura es inferior a 3.7 metros y se demuestra una mezcla homogénea de aire \cite{well_performance_guidebook}, sin embargo, el enfoque central en la zona de respiración montada en pared es el más apropiado para las aulas universitarias del proyecto.
 
 
+\subsubsection{Definición de Parámetros de Instalación}
+Con base en las normativas expuestas, se ha consolidado un conjunto de reglas precisas para la instalación física de los nodos sensores en los espacios evaluados de la universidad. Estos parámetros buscan un equilibrio entre el cumplimiento de los estándares internacionales (ASHRAE, RESET, WELL) y las particularidades arquitectónicas de las aulas universitarias, garantizando mediciones consistentes y libres de sesgos. En la Tabla \ref{tabla:criterios_instalacion} se resumen las recomendaciones de la literatura frente a los valores definitivos seleccionados para el despliegue de esta tesis.
 
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \caption{Selección de Criterios para la Instalación de Nodos Sensores de CO$_2$}
+    \label{tabla:criterios_instalacion}
+    \begin{tabular}{|p{4cm}|p{5.5cm}|p{4.5cm}|}
+        \hline
+        \textbf{Criterio de Instalación} & \textbf{Recomendación de la Literatura} & \textbf{Valor Seleccionado para el Proyecto} \\ \hline
+        Altura de colocación & 1.1 a 1.7 m (RESET, WELL); 0.75 a 1.8 m (ASHRAE); Altura de cabeza sentado (GOV.UK) & \textbf{1.2 metros} (Altura promedio de respiración de estudiantes sentados) \\ \hline
+        Distancia a fuentes de aire directo (ventanas, difusores) & 5 m ideal, o mínimo mitad del ancho de la habitación (RESET) & \textbf{$\geq$ 2.5 metros} (Adaptado al tamaño de las aulas universitarias) \\ \hline
+        Distancia a puertas y ventanas cerradas & Mínimo 1 m (WELL, RESET) & \textbf{1.5 metros} \\ \hline
+        Distancia a puertas exteriores & 3 a 5 metros (WELL) & \textbf{$\geq$ 4 metros} \\ \hline
+        Distancia a ocupantes & Mínimo 0.5 metros (GOV.UK) & \textbf{1 metro} de separación del escritorio más cercano \\ \hline
+        Posicionamiento espacial & Central en la habitación (RESET) o en techo si H $<$ 3.7 m y aire mixto (WELL) & \textbf{Pared central}, sin interferencias u obstáculos directos \\ \hline
+    \end{tabular}
+\end{table}
 
-
-
+La justificación de los valores definidos en la Tabla \ref{tabla:criterios_instalacion} responde directamente a la dinámica del flujo de aire y al comportamiento habitual en las aulas. Al seleccionar una altura de 1.2 metros, se asegura que las lecturas reflejen de manera precisa la concentración de dióxido de carbono que los estudiantes están inhalando mientras permanecen sentados durante las clases teóricas, evitando la recolección de aire estancado a nivel del suelo o bolsas de calor cerca del techo. Por otro lado, establecer distancias mínimas estrictas frente a ventanas operables (2.5 metros) y puertas (1.5 metros) previene que corrientes puntuales de aire fresco diluyan artificialmente las mediciones, lo que podría retrasar la activación del sistema de mitigación predictiva. Finalmente, mantener una distancia prudente de 1 metro respecto a los estudiantes y centralizar los sensores en las paredes laterales permite evaluar el estado volumétrico real de la masa de aire del aula, garantizando una caracterización homogénea y confiable del entorno evaluado.
 
 \newpage
 \section{Configuración del gateway}
