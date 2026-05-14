@@ -29,6 +29,12 @@ El presupuesto del enlace determina la máxima pérdida de señal permitida para
 	P_{Rx} = P_{Tx} + G_{Tx} - L_{Tx} - FSPL - L_{Rx} + G_{Rx}
 \end{equation}
 
+Para garantizar una comunicación confiable, el Link Budget del módulo debe ser mayor o igual a las pérdidas totales en el trayecto, lo que incluye la pérdida en el espacio libre, las pérdidas por obstáculos y un margen de desvanecimiento. Esto se expresa mediante la siguiente inecuación:
+
+\begin{equation}\label{eq:link_budget_inecuacion}
+	\text{Link Budget} \geq FSPL + L_{\text{obstáculos}} + \text{Margen}_{\text{desvanecimiento}}
+\end{equation}
+
 El cálculo del FSPL y el Link Budget es de vital importancia para el diseño de la red en espacios universitarios, ya que permite estimar teóricamente el alcance máximo y la viabilidad del enlace de comunicación considerando las frecuencias utilizadas (por ejemplo, 915 MHz) y las potencias de transmisión de los módulos LoRa. Esto asegura que la señal tenga la suficiente potencia para superar la atenuación por la distancia y penetrar muros u otros obstáculos típicos de la infraestructura académica.
 
 \begin{table}[H]
