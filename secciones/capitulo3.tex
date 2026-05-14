@@ -5,7 +5,7 @@ El trabajo de investigación se divide en los siguientes cuatro frentes: nodo se
 \begin{itemize}
     \item \textbf{Desarrollo de nodo sensor}
     \item \textbf{Desarrollo de la aplicación web}
-    \item \textbf{Configuración del gateway}
+    \item \textbf{Diseño e implementación del gateway personalizado}
     \item \textbf{Desarrollo del subsistema de mitigación activa y control}
 \end{itemize}
 
@@ -25,7 +25,7 @@ Para el desarrollo de la aplicación web, se ha escogido la metodología V model
 
 \subsubsection{Definición de Requisitos}
 
-En esta primera etapa, se establecen los requisitos funcionales y no funcionales de la aplicación web. Estos incluyen la capacidad para recibir y mostrar los datos provenientes del mega gateway Kona, almacenar y consultar dichos datos en una base de datos SQL, y activar alertas visuales y sonoras cuando los niveles de CO\(_2\) superen un umbral predeterminado.
+En esta primera etapa, se establecen los requisitos funcionales y no funcionales de la aplicación web. Estos incluyen la capacidad para recibir y mostrar los datos provenientes del gateway personalizado, almacenar y consultar dichos datos en una base de datos SQL, y activar alertas visuales y sonoras cuando los niveles de CO\(_2\) superen un umbral predeterminado.
 
 \subsubsection{Diseño de Sistema y Arquitectura}
 
@@ -33,7 +33,7 @@ En esta fase, se desarrolla una arquitectura que permita la integración de todo
 
 \subsubsection{Diseño de Componentes}
 
-Aquí se realiza el diseño específico de cada componente de la aplicación web, considerando el flujo de datos entre el mega gateway Kona, la base de datos y la interfaz de usuario. Esta fase incluye el diseño de la estructura de la base de datos SQL para almacenar las lecturas, la configuración de la API para recibir los datos del gateway mediante el protocolo MQTT, y la implementación de componentes de interfaz en React para visualizar los datos y alertas.
+Aquí se realiza el diseño específico de cada componente de la aplicación web, considerando el flujo de datos entre el gateway personalizado, la base de datos y la interfaz de usuario. Esta fase incluye el diseño de la estructura de la base de datos SQL para almacenar las lecturas, la configuración de la API para recibir los datos del gateway mediante el protocolo MQTT, y la implementación de componentes de interfaz en React para visualizar los datos y alertas.
 
 \subsubsection{Implementación y Codificación}
 
@@ -64,7 +64,7 @@ El modelo V incluye una fase de mantenimiento, donde se abordan posibles mejoras
 
 \subsection{Metodología PPDIOO}
 
-Para el desarrollo del nodo sensor y la configuración del gateway, se ha optado por emplear la metodología PPDIOO. Esta metodología se adapta bien a la implementación de sistemas de hardware y redes, pues permite una planificación detallada en cada fase, asegurando la fiabilidad y eficiencia del sistema desde la concepción hasta la operación y mejora continua. A continuación, se describe la aplicación de esta metodología en los dos frentes del proyecto: el nodo sensor y el gateway.
+Para el desarrollo del nodo sensor y el diseño del gateway personalizado, se ha optado por emplear la metodología PPDIOO. Esta metodología se adapta bien a la implementación de sistemas de hardware y redes, pues permite una planificación detallada en cada fase, asegurando la fiabilidad y eficiencia del sistema desde la concepción hasta la operación y mejora continua. A continuación, se describe la aplicación de esta metodología en los dos frentes del proyecto: el nodo sensor y el gateway.
 
 \begin{figure}[H]
     \centering
@@ -167,13 +167,15 @@ Así mismo, la página web cuenta con dos páginas que funcionan como dashboards
     \item El frontend permitirá la consulta histórica de lecturas de CO\(_2\) de cada sensor para su representación en los gráficos.
 \end{itemize}
 
-\subsubsection{Interacción con el Mega Gateway Kona}
+\subsubsection{Requisitos de Hardware e Interacción con el Gateway Personalizado}
 
 \begin{itemize}
-    \item El mega gateway Kona recibirá los datos de los sensores mediante comunicación LoRa y los enviará al backend utilizando el protocolo MQTT.
-    \item El backend debe estar configurado para recibir y procesar mensajes MQTT enviados por el mega gateway Kona.
-    \item Los datos recibidos desde el mega gateway Kona deben almacenarse en una base de datos SQL para su posterior visualización y consulta histórica.
-    \item En caso de que el mega gateway envíe lecturas que superen el umbral, el backend debe activar el sistema de alertas.
+    \item \textbf{Interacción y comunicación:} El gateway personalizado recibirá los datos de los sensores mediante comunicación LoRa y los enviará al backend alojado en Azure utilizando el protocolo MQTT a través de una conexión Wi-Fi.
+    \item \textbf{Compatibilidad de interfaces:} El microcontrolador del gateway debe interconectarse de manera eficiente con el módulo transceptor LoRa y disponer de hardware para conexión a internet (Wi-Fi).
+    \item \textbf{Capacidad de procesamiento:} El gateway debe contar con los recursos computacionales suficientes para recibir las tramas LoRa, empaquetar los datos en formato JSON y gestionar el envío a los servicios en la nube (Azure Container Apps).
+    \item \textbf{Requerimientos de alimentación:} El dispositivo deberá operar de manera continua mediante una fuente de alimentación conectada a la red eléctrica del aula, garantizando un voltaje estable.
+    \item \textbf{Recepción en Backend:} El backend debe estar configurado para recibir, autenticar y procesar los mensajes MQTT enviados por el gateway personalizado.
+    \item \textbf{Almacenamiento y alertas:} Los datos recibidos deben almacenarse en la base de datos CosmosDB para su consulta histórica. Si las lecturas superan el umbral de CO\(_2\), el backend activará de inmediato el sistema de alertas.
 \end{itemize}
 
 \subsubsection{Requisitos de Almacenamiento y Persistencia de Datos}
@@ -541,16 +543,23 @@ Con base en las normativas expuestas, se ha consolidado un conjunto de reglas pr
 La justificación de los valores definidos en la Tabla \ref{tabla:criterios_instalacion} responde directamente a la dinámica del flujo de aire y al comportamiento habitual en las aulas. Al seleccionar una altura de 1.2 metros, se asegura que las lecturas reflejen de manera precisa la concentración de dióxido de carbono que los estudiantes están inhalando mientras permanecen sentados durante las clases teóricas, evitando la recolección de aire estancado a nivel del suelo o bolsas de calor cerca del techo. Por otro lado, establecer distancias mínimas estrictas frente a ventanas operables (2.5 metros) y puertas (1.5 metros) previene que corrientes puntuales de aire fresco diluyan artificialmente las mediciones, lo que podría retrasar la activación del sistema de mitigación predictiva. Finalmente, mantener una distancia prudente de 1 metro respecto a los estudiantes y centralizar los sensores en las paredes laterales permite evaluar el estado volumétrico real de la masa de aire del aula, garantizando una caracterización homogénea y confiable del entorno evaluado.
 
 \newpage
-\section{Configuración del gateway}
-Para la configuración del gateway Kona Mega, primero se debe confirmar que tanto la computadora, desde donde se enviará la configuración, y el gateway estén en la misma red. Se pueden emplear 2 herramientas. Por un lado, se tiene la opción de utilizar una consola para comunicarse con el dispositivo via SSH (Secure Shell). Esto puede realizarse ya sea en el sistema operativo (OS: Operative System) Linux, el cual cuenta con una consola SSH preinstalada, así como una serie de comandos que pueden agilizar la interacción con el gateway durante la configuración; o también se pueden utilizar aplicaciones como PuTTY para la comunicación via SSH. Por otro lado, se puede emplear la aplicacion Kona Field Tool (KonaFT), la cual fue la empleada en este proyecto. Esta herramienta no solo permite realizar las configuraciones del gateway mediante una interfaz gráfica de usuario (GUI: Graphic User Interface), sino también, identificar la dirección IP de todos los dispositivos TekTelic conectados a la misma red que la computadora en la que está instalada el programa. El proceso de idetificación y configuración del gateway sigue el siguiente flujo mostrado en la figura \ref{fig:DF_gateway}.
+\section{Diseño e Implementación del Gateway Personalizado}
 
+Para superar las limitaciones de costo y rigidez asociadas a los equipos comerciales, se optó por el diseño y construcción de un gateway personalizado. Esta aproximación permite una total adaptabilidad a las necesidades de la red universitaria y facilita el control sobre el flujo de los datos desde la capa física hasta la nube. El desarrollo del dispositivo se divide metodológicamente en dos etapas: el ensamblaje de los componentes de hardware y el desarrollo de la lógica de firmware para el enrutamiento de datos.
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.8\linewidth]{images/capitulo3/DF_gateway.png}
-    \caption{Diagrama de flujo de la configuración del gateway Kona Mega.}
-    \label{fig:DF_gateway}
-\end{figure}
+\subsection{Ensamblaje de Hardware}
+
+La arquitectura física del gateway se basa en la interconexión de tres elementos fundamentales: la unidad de procesamiento central, el transceptor de la red de sensores y el módulo de salida a internet. Se emplea un microcontrolador ESP32 como placa base, el cual integra de forma nativa conectividad Wi-Fi, reduciendo la complejidad del circuito y optimizando el espacio físico \cite{nb_mcu_4}.
+
+Para la recepción de los datos provenientes de los nodos sensores, se utiliza el módulo transceptor LoRa Ebyte E220-900T30D. La comunicación entre este módulo y el ESP32 se establece mediante el protocolo serial UART, lo que permite un intercambio fluido de las tramas de datos. El ensamblaje considera la correcta adaptación de los niveles lógicos y la provisión de una alimentación estable (típicamente de 5V a través de la interfaz USB del microcontrolador o una fuente regulada externa). Esto asegura que tanto el ESP32 como el módulo de radiofrecuencia operen sin caídas de tensión durante las ráfagas de transmisión y recepción, cumpliendo con los requerimientos energéticos de un entorno universitario.
+
+\subsection{Desarrollo de Firmware y Lógica de Enrutamiento}
+
+El firmware del gateway personalizado se desarrolló con el propósito de actuar como un puente eficiente entre la red local LoRa y la infraestructura en la nube de Azure. La lógica procedimental se estructura en un ciclo de operación continuo, diseñado para maximizar la fiabilidad en la entrega de la información \cite{nb_gateway_custom_7}.
+
+En primer lugar, el gateway inicializa sus periféricos, estableciendo conexión con la red Wi-Fi local y configurando el puerto serial para escuchar al módulo transceptor LoRa. Al recibir una trama de datos desde un nodo sensor, el firmware realiza un proceso de validación para descartar paquetes incompletos, erróneos o corruptos originados por interferencias. Una vez validada, la carga útil, que contiene la medición de CO\(_2\) y el identificador único del nodo, es extraída y procesada.
+
+Posteriormente, el microcontrolador reformatea esta información estructurándola en formato JSON, un estándar ligero y ampliamente compatible con los servicios web actuales. Finalmente, utilizando el protocolo MQTT sobre la conexión Wi-Fi, el gateway publica este paquete en el servicio de backend alojado en Azure Container Apps, desde donde la información se procesa y almacena en CosmosDB. Si se detecta una pérdida de conexión Wi-Fi o del enlace MQTT, el firmware contempla rutinas de reconexión automática para minimizar la pérdida de datos, asegurando una alta disponibilidad del sistema de monitoreo en tiempo real.
 
 
 
