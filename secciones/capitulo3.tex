@@ -658,8 +658,32 @@ A partir de esta formulación, es posible simular distintos escenarios de operac
 
 
 \subsection{Diseño e implementación de controladores PID y Fuzzy}
+
+Con el fin de evaluar distintas estrategias de mitigación activa de CO$_2$ en ambientes interiores, se planteó el diseño e implementación de dos esquemas de control sobre una misma arquitectura física: un controlador PID y un controlador Fuzzy. En ambos casos, la variable controlada corresponde a la concentración de CO$_2$ en el recinto, mientras que la variable manipulada es la velocidad de los ventiladores, regulada mediante una señal PWM. De esta forma, ambas estrategias actúan sobre el mismo sistema y bajo las mismas condiciones de operación, permitiendo una comparación directa de su desempeño.
+
+En el caso del controlador PID, la acción de control se calcula a partir del error entre la concentración medida y el valor de referencia establecido. Este esquema combina una acción proporcional, una integral y una derivativa, con el objetivo de reducir el error en estado estacionario, mejorar la rapidez de respuesta y atenuar oscilaciones en la salida. La ley de control utilizada se expresa de la siguiente manera:
+
+\begin{equation}
+u(t) = K_p e(t) + K_i \int e(t)\,dt + K_d \frac{de(t)}{dt}
+\end{equation}
+
+donde \(e(t)\) representa el error entre la concentración medida de CO$_2$ y el setpoint definido, mientras que \(u(t)\) corresponde a la señal de control que posteriormente se traduce en un duty cycle PWM aplicado a los ventiladores. La sintonización de los parámetros \(K_p\), \(K_i\) y \(K_d\) se realiza buscando un compromiso entre rapidez de corrección, estabilidad y ausencia de sobreimpulso excesivo.
+
+Por otro lado, el controlador Fuzzy se plantea como una alternativa basada en reglas lingüísticas, adecuada para sistemas con incertidumbre o comportamiento no lineal. En este caso, las variables de entrada consideradas son el error de concentración de CO$_2$ y la variación del error, mientras que la variable de salida corresponde al ajuste de la señal PWM aplicada al sistema de ventilación. A partir de funciones de pertenencia y una base de reglas tipo IF-THEN, el controlador determina la acción de control más conveniente según el estado del sistema, sin depender de un modelo matemático exacto del proceso.
+
+Para la implementación de ambas estrategias, se establece una misma estructura de operación: el sensor mide la concentración de CO$_2$, el sistema calcula el error respecto al valor de referencia, el controlador correspondiente genera la acción de control y esta señal se aplica a los ventiladores mediante modulación PWM. De esta manera, tanto el controlador PID como el controlador Fuzzy pueden evaluarse bajo un mismo entorno de simulación y, posteriormente, sobre la plataforma experimental, permitiendo comparar su comportamiento en términos de tiempo de respuesta, estabilidad, capacidad de mitigación y esfuerzo de control.
+
+En ambos casos, la implementación se orienta a determinar cuál de las dos estrategias presenta mejores resultados para la reducción de CO$_2$ en ambientes universitarios, considerando no solo la rapidez de corrección, sino también la estabilidad de la respuesta y la factibilidad de integración en un sistema de bajo costo.
+
+
+
 \subsection{Criterios de evaluación y validación experimental}
 
+La evaluación del subsistema de mitigación activa y control se plantea con el objetivo de comparar el desempeño de las estrategias PID y Fuzzy bajo condiciones equivalentes de operación. Para ello, ambos controladores serán analizados sobre la misma arquitectura de sensado y actuación, considerando la concentración de CO$_2$ como variable controlada y la señal PWM aplicada a los ventiladores como variable manipulada. La validación se realizará tanto en simulación como en pruebas experimentales, con el fin de observar la respuesta del sistema frente a variaciones en la concentración inicial de CO$_2$ y ante cambios en las condiciones del ambiente interior.
+
+Los criterios principales de evaluación considerados en este trabajo son el tiempo de establecimiento, entendido como el tiempo requerido para que la concentración de CO$_2$ alcance y permanezca próxima al valor de referencia; el sobreimpulso, asociado a desviaciones excesivas respecto al setpoint; el error en estado estacionario, que permite medir la precisión de regulación del sistema; y el esfuerzo de control, representado por la intensidad de la acción aplicada a los ventiladores mediante PWM. Asimismo, se considera la estabilidad general de la respuesta y la capacidad del controlador para recuperar condiciones aceptables de calidad del aire ante perturbaciones o incrementos en la generación de CO$_2$ dentro del recinto.
+
+A partir de estos criterios, la validación experimental permitirá determinar cuál de las dos estrategias presenta un mejor compromiso entre rapidez de respuesta, estabilidad, precisión y factibilidad de implementación en un sistema de bajo costo orientado a espacios universitarios. De esta manera, la comparación no solo se enfocará en la disminución de la concentración de CO$_2$, sino también en la viabilidad práctica de integrar cada controlador dentro del prototipo desarrollado.
 
 
 
