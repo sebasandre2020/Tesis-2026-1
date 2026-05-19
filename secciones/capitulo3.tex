@@ -202,13 +202,13 @@ Así mismo, la página web cuenta con dos páginas que funcionan como dashboards
     \caption{Comparación de Arquitecturas de Software para Aplicaciones de Monitoreo IoT \cite{software_arquitectura}}
     \label{tabla:software_arquitecturas}
     \resizebox{\textwidth}{!}{
-    \begin{tabular}{|p{3.2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.8cm}|}
-        \hline
-        \textbf{Arquitectura}   & \textbf{Escalabilidad}                                                                          & \textbf{Mantenibilidad}                                                           & \textbf{Manejo de Datos IoT}                                                                & \textbf{Capacidad de Despliegue}                                                                        \\ \hline
-        \textbf{Monolítica (MVC o Capas)} & Moderada: frontend y backend acoplados dificultan escalar componentes por separado                                        & Alta al inicio, pero compleja si el proyecto crece y requiere tecnologías distintas                      & Limitada: el procesamiento sincrónico puede generar cuellos de botella con alta telemetría                                       & Despliegue en un único servidor, limitando la adopción de servicios Serverless o PaaS en la nube                      \\ \hline
-        \textbf{Microservicios} & Muy alta: ideal para aplicaciones inmensas, permite escalar y desplegar servicios independientes & Baja: requiere alta experiencia para orquestar contenedores, gestionar redes y despliegues complejos & Muy buena: ingesta y consultas pueden separarse en microservicios dedicados                              & Requiere orquestadores como Kubernetes, elevando significativamente el costo y la complejidad operativa \\ \hline
-        \textbf{Client-Server Desacoplada} & Alta: permite separar los recursos de ingesta de datos de los recursos de visualización del frontend          & Alta: frontend y backend evolucionan de forma independiente usando las tecnologías más aptas                        & Excelente: permite integrar un pipeline de datos optimizado (Ingesta, Almacenamiento, API Serverless) & Óptima para la nube moderna, permitiendo usar Container Apps para backend y Static Web Apps para frontend         \\ \hline
-    \end{tabular}
+        \begin{tabular}{|p{3.2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.8cm}|}
+            \hline
+            \textbf{Arquitectura}              & \textbf{Escalabilidad}                                                                               & \textbf{Mantenibilidad}                                                                              & \textbf{Manejo de Datos IoT}                                                                          & \textbf{Capacidad de Despliegue}                                                                          \\ \hline
+            \textbf{Monolítica (MVC o Capas)}  & Moderada: frontend y backend acoplados dificultan escalar componentes por separado                   & Alta al inicio, pero compleja si el proyecto crece y requiere tecnologías distintas                  & Limitada: el procesamiento sincrónico puede generar cuellos de botella con alta telemetría            & Despliegue en un único servidor, limitando la adopción de servicios Serverless o PaaS en la nube          \\ \hline
+            \textbf{Microservicios}            & Muy alta: ideal para aplicaciones inmensas, permite escalar y desplegar servicios independientes     & Baja: requiere alta experiencia para orquestar contenedores, gestionar redes y despliegues complejos & Muy buena: ingesta y consultas pueden separarse en microservicios dedicados                           & Requiere orquestadores como Kubernetes, elevando significativamente el costo y la complejidad operativa   \\ \hline
+            \textbf{Client-Server Desacoplada} & Alta: permite separar los recursos de ingesta de datos de los recursos de visualización del frontend & Alta: frontend y backend evolucionan de forma independiente usando las tecnologías más aptas         & Excelente: permite integrar un pipeline de datos optimizado (Ingesta, Almacenamiento, API Serverless) & Óptima para la nube moderna, permitiendo usar Container Apps para backend y Static Web Apps para frontend \\ \hline
+        \end{tabular}
     }
 \end{table}
 
@@ -236,15 +236,15 @@ Bajo este modelo, la solución se estructura en tres capas principales de despli
     \caption{Comparación de Tecnologías Frontend para Aplicaciones de Monitoreo IoT}
     \label{tabla:comparativa}
     \resizebox{\textwidth}{!}{
-    \begin{tabular}{|p{2.1cm}|p{2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{3.7cm}|}
-        \hline
-        \textbf{Tecnología}        & \textbf{Facilidad de Uso}                   & \textbf{Rendimiento}                                          & \textbf{Soporte de Componentes de Visualización}         & \textbf{Escalabilidad}                                & \textbf{Enfoque}                                                                                                              \\ \hline
-        \textbf{React}             & Alta: gran documentación y comunidad        & Alto, gracias a su DOM virtual optimizado                     & Amplio: compatible con bibliotecas como Chart.js y D3.js & Alta: compatible con arquitecturas modulares          & Creado para construir interfaces de usuario y gestionar el estado de aplicaciones de una sola página (SPA)                    \\ \hline
-        \textbf{Vue.js}            & Muy alta: curva de aprendizaje rápida       & Moderado-Alto: buen manejo de cambios                         & Amplio: compatible con bibliotecas gráficas              & Moderado: adecuado para proyectos pequeños-medianos   & Enfoque progresivo, diseñado para ser adaptable y escalable según las necesidades del proyecto                                \\ \hline
-        \textbf{Angular}           & Media: curva de aprendizaje más pronunciada & Alto: rendimiento robusto en aplicaciones grandes             & Muy amplio: incluye gráficos y componentes integrados    & Alta: ideal para proyectos grandes y escalables       & Framework completo orientado a aplicaciones empresariales de gran tamaño y aplicaciones SPA complejas                         \\ \hline
-        \textbf{Svelte}            & Muy alta: sintaxis intuitiva y directa      & Muy alto: menos carga de procesamiento en tiempo de ejecución & Moderado: soporte de bibliotecas externas                & Moderado-Alto: más adecuado para aplicaciones ligeras & Diseño enfocado en la eficiencia, compila código en tiempo de desarrollo para optimizar el rendimiento en tiempo de ejecución \\ \hline
-        \textbf{Blazor (para C\#)} & Media: requiere familiaridad con .NET       & Alto: ejecuta WebAssembly                                     & Moderado: integrable con bibliotecas .NET                & Alta: conveniente para aplicaciones basadas en .NET   & Orientado a la ejecución de aplicaciones .NET en el navegador usando WebAssembly                                              \\ \hline
-    \end{tabular}
+        \begin{tabular}{|p{2.1cm}|p{2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{3.7cm}|}
+            \hline
+            \textbf{Tecnología}        & \textbf{Facilidad de Uso}                   & \textbf{Rendimiento}                                          & \textbf{Soporte de Componentes de Visualización}         & \textbf{Escalabilidad}                                & \textbf{Enfoque}                                                                                                              \\ \hline
+            \textbf{React}             & Alta: gran documentación y comunidad        & Alto, gracias a su DOM virtual optimizado                     & Amplio: compatible con bibliotecas como Chart.js y D3.js & Alta: compatible con arquitecturas modulares          & Creado para construir interfaces de usuario y gestionar el estado de aplicaciones de una sola página (SPA)                    \\ \hline
+            \textbf{Vue.js}            & Muy alta: curva de aprendizaje rápida       & Moderado-Alto: buen manejo de cambios                         & Amplio: compatible con bibliotecas gráficas              & Moderado: adecuado para proyectos pequeños-medianos   & Enfoque progresivo, diseñado para ser adaptable y escalable según las necesidades del proyecto                                \\ \hline
+            \textbf{Angular}           & Media: curva de aprendizaje más pronunciada & Alto: rendimiento robusto en aplicaciones grandes             & Muy amplio: incluye gráficos y componentes integrados    & Alta: ideal para proyectos grandes y escalables       & Framework completo orientado a aplicaciones empresariales de gran tamaño y aplicaciones SPA complejas                         \\ \hline
+            \textbf{Svelte}            & Muy alta: sintaxis intuitiva y directa      & Muy alto: menos carga de procesamiento en tiempo de ejecución & Moderado: soporte de bibliotecas externas                & Moderado-Alto: más adecuado para aplicaciones ligeras & Diseño enfocado en la eficiencia, compila código en tiempo de desarrollo para optimizar el rendimiento en tiempo de ejecución \\ \hline
+            \textbf{Blazor (para C\#)} & Media: requiere familiaridad con .NET       & Alto: ejecuta WebAssembly                                     & Moderado: integrable con bibliotecas .NET                & Alta: conveniente para aplicaciones basadas en .NET   & Orientado a la ejecución de aplicaciones .NET en el navegador usando WebAssembly                                              \\ \hline
+        \end{tabular}
     }
 \end{table}
 \FloatBarrier
@@ -312,36 +312,36 @@ A continuación se presentan los componentes creados e implementados en el dise�
         \label{tabla:patrones-diseno}
         \begin{tabular}{|p{2cm}|p{3cm}|p{3cm}|p{5cm}|p{2cm}|}
             \hline
-            \textbf{Patrón de Diseño} & \textbf{Descripción} & \textbf{Función en el Proyecto} & \textbf{Beneficios} & \textbf{Capa(s) de la Arquitectura} \\ \hline
+            \textbf{Patrón de Diseño}                                                                                                      & \textbf{Descripción} & \textbf{Función en el Proyecto} & \textbf{Beneficios} & \textbf{Capa(s) de la Arquitectura} \\ \hline
 
-            \textbf{Repository Pattern} &
-            Abstracción que maneja las operaciones de acceso a datos aislando la capa de persistencia. &
+            \textbf{Repository Pattern}                                                                                                    &
+            Abstracción que maneja las operaciones de acceso a datos aislando la capa de persistencia.                                     &
             Abstrae y centraliza todas las consultas e inserciones hacia Azure Cosmos DB, separando la base de datos de los controladores. &
             \begin{itemize}[leftmargin=*, nosep]
                 \item Desacopla la lógica de negocio del proveedor NoSQL.
                 \item Centraliza las consultas, evitando duplicidad.
                 \item Facilita \textit{mocks} para pruebas unitarias.
-            \end{itemize} &
-            Capa de Ingesta (Repositorios) \\ \hline
+            \end{itemize}                                                                  &
+            Capa de Ingesta (Repositorios)                                                                                                                                                                                                                      \\ \hline
 
-            \textbf{Inyección de Dependencias} &
-            Patrón donde los objetos reciben sus dependencias en lugar de instanciarlas directamente. &
-            Gestiona y suministra de forma eficiente los recursos (ej. clientes Cosmos DB) en los controladores de la API. &
+            \textbf{Inyección de Dependencias}                                                                                             &
+            Patrón donde los objetos reciben sus dependencias en lugar de instanciarlas directamente.                                      &
+            Gestiona y suministra de forma eficiente los recursos (ej. clientes Cosmos DB) en los controladores de la API.                 &
             \begin{itemize}[leftmargin=*, nosep]
                 \item Garantiza un código altamente testeable y modular.
                 \item Optimiza el ciclo de vida de los servicios.
                 \item Reduce el acoplamiento fuerte.
-            \end{itemize} &
-            Capa de Ingesta (Controladores) \\ \hline
+            \end{itemize}                                                                   &
+            Capa de Ingesta (Controladores)                                                                                                                                                                                                                     \\ \hline
 
-            \textbf{DTO (Data Transfer Object)} &
-            Objeto que encapsula datos para la transferencia en red sin exponer modelos de dominio. &
-            Mapea la trama JSON del POST del gateway a C\#, validando campos como ID, nivel de CO\(_2\) y timestamp. &
+            \textbf{DTO (Data Transfer Object)}                                                                                            &
+            Objeto que encapsula datos para la transferencia en red sin exponer modelos de dominio.                                        &
+            Mapea la trama JSON del POST del gateway a C\#, validando campos como ID, nivel de CO\(_2\) y timestamp.                       &
             \begin{itemize}[leftmargin=*, nosep]
                 \item Previene vulnerabilidades de sobre-publicación.
                 \item Define contratos claros en la API HTTP.
-            \end{itemize} &
-            Capa de Ingesta \\ \hline
+            \end{itemize}                                                                      &
+            Capa de Ingesta                                                                                                                                                                                                                                     \\ \hline
         \end{tabular}
     \end{table}
     \FloatBarrier % Evita que las tablas floten por encima de este punto
@@ -383,24 +383,24 @@ A continuación, se presenta el diagrama de bloques que sintetiza la arquitectur
 \begin{figure}[H]
     \centering
     \begin{tikzpicture}[
-        >=Stealth,
-        box/.style={rectangle, draw=black, thick, fill=blue!5, text width=3.8cm, align=center, minimum height=1.6cm, rounded corners, font=\small},
-        arrow/.style={->, thick},
-        biarrow/.style={<->, thick}
-    ]
+            >=Stealth,
+            box/.style={rectangle, draw=black, thick, fill=blue!5, text width=3.8cm, align=center, minimum height=1.6cm, rounded corners, font=\small},
+            arrow/.style={->, thick},
+            biarrow/.style={<->, thick}
+        ]
 
-    % Nodos
-    \node[box] (gateway) at (0, 2) {\textbf{Gateway ESP32}\\(Origen físico)};
-    \node[box] (container) at (6.5, 2) {\textbf{Azure Container Apps}\\(Backend / Lógica)};
-    \node[box] (cosmos) at (12.5, 0) {\textbf{Azure Cosmos DB}\\(Base de Datos)};
-    \node[box] (static) at (6.5, -2) {\textbf{Azure Static Web Apps}\\Managed Functions\\(API Serverless)};
-    \node[box] (cliente) at (0, -2) {\textbf{Cliente Web / React.js}\\(Frontend)};
+        % Nodos
+        \node[box] (gateway) at (0, 2) {\textbf{Gateway ESP32}\\(Origen físico)};
+        \node[box] (container) at (6.5, 2) {\textbf{Azure Container Apps}\\(Backend / Lógica)};
+        \node[box] (cosmos) at (12.5, 0) {\textbf{Azure Cosmos DB}\\(Base de Datos)};
+        \node[box] (static) at (6.5, -2) {\textbf{Azure Static Web Apps}\\Managed Functions\\(API Serverless)};
+        \node[box] (cliente) at (0, -2) {\textbf{Cliente Web / React.js}\\(Frontend)};
 
-    % Flechas
-    \draw[arrow] (gateway) -- node[above, font=\footnotesize] {HTTP POST (JSON)} (container);
-    \draw[biarrow] (container.east) -- node[above right, font=\footnotesize, align=center, xshift=-0.3cm] {Escritura/\\Validación} (cosmos.150);
-    \draw[arrow] (static.east) -- node[below right, font=\footnotesize, align=center, xshift=-0.3cm] {Lectura/\\Consulta} (cosmos.210);
-    \draw[biarrow] (cliente) -- node[above, font=\footnotesize, align=center] {Petición HTTP\\/ Polling} (static);
+        % Flechas
+        \draw[arrow] (gateway) -- node[above, font=\footnotesize] {HTTP POST (JSON)} (container);
+        \draw[biarrow] (container.east) -- node[above right, font=\footnotesize, align=center, xshift=-0.3cm] {Escritura/\\Validación} (cosmos.150);
+        \draw[arrow] (static.east) -- node[below right, font=\footnotesize, align=center, xshift=-0.3cm] {Lectura/\\Consulta} (cosmos.210);
+        \draw[biarrow] (cliente) -- node[above, font=\footnotesize, align=center] {Petición HTTP\\/ Polling} (static);
 
     \end{tikzpicture}
     \caption{Diagrama de Arquitectura de Interconexión Cloud-Gateway.}
@@ -546,6 +546,45 @@ Debido a que el proyecto se contextualiza como un desarrollo universitario en Li
 
 Por otro lado, aunque los concentradores multicanal basados en el SX1302 (como el RAK2287) presentan un puntaje técnico superior en capacidad de radio, su nula disponibilidad en el mercado local, sus altos aranceles de importación y su exigente curva de aprendizaje penalizan severamente su puntaje final. En contraste, el módulo E220-900T30D (915 MHz) domina el mercado nacional peruano de prototipado, resulta extremadamente accesible y es plenamente compatible con el ESP32 mediante su interfaz serial UART. Esta sinergia ESP32 + E220-900T30D permite construir nodos y un gateway base altamente viables, respaldados por una inmensa comunidad técnica que garantiza el cumplimiento de los objetivos de la tesis.
 
+\subsubsection{Resumen Consolidado de Selección}
+
+La Tabla \ref{tabla:resumen_seleccion} consolida los resultados de las tres matrices de evaluación presentadas anteriormente, permitiendo visualizar de forma integral las alternativas evaluadas, sus puntajes ponderados y los componentes seleccionados para cada dominio del sistema.
+
+\begin{landscape}
+    \begin{table}[H]
+        \centering
+        \renewcommand{\arraystretch}{1.4}
+        \fontsize{9}{10}\selectfont
+        \caption{Resumen Consolidado de Selección de Componentes}
+        \label{tabla:resumen_seleccion}
+        \begin{tabular}{|p{2.8cm}|p{3.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{3.8cm}|}
+            \hline
+            \textbf{Dominio} & \textbf{Alternativa}                       & \textbf{Disp. local (35\%)} & \textbf{Facilidad config. (30\%)} & \textbf{Criterio técnico (20\%)} & \textbf{Costo / Integr. (15\%)} & \textbf{Puntaje Total}             & \textbf{Observación}                       \\ \hline
+
+            \multirow{4}{*}{\parbox{2.8cm}{\textbf{Micro-controladores}}}
+                             & MCU 1: ATmega328P                          & 1.40                        & 1.20                              & 0.20                             & 0.45                            & \textbf{3.25}                      & Limitación severa de RAM                   \\ \cline{2-8}
+                             & \cellcolor{green!15} MCU 2: ESP32          & \cellcolor{green!15} 1.40   & \cellcolor{green!15} 1.20         & \cellcolor{green!15} 0.60        & \cellcolor{green!15} 0.60       & \cellcolor{green!15} \textbf{3.80} & \cellcolor{green!15} \textbf{Seleccionado} \\ \cline{2-8}
+                             & MCU 3: ESP32-S3                            & 0.70                        & 0.90                              & 0.80                             & 0.45                            & \textbf{2.85}                      & Escasa disponibilidad local                \\ \cline{2-8}
+                             & MCU 4: ATECC608A                           & 0.35                        & 0.60                              & 0.40                             & 0.30                            & \textbf{1.65}                      & Coprocesador, no MCU general               \\ \hline
+
+            \multirow{4}{*}{\parbox{2.8cm}{\textbf{Módulos LoRa}}}
+                             & \cellcolor{green!15} LoRa 1: E220-900T30D  & \cellcolor{green!15} 1.40   & \cellcolor{green!15} 1.20         & \cellcolor{green!15} 0.40        & \cellcolor{green!15} 0.60       & \cellcolor{green!15} \textbf{3.60} & \cellcolor{green!15} \textbf{Seleccionado} \\ \cline{2-8}
+                             & LoRa 2: RAK2287                            & 0.35                        & 0.90                              & 0.80                             & 0.30                            & \textbf{2.35}                      & Nula disponibilidad local                  \\ \cline{2-8}
+                             & LoRa 3: Wio-WM1302                         & 0.35                        & 0.90                              & 0.80                             & 0.45                            & \textbf{2.50}                      & Nula disponibilidad local                  \\ \cline{2-8}
+                             & LoRa 4: Dragino PG1302                     & 0.70                        & 0.60                              & 0.60                             & 0.45                            & \textbf{2.35}                      & Soporte técnico limitado                   \\ \hline
+
+            \multirow{4}{*}{\parbox{2.8cm}{\textbf{Soluciones Wi-Fi}}}
+                             & Wi-Fi 1: 802.11 b/g/n                      & 1.05                        & 0.90                              & 0.60                             & 0.30                            & \textbf{2.85}                      & Componente externo adicional               \\ \cline{2-8}
+                             & \cellcolor{green!15} Wi-Fi 2: Nativo ESP32 & \cellcolor{green!15} 1.40   & \cellcolor{green!15} 1.20         & \cellcolor{green!15} 0.40        & \cellcolor{green!15} 0.60       & \cellcolor{green!15} \textbf{3.60} & \cellcolor{green!15} \textbf{Seleccionado} \\ \cline{2-8}
+                             & Wi-Fi 3: Orange Pi Zero 3                  & 0.70                        & 0.90                              & 0.80                             & 0.45                            & \textbf{2.85}                      & Requiere SBC completa                      \\ \cline{2-8}
+                             & Wi-Fi 4: Raspberry Pi 4                    & 1.05                        & 1.20                              & 0.80                             & 0.30                            & \textbf{3.35}                      & Mayor costo global                         \\ \hline
+        \end{tabular}
+    \end{table}
+\end{landscape}
+\FloatBarrier
+
+Como se puede observar en la Tabla \ref{tabla:resumen_seleccion}, los componentes seleccionados ---ESP32, Ebyte E220-900T30D y Wi-Fi nativo del ESP32--- lideran consistentemente en las categorías de mayor peso (disponibilidad local y facilidad de configuración), lo que valida de forma cuantitativa la decisión de diseño adoptada para el gateway personalizado y los nodos sensores del proyecto.
+
 \subsection{Criterios Normativos para la Ubicación Espacial de los Nodos Sensores}
 
 Para garantizar la fiabilidad y representatividad de las mediciones de dióxido de carbono (CO$_2$) en espacios universitarios, como laboratorios y aulas, es imperativo fundamentar la instalación física de los nodos sensores en normativas y estándares internacionales reconocidos. Un posicionamiento incorrecto puede derivar en lecturas sesgadas o la aparición de puntos ciegos. A partir de la revisión de literatura, se detallan los siguientes criterios estandarizados adoptados para este proyecto:
@@ -569,16 +608,16 @@ Con base en las normativas expuestas, se ha consolidado un conjunto de reglas pr
     \caption{Selección de Criterios para la Instalación de Nodos Sensores de CO$_2$}
     \label{tabla:criterios_instalacion}
     \resizebox{\textwidth}{!}{
-    \begin{tabular}{|p{4cm}|p{5.5cm}|p{4.5cm}|}
-        \hline
-        \textbf{Criterio de Instalación}                          & \textbf{Recomendación de la Literatura}                                             & \textbf{Valor Seleccionado para el Proyecto}                                 \\ \hline
-        Altura de colocación                                      & 1.1 a 1.7 m (RESET, WELL); 0.75 a 1.8 m (ASHRAE); Altura de cabeza sentado (GOV.UK) & \textbf{1.2 metros} (Altura promedio de respiración de estudiantes sentados) \\ \hline
-        Distancia a fuentes de aire directo (ventanas, difusores) & 5 m ideal, o mínimo mitad del ancho de la habitación (RESET)                        & \textbf{$\geq$ 2.5 metros} (Adaptado al tamaño de las aulas universitarias)  \\ \hline
-        Distancia a puertas y ventanas cerradas                   & Mínimo 1 m (WELL, RESET)                                                            & \textbf{1.5 metros}                                                          \\ \hline
-        Distancia a puertas exteriores                            & 3 a 5 metros (WELL)                                                                 & \textbf{$\geq$ 4 metros}                                                     \\ \hline
-        Distancia a ocupantes                                     & Mínimo 0.5 metros (GOV.UK)                                                          & \textbf{1 metro} de separación del escritorio más cercano                    \\ \hline
-        Posicionamiento espacial                                  & Central en la habitación (RESET) o en techo si H $<$ 3.7 m y aire mixto (WELL)      & \textbf{Pared central}, sin interferencias u obstáculos directos             \\ \hline
-    \end{tabular}
+        \begin{tabular}{|p{4cm}|p{5.5cm}|p{4.5cm}|}
+            \hline
+            \textbf{Criterio de Instalación}                          & \textbf{Recomendación de la Literatura}                                             & \textbf{Valor Seleccionado para el Proyecto}                                 \\ \hline
+            Altura de colocación                                      & 1.1 a 1.7 m (RESET, WELL); 0.75 a 1.8 m (ASHRAE); Altura de cabeza sentado (GOV.UK) & \textbf{1.2 metros} (Altura promedio de respiración de estudiantes sentados) \\ \hline
+            Distancia a fuentes de aire directo (ventanas, difusores) & 5 m ideal, o mínimo mitad del ancho de la habitación (RESET)                        & \textbf{$\geq$ 2.5 metros} (Adaptado al tamaño de las aulas universitarias)  \\ \hline
+            Distancia a puertas y ventanas cerradas                   & Mínimo 1 m (WELL, RESET)                                                            & \textbf{1.5 metros}                                                          \\ \hline
+            Distancia a puertas exteriores                            & 3 a 5 metros (WELL)                                                                 & \textbf{$\geq$ 4 metros}                                                     \\ \hline
+            Distancia a ocupantes                                     & Mínimo 0.5 metros (GOV.UK)                                                          & \textbf{1 metro} de separación del escritorio más cercano                    \\ \hline
+            Posicionamiento espacial                                  & Central en la habitación (RESET) o en techo si H $<$ 3.7 m y aire mixto (WELL)      & \textbf{Pared central}, sin interferencias u obstáculos directos             \\ \hline
+        \end{tabular}
     }
 \end{table}
 
@@ -644,18 +683,18 @@ En esta subsección se evalúan las alternativas de actuadores consideradas para
     \caption{Comparación de alternativas de ventiladores para el subsistema de mitigación activa \cite{cm_sickleflow_2026, cm_mf120_halo_2026, cm_mf120_lite_2026, delta_pfb1224uhep0_2026}}
     \label{tab:comparacion_ventiladores}
     \resizebox{\textwidth}{!}{
-    \begin{tabular}{|p{3.6cm}|p{1.4cm}|p{1.9cm}|p{1.8cm}|p{1.8cm}|p{1.8cm}|p{3.4cm}|}
-        \hline
-        \textbf{Modelo}                                             & \textbf{Voltaje} & \textbf{Control} & \textbf{Caudal} & \textbf{Presión estática} & \textbf{Corriente nominal} & \textbf{Observación}                                                                                                                \\ \hline
+        \begin{tabular}{|p{3.6cm}|p{1.4cm}|p{1.9cm}|p{1.8cm}|p{1.8cm}|p{1.8cm}|p{3.4cm}|}
+            \hline
+            \textbf{Modelo}                                             & \textbf{Voltaje} & \textbf{Control} & \textbf{Caudal} & \textbf{Presión estática} & \textbf{Corriente nominal} & \textbf{Observación}                                                                                                                \\ \hline
 
-        Cooler Master SickleFlow 120 ARGB (MFX-B2DN-18NPA-R1)       & 12 V             & PWM (4 pines)    & 62 CFM          & 2.5 mmH$_2$O              & 0.15 A                     & Buena integración con PWM, bajo consumo y presión estática adecuada.                                                                \\ \hline
+            Cooler Master SickleFlow 120 ARGB (MFX-B2DN-18NPA-R1)       & 12 V             & PWM (4 pines)    & 62 CFM          & 2.5 mmH$_2$O              & 0.15 A                     & Buena integración con PWM, bajo consumo y presión estática adecuada.                                                                \\ \hline
 
-        Cooler Master MasterFan MF120 Halo (MFL-B2DN-18NPA-R1)      & 12 V             & PWM (4 pines)    & 47.2 CFM        & 1.6 mmH$_2$O              & 0.25 A                     & Integración sencilla, pero menor caudal y menor presión estática.                                                                   \\ \hline
+            Cooler Master MasterFan MF120 Halo (MFL-B2DN-18NPA-R1)      & 12 V             & PWM (4 pines)    & 47.2 CFM        & 1.6 mmH$_2$O              & 0.25 A                     & Integración sencilla, pero menor caudal y menor presión estática.                                                                   \\ \hline
 
-        Cooler Master MasterFan MF120 Lite ARGB (MFW-B2DN-17NPA-R1) & 12 V             & PWM (4 pines)    & 70.5 CFM        & 2.0 mmH$_2$O              & 0.45 A                     & Mayor caudal entre las opciones de 12 V, aunque con mayor consumo.                                                                  \\ \hline
+            Cooler Master MasterFan MF120 Lite ARGB (MFW-B2DN-17NPA-R1) & 12 V             & PWM (4 pines)    & 70.5 CFM        & 2.0 mmH$_2$O              & 0.45 A                     & Mayor caudal entre las opciones de 12 V, aunque con mayor consumo.                                                                  \\ \hline
 
-        Delta PFB1224UHEP0                                          & 24 V             & PWM + Tacómetro  & ---             & ---                       & 2.00 A                     & Opción industrial de alto desempeño, pero con mayor requerimiento de potencia y menor conveniencia para un prototipo universitario. \\ \hline
-    \end{tabular}
+            Delta PFB1224UHEP0                                          & 24 V             & PWM + Tacómetro  & ---             & ---                       & 2.00 A                     & Opción industrial de alto desempeño, pero con mayor requerimiento de potencia y menor conveniencia para un prototipo universitario. \\ \hline
+        \end{tabular}
     }
 \end{table}
 
