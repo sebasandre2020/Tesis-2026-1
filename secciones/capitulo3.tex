@@ -751,6 +751,119 @@ donde \(e(t)\) representa el error entre la concentración medida de CO$_2$ y el
 
 Por otro lado, el controlador Fuzzy se plantea como una alternativa basada en reglas lingüísticas, adecuada para sistemas con incertidumbre o comportamiento no lineal. En este caso, las variables de entrada consideradas son el error de concentración de CO$_2$ y la variación del error, mientras que la variable de salida corresponde al ajuste de la señal PWM aplicada al sistema de ventilación. A partir de funciones de pertenencia y una base de reglas tipo IF-THEN, el controlador determina la acción de control más conveniente según el estado del sistema, sin depender de un modelo matemático exacto del proceso.
 
+
+```latex
+\subsubsection{Diseño del controlador Fuzzy propuesto}
+
+Para el controlador Fuzzy se empleó un sistema de inferencia difusa tipo Mamdani, implementado mediante la herramienta Fuzzy Logic Designer de MATLAB. La elección de este tipo de controlador se debe a que permite representar el comportamiento del sistema mediante reglas lingüísticas, lo cual resulta adecuado para un proceso con incertidumbre en la ventilación efectiva, la mezcla del aire interior y la respuesta del sensor de CO$_2$.
+
+El controlador utiliza dos variables de entrada: el error de concentración de CO$_2$ y la variación del error. La salida corresponde a la señal de control aplicada a los ventiladores, expresada como porcentaje de PWM. El error se define como:
+
+\begin{equation}
+e(k)=C_{CO_2}(k)-C_{ref}
+\end{equation}
+
+donde \(C_{CO_2}(k)\) representa la concentración medida de CO$_2$ en el instante \(k\), y \(C_{ref}\) corresponde al valor de referencia establecido. La variación del error se calcula como:
+
+\begin{equation}
+\Delta e(k)=e(k)-e(k-1)
+\end{equation}
+
+Para la simulación, la variación del error también puede expresarse en ppm/min, con el objetivo de representar mejor la velocidad de cambio de la concentración:
+
+\begin{equation}
+\Delta e_{min}(k)=\frac{e(k)-e(k-1)}{\Delta t}\cdot 60
+\end{equation}
+
+La señal de salida del controlador se encuentra limitada al intervalo:
+
+\begin{equation}
+U_{fuzzy}(k)\in[0,100]
+\end{equation}
+
+donde \(U_{fuzzy}(k)\) representa el porcentaje de PWM sugerido por el controlador difuso. Esta señal se convierte posteriormente a una señal normalizada entre 0 y 1 para calcular el caudal efectivo de ventilación.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\caption{Variables lingüísticas del controlador Fuzzy}
+\label{tab:variables_fuzzy}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{|p{3cm}|p{3cm}|p{4cm}|p{5cm}|}
+\hline
+\textbf{Variable} & \textbf{Rango} & \textbf{Conjuntos difusos} & \textbf{Interpretación} \\ \hline
+Error de CO$_2$ & \([-600,1500]\) ppm & Bajo, Medio, Alto, Muy Alto & Indica qué tan alejada está la concentración medida respecto al setpoint. \\ \hline
+Variación del error & \([-30,30]\) ppm/min & Baja, Media, Alta & Indica si el error disminuye, permanece casi estable o aumenta. \\ \hline
+PWM de ventiladores & \([0,100]\) \% & Cero, Baja, Media, Alta & Define el porcentaje de potencia aplicado a los ventiladores. \\ \hline
+\end{tabular}
+}
+\end{table}
+
+La base de reglas se definió considerando que, mientras mayor sea el error de CO$_2$ y mayor sea su tendencia de incremento, mayor debe ser la acción de ventilación. Por el contrario, si el error es bajo y la concentración disminuye, la potencia puede reducirse.
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\caption{Base de reglas del controlador Fuzzy}
+\label{tab:reglas_fuzzy}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Error / Derivada del error} & \textbf{Baja der.} & \textbf{Media der.} & \textbf{Alta der.} \\ \hline
+\textbf{Bajo PPM} & Cero POT & Baja POT & Baja POT \\ \hline
+\textbf{Medio PPM} & Baja POT & Media POT & Media POT \\ \hline
+\textbf{Alto PPM} & Media POT & Media POT & Alta POT \\ \hline
+\textbf{Muy Alto PPM} & Alta POT & Alta POT & Alta POT \\ \hline
+\end{tabular}
+}
+\end{table}
+
+Adicionalmente, se incorporó un PWM base calculado a partir del caudal mínimo requerido para sostener el setpoint de CO$_2$. Esta consideración evita que el sistema reduzca excesivamente la ventilación cuando el error se aproxima a cero, debido a que siempre existe generación continua de CO$_2$ por parte de los ocupantes.
+
+El caudal objetivo se calcula mediante:
+
+\begin{equation}
+Q_{obj}=\frac{G_p\cdot 10^6}{C_{sp}-C_{out}}
+\end{equation}
+
+donde \(G_p\) es la generación de CO$_2$ por persona, \(C_{sp}\) es el setpoint y \(C_{out}\) es la concentración exterior de CO$_2$. Luego, el PWM base se obtiene como:
+
+\begin{equation}
+U_{base}=100\cdot\frac{Q_{obj}}{Q_{max,ef}}
+\end{equation}
+
+Finalmente, la señal de control aplicada al sistema se define como:
+
+\begin{equation}
+U(k)=\max\left(U_{base},U_{fuzzy}(k)\right)
+\end{equation}
+
+De esta manera, el controlador Fuzzy regula la potencia de los ventiladores según el estado del sistema, mientras que el PWM base garantiza un caudal mínimo de ventilación para mantener la concentración de CO$_2$ cerca del valor de referencia.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\linewidth]{images/capitulo3/fuzzy_respuesta_co2.png}
+\caption{Respuesta de concentración de CO$_2$ con controlador Fuzzy.}
+\label{fig:fuzzy_respuesta_co2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\linewidth]{images/capitulo3/fuzzy_pwm.png}
+\caption{Esfuerzo de control del controlador Fuzzy con PWM base.}
+\label{fig:fuzzy_pwm}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\linewidth]{images/capitulo3/fuzzy_caudal.png}
+\caption{Caudal efectivo total generado por el sistema de ventilación.}
+\label{fig:fuzzy_caudal}
+\end{figure}
+
+
+
+
 Para la implementación de ambas estrategias, se establece una misma estructura de operación: el sensor mide la concentración de CO$_2$, el sistema calcula el error respecto al valor de referencia, el controlador correspondiente genera la acción de control y esta señal se aplica a los ventiladores mediante modulación PWM. De esta manera, tanto el controlador PID como el controlador Fuzzy pueden evaluarse bajo un mismo entorno de simulación y, posteriormente, sobre la plataforma experimental, permitiendo comparar su comportamiento en términos de tiempo de respuesta, estabilidad, capacidad de mitigación y esfuerzo de control.
 
 En ambos casos, la implementación se orienta a determinar cuál de las dos estrategias presenta mejores resultados para la reducción de CO$_2$ en ambientes universitarios, considerando no solo la rapidez de corrección, sino también la estabilidad de la respuesta y la factibilidad de integración en un sistema de bajo costo.
