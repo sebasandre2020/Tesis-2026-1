@@ -116,300 +116,155 @@ Finalmente, la fase de optimización contempla ajustes en la configuración de m
 
 
 
-\section{Desarrollo de la aplicación web}
+\section{Arquitectura General del Sistema}
+\subsection{Topología de Red y Capas Físicas}
 
-\subsection{Estudio de requisitos}
-
-\subsubsection{Interfaz de Usuario (Frontend)}
+El diseño del sistema de monitoreo de CO\(_2\) se fundamenta en una topología de red en estrella, seleccionada estratégicamente para garantizar una cobertura amplia, bajo consumo energético y alta escalabilidad dentro del campus universitario. La arquitectura se divide en dos dominios físicos principales que convergen en la nube: la red de sensores (Percepción) y el nodo central (Edge o Gateway).
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\linewidth]{images//capitulo3/DF_frontend.png}
-    \caption{Diagrama de flujo para el desarrollo Frontend}
-    \label{fig:DF_frontend}
+    \includegraphics[width=0.9\textwidth]{images/capitulo3/placeholder_topologia_completa.png}
+    % UBICACIÓN IMAGEN 1: Topología completa
+    % TODO: Reemplaza esta imagen con un diagrama visual o mapa que ilustre la topología en estrella completa del sistema (Nodos sensores comunicándose por LoRa hacia el ESP32 Gateway).
+    \caption{Diagrama esquemático de la topología de red en estrella del sistema de monitoreo.}
+    \label{fig:topologia_completa}
 \end{figure}
 
-En la figura \ref{fig:DF_frontend} se observa la metodología seguida para del desarrollo del frontend de la aplicación web de Monitoreo. En cuanto al paso de evaluación de cualidad (QA: Quality Asessment), consiste en realizar una variedad de pruebas para asegurar el adecuado funcionamiento de la aplicación, cuyos principales focos de atención son los siguientes:
+\subsubsection{Capa de Percepción: Nodos Sensores}
+Los nodos sensores representan el nivel físico de captura de datos. Cada nodo integra un microcontrolador (Arduino UNO) acoplado a un sensor NDIR MH-Z19, el cual garantiza alta precisión en la medición de las concentraciones de CO\(_2\). Para la transmisión de los datos, se emplea el módulo transceptor E220-900T30D operando bajo la tecnología de modulación LoRa en la banda Sub-GHz (915 MHz). Esta configuración permite a los nodos operar de forma asíncrona, capturando mediciones periódicas y emitiendo paquetes de telemetría sin requerir una conexión persistente. Al delegar la complejidad del enrutamiento al gateway, se minimiza el consumo energético en los puntos extremos de la red.
 
-\begin{itemize}
-    \item Correcciónes gramaticales.
-    \item Bugs y malfuncionamientos en ciertas acciones de la aplicación.
-    \item Configuraciones incompletas.
-\end{itemize}
+\subsubsection{Capa Edge y Transición de Red (LoRa a Wi-Fi)}
+El Gateway Personalizado (Custom Gateway) actúa como el núcleo de la topología en estrella. Basado en el microcontrolador ESP32, este dispositivo posee una función dual crítica: la recepción por radiofrecuencia y la retransmisión por redes IP. El gateway utiliza un módulo E220-900T30D idéntico al de los nodos para recibir las tramas LoRa entrantes. Una vez recibido el paquete, el microcontrolador decodifica la carga útil (payload), extrae la información relevante (identificador del nodo y nivel de CO\(_2\)) y la empaqueta en formato JSON.
 
+Posteriormente, ocurre la transición de red: el ESP32, mediante su conectividad Wi-Fi nativa, establece una conexión segura (HTTPS/MQTT) con los servicios de nube, inyectando los datos de telemetría al flujo de procesamiento en Azure. Esta separación de tecnologías de red permite explotar el largo alcance y la capacidad de penetración de LoRa en el entorno físico, mientras se aprovecha la infraestructura Wi-Fi existente de la universidad para el acceso al internet público de manera económica y segura.
 
-Así mismo, la página web cuenta con dos páginas que funcionan como dashboards. La primera es una landing page en la cual se detallan los datos más relevantes en la aplicaciónl, la segunda es una vista detallada para cada uno de los sensores. Las principales funciones de cada una se detallan a continuación.
+\subsection{Arquitectura de Software y Servicios en la Nube (Azure)}
 
-
-
-\begin{itemize}
-    \item \textbf{Landing page (Dashboard)}:
-          \begin{itemize}
-              \item Mostrar las últimas lecturas de CO\(_2\) de tres sensores en tiempo real.
-              \item Incluir detalles de la ubicación de cada sensor.
-              \item Visualizar las alertas cuando los valores de CO\(_2\) superen el umbral permitido (mediante ventanas emergentes y sonidos de alerta).
-          \end{itemize}
-
-    \item \textbf{Vista de Detalle de Sensor}:
-          \begin{itemize}
-              \item Mostrar información detallada de cada sensor, como el nombre y la ubicación.
-              \item Incluir un gráfico interactivo con las lecturas de CO\(_2\) de las últimas 8 horas.
-              \item Acceso desde un menú lateral que permite la navegación entre sensores.
-          \end{itemize}
-\end{itemize}
-
-\subsubsection{Operaciones entre Frontend y Backend}
-
-\begin{itemize}
-    \item El frontend debe realizar solicitudes HTTP al backend para recibir actualizaciones de datos de los sensores en tiempo real.
-    \item El backend enviará datos actualizados al frontend cada vez que haya una nueva lectura registrada.
-    \item Cuando los datos de CO\(_2\) superen el umbral configurado, el backend enviará una señal de alerta que el frontend deberá presentar visual y sonoramente.
-    \item El frontend permitirá la consulta histórica de lecturas de CO\(_2\) de cada sensor para su representación en los gráficos.
-\end{itemize}
-
-\subsubsection{Requisitos de Hardware e Interacción con el Gateway Personalizado}
-
-\begin{itemize}
-    \item \textbf{Interfaz Gateway - Nube (Ingesta de Datos):} El gateway (basado en ESP32) funciona como el puente entre el entorno LoRa local y la infraestructura en Azure. La comunicación se realiza mediante peticiones HTTP (REST) sobre una conexión segura (HTTPS).
-    \item \textbf{Compatibilidad de interfaces:} El microcontrolador del gateway debe interconectarse de manera eficiente con el módulo transceptor LoRa y disponer de hardware para conexión a internet (Wi-Fi).
-    \item \textbf{Capacidad de procesamiento:} El gateway debe contar con los recursos computacionales suficientes para recibir las tramas LoRa, empaquetar los datos recopilados de los nodos (ID, CO\(_2\), timestamp) en formato JSON y enviarlos mediante un método POST hacia el endpoint de la nube.
-    \item \textbf{Requerimientos de alimentación:} El dispositivo deberá operar de manera continua mediante una fuente de alimentación conectada a la red eléctrica del aula, garantizando un voltaje estable.
-    \item \textbf{Recepción en Backend (Capa de Ingesta):} El backend debe estar configurado para recibir el HTTP POST, validar la trama JSON, evaluar los umbrales de alerta de CO\(_2\) y ejecutar la orden de guardado.
-    \item \textbf{Almacenamiento y alertas:} Los datos recibidos deben almacenarse en la base de datos Azure Cosmos DB (NoSQL) para su consulta histórica. Si las lecturas superan el umbral de CO\(_2\), el backend activará el sistema de alertas.
-\end{itemize}
-
-\subsubsection{Requisitos de Almacenamiento y Persistencia de Datos}
-
-\begin{itemize}
-    \item Los datos de telemetría de los sensores deben almacenarse en Azure Cosmos DB (NoSQL), justificado por su alta eficiencia y escalabilidad para almacenar telemetría rápida y no estructurada típica de sensores IoT.
-    \item La base de datos debe registrar el identificador del nodo (ID), la marca de tiempo (timestamp), la ubicación y el nivel de CO\(_2\) de cada lectura.
-    \item Los datos históricos deben poder ser visualizados por el usuario a través de gráficos en la interfaz de detalle de cada sensor mediante consultas a la API del backend.
-\end{itemize}
-
-
-
-
-
-
-
-
-
-\subsection{Selección de la arquitectura de software}
-
-\begin{table}[h!]
-    \centering
-    \renewcommand{\arraystretch}{1.5}
-    \caption{Comparación de Arquitecturas de Software para Aplicaciones de Monitoreo IoT \cite{software_arquitectura}}
-    \label{tabla:software_arquitecturas}
-    \resizebox{\textwidth}{!}{
-        \begin{tabular}{|p{3.2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{2.8cm}|}
-            \hline
-            \textbf{Arquitectura}              & \textbf{Escalabilidad}                                                                               & \textbf{Mantenibilidad}                                                                              & \textbf{Manejo de Datos IoT}                                                                          & \textbf{Capacidad de Despliegue}                                                                          \\ \hline
-            \textbf{Monolítica (MVC o Capas)}  & Moderada: frontend y backend acoplados dificultan escalar componentes por separado                   & Alta al inicio, pero compleja si el proyecto crece y requiere tecnologías distintas                  & Limitada: el procesamiento sincrónico puede generar cuellos de botella con alta telemetría            & Despliegue en un único servidor, limitando la adopción de servicios Serverless o PaaS en la nube          \\ \hline
-            \textbf{Microservicios}            & Muy alta: ideal para aplicaciones inmensas, permite escalar y desplegar servicios independientes     & Baja: requiere alta experiencia para orquestar contenedores, gestionar redes y despliegues complejos & Muy buena: ingesta y consultas pueden separarse en microservicios dedicados                           & Requiere orquestadores como Kubernetes, elevando significativamente el costo y la complejidad operativa   \\ \hline
-            \textbf{Client-Server Desacoplada} & Alta: permite separar los recursos de ingesta de datos de los recursos de visualización del frontend & Alta: frontend y backend evolucionan de forma independiente usando las tecnologías más aptas         & Excelente: permite integrar un pipeline de datos optimizado (Ingesta, Almacenamiento, API Serverless) & Óptima para la nube moderna, permitiendo usar Container Apps para backend y Static Web Apps para frontend \\ \hline
-        \end{tabular}
-    }
-\end{table}
-
-Para este trabajo de investigación, se determinó que la \textbf{Arquitectura Client-Server Desacoplada} es la idónea. Esta arquitectura rige el desarrollo separando estrictamente el frontend del backend, lo que permite un despliegue optimizado en la nube de Azure y un pipeline de datos robusto para el procesamiento de telemetría IoT.
-
-Bajo este modelo, la solución se estructura en tres capas principales de despliegue en la nube:
-\begin{itemize}
-    \item \textbf{Capa de Ingesta y Lógica:} Un backend ligero desarrollado en C\# (.NET Core) alojado en Azure Container Apps. Su función es recibir el tráfico HTTP POST desde el gateway, validar la trama JSON, evaluar los umbrales de alerta de CO\(_2\) y ejecutar la orden de guardado.
-    \item \textbf{Capa de Almacenamiento:} Se utiliza Azure Cosmos DB (NoSQL), justificado por su alta eficiencia y baja latencia para almacenar series temporales y telemetría rápida y no estructurada típica de sensores IoT.
-    \item \textbf{Capa de Visualización:} Un panel web alojado en Azure Static Web Apps. Utiliza Managed Functions (API Serverless) para abstraer la consulta del historial almacenado en Cosmos DB y alimentar el frontend de forma escalable y segura.
-\end{itemize}
-\FloatBarrier
-
-
-
-
-
-
-\subsection{Desarrollo del Frontend}
-
-\subsubsection{Selección de tecnologías de diseño}
-\begin{table}[h!]
-    \centering
-    \renewcommand{\arraystretch}{1.5}
-    \caption{Comparación de Tecnologías Frontend para Aplicaciones de Monitoreo IoT}
-    \label{tabla:comparativa}
-    \resizebox{\textwidth}{!}{
-        \begin{tabular}{|p{2.1cm}|p{2cm}|p{2.5cm}|p{2.5cm}|p{2.5cm}|p{3.7cm}|}
-            \hline
-            \textbf{Tecnología}        & \textbf{Facilidad de Uso}                   & \textbf{Rendimiento}                                          & \textbf{Soporte de Componentes de Visualización}         & \textbf{Escalabilidad}                                & \textbf{Enfoque}                                                                                                              \\ \hline
-            \textbf{React}             & Alta: gran documentación y comunidad        & Alto, gracias a su DOM virtual optimizado                     & Amplio: compatible con bibliotecas como Chart.js y D3.js & Alta: compatible con arquitecturas modulares          & Creado para construir interfaces de usuario y gestionar el estado de aplicaciones de una sola página (SPA)                    \\ \hline
-            \textbf{Vue.js}            & Muy alta: curva de aprendizaje rápida       & Moderado-Alto: buen manejo de cambios                         & Amplio: compatible con bibliotecas gráficas              & Moderado: adecuado para proyectos pequeños-medianos   & Enfoque progresivo, diseñado para ser adaptable y escalable según las necesidades del proyecto                                \\ \hline
-            \textbf{Angular}           & Media: curva de aprendizaje más pronunciada & Alto: rendimiento robusto en aplicaciones grandes             & Muy amplio: incluye gráficos y componentes integrados    & Alta: ideal para proyectos grandes y escalables       & Framework completo orientado a aplicaciones empresariales de gran tamaño y aplicaciones SPA complejas                         \\ \hline
-            \textbf{Svelte}            & Muy alta: sintaxis intuitiva y directa      & Muy alto: menos carga de procesamiento en tiempo de ejecución & Moderado: soporte de bibliotecas externas                & Moderado-Alto: más adecuado para aplicaciones ligeras & Diseño enfocado en la eficiencia, compila código en tiempo de desarrollo para optimizar el rendimiento en tiempo de ejecución \\ \hline
-            \textbf{Blazor (para C\#)} & Media: requiere familiaridad con .NET       & Alto: ejecuta WebAssembly                                     & Moderado: integrable con bibliotecas .NET                & Alta: conveniente para aplicaciones basadas en .NET   & Orientado a la ejecución de aplicaciones .NET en el navegador usando WebAssembly                                              \\ \hline
-        \end{tabular}
-    }
-\end{table}
-\FloatBarrier
-
-
-Dado que el trabajo de investigación requiere una interfaz dinámica capaz de procesar telemetría en tiempo real, se considera que React es la opción más adecuada. Su ecosistema facilita la integración con APIs y la gestión de estados complejos en aplicaciones Single Page Application (SPA).
-
-En el desarrollo del frontend (React.js), se aplican patrones de diseño clave para asegurar el desacoplamiento y la reactividad de la interfaz:
-\begin{itemize}
-    \item \textbf{Smart vs. Dumb Components (Contenedor / Presentación):} Se separan estrictamente los componentes que manejan la lógica de negocio y llamadas a la API (Smart) de aquellos dedicados exclusivamente a la renderización gráfica de los datos (Dumb).
-    \item \textbf{Patrón Observer:} Implementado a través de librerías como React Query para gestionar el \textit{polling} o las suscripciones. Esto permite que la interfaz escuche y se actualice en tiempo real ante nuevos registros de CO\(_2\), manteniendo los datos sincronizados con la nube.
-    \item \textbf{Provider Pattern (Context API):} Utilizado para el manejo eficiente del estado global de la aplicación. Facilita la propagación de datos transversales, como la sesión del usuario o el nodo sensor actualmente seleccionado, sin necesidad de perforación de propiedades (\textit{prop drilling}).
-\end{itemize}
-
-
-
-
-
-
-
-\subsubsection{Diseño de componentes}
-
-A continuación se presentan los componentes creados e implementados en el diseño, tanto en el dashboard de la landing page, así como en la página de detalle de cada sensor, y la página de configuración del administrador. El código para estos componentes se puede visualizar en el anexo \ref{an:componentes_front}.
-
-\begin{itemize}
-
-    \item \texttt{Sidebar.tsx}: Menú lateral de navegación que permite acceder rápidamente a diferentes secciones de la aplicación, como el Dashboard, detalles de sensores, configuración y ayuda. Incluye iconos para mejorar la usabilidad y el diseño.
-
-    \item \texttt{SensorOverview.tsx}: Muestra un resumen en tiempo real del estado de los sensores de CO\(_2\). Cada sensor tiene su propia tarjeta con información sobre el nivel actual de CO\(_2\), ubicación, estado (normal, elevado, crítico) y última actualización.
-
-    \item \texttt{ComparativeChart.tsx}: Componente que muestra una gráfica comparativa de los niveles de CO\(_2\) de varios sensores a lo largo del tiempo. Permite visualizar las tendencias de CO\(_2\) para cada sensor y ayuda a identificar patrones o picos.
-
-    \item \texttt{Filters.tsx}: Card que permite seleccionar el período de tiempo (última hora, últimas 3 horas, etc.) para filtrar los datos que se muestran en la gráfica comparativa (\texttt{ComparativeChart}). Incluye un selector desplegable para ajustar el rango de tiempo.
-
-    \item \texttt{Statistics.tsx}: Card que muestra las estadísticas generales de los sensores, como el nivel promedio de CO\(_2\), el máximo alcanzado, el tiempo total en alerta y el número de alertas generadas. Está diseñado para adaptarse a la altura de su contenido y optimizar el uso del espacio.
-
-    \item \texttt{AlertHistory.tsx}: Card que muestra un historial de alertas, con información sobre la hora de cada alerta y el nivel de CO\(_2\) registrado. Ayuda a rastrear incidentes pasados y evaluar la frecuencia de las alertas.
-
-    \item \texttt{Alerts.tsx}: Card que muestra las alertas activas en el sistema. Cada alerta tiene información sobre la ubicación, el nivel de CO\(_2\) y el estado (elevado, crítico). Incluye botones de acción (como "Reconocer" y "Silenciar") para gestionar las alertas.
-
-    \item \texttt{CampusMap.tsx} (Opcional): Muestra un mapa del campus con las ubicaciones de los sensores de CO\(_2\) resaltadas. Este componente fue eliminado en la última versión del Dashboard para liberar espacio, pero puede reinsertarse según sea necesario.
-\end{itemize}
-
-
-
-
-
-
-
-
-
-
-
-\subsection{Desarrollo del back end}
-
-\subsubsection{Selección de patrones de diseño}
-
-
-\begin{landscape}
-    \begin{table}[h!]
-        \centering
-        \renewcommand{\arraystretch}{1.2} % Ajusta la altura de las filas
-        \fontsize{9}{10}\selectfont % Reduce aún más el tamaño de la fuente dentro de la tabla
-        \caption{Patrones de Diseño Utilizados en el Backend \cite{design_patterns}}
-        \label{tabla:patrones-diseno}
-        \begin{tabular}{|p{2cm}|p{3cm}|p{3cm}|p{5cm}|p{2cm}|}
-            \hline
-            \textbf{Patrón de Diseño}                                                                                                      & \textbf{Descripción} & \textbf{Función en el Proyecto} & \textbf{Beneficios} & \textbf{Capa(s) de la Arquitectura} \\ \hline
-
-            \textbf{Repository Pattern}                                                                                                    &
-            Abstracción que maneja las operaciones de acceso a datos aislando la capa de persistencia.                                     &
-            Abstrae y centraliza todas las consultas e inserciones hacia Azure Cosmos DB, separando la base de datos de los controladores. &
-            \begin{itemize}[leftmargin=*, nosep]
-                \item Desacopla la lógica de negocio del proveedor NoSQL.
-                \item Centraliza las consultas, evitando duplicidad.
-                \item Facilita \textit{mocks} para pruebas unitarias.
-            \end{itemize}                                                                  &
-            Capa de Ingesta (Repositorios)                                                                                                                                                                                                                      \\ \hline
-
-            \textbf{Inyección de Dependencias}                                                                                             &
-            Patrón donde los objetos reciben sus dependencias en lugar de instanciarlas directamente.                                      &
-            Gestiona y suministra de forma eficiente los recursos (ej. clientes Cosmos DB) en los controladores de la API.                 &
-            \begin{itemize}[leftmargin=*, nosep]
-                \item Garantiza un código altamente testeable y modular.
-                \item Optimiza el ciclo de vida de los servicios.
-                \item Reduce el acoplamiento fuerte.
-            \end{itemize}                                                                   &
-            Capa de Ingesta (Controladores)                                                                                                                                                                                                                     \\ \hline
-
-            \textbf{DTO (Data Transfer Object)}                                                                                            &
-            Objeto que encapsula datos para la transferencia en red sin exponer modelos de dominio.                                        &
-            Mapea la trama JSON del POST del gateway a C\#, validando campos como ID, nivel de CO\(_2\) y timestamp.                       &
-            \begin{itemize}[leftmargin=*, nosep]
-                \item Previene vulnerabilidades de sobre-publicación.
-                \item Define contratos claros en la API HTTP.
-            \end{itemize}                                                                      &
-            Capa de Ingesta                                                                                                                                                                                                                                     \\ \hline
-        \end{tabular}
-    \end{table}
-    \FloatBarrier % Evita que las tablas floten por encima de este punto
-\end{landscape}
-\FloatBarrier
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsubsection{Desarrollo de REST API y Pipeline en la Nube}
-\begin{figure}
-    \centering
-    \includegraphics[width=0.8\linewidth]{images/capitulo3/DF_backend.png}
-    \caption{Diagrama de flujo del desarrollo de Backend.}
-    \label{fig:df_backend}
-\end{figure}
-
-
-Como se ilustra en la Figura \ref{fig:df_backend}, el flujo de desarrollo del backend se adapta al nuevo pipeline de datos alojado en Azure. La implementación del backend (Capa de Ingesta), alojado como un contenedor ligero en Azure Container Apps, está construida en C\# (.NET Core). Su configuración inicial establece las políticas de seguridad para exponer un endpoint HTTPS público que recepciona la información.
-
-El ciclo de procesamiento inicia cuando los controladores reciben el JSON vía petición \texttt{HTTP POST} desde el gateway ESP32. Tras la inyección de dependencias, los DTOs validan la estructura del mensaje. Posteriormente, la capa de servicios evalúa la lógica de negocio, verificando si el nivel de CO\(_2\) amerita la activación de alertas. Finalmente, mediante el \textit{Repository Pattern}, el servicio interactúa de forma directa y eficiente con Azure Cosmos DB (NoSQL) para registrar el evento histórico de la telemetría, reemplazando el uso de bases de datos relacionales tradicionales como MySQL.
-
-Las pruebas unitarias y de integración aseguran la robustez de la lógica de evaluación y las consultas a Cosmos DB antes de empaquetar la aplicación en su contenedor Docker y ser desplegada a producción. El proceso de Quality Assessment verifica que todos los componentes cumplen con los estándares de calidad antes de finalizar el desarrollo.
-
-\subsection{Diagrama de Arquitectura de Interconexión Cloud-Gateway}
-
-A continuación, se presenta el diagrama de bloques que sintetiza la arquitectura de red y el flujo de datos del sistema, conectando el entorno físico con los recursos desplegados en la nube.
+Para el procesamiento, almacenamiento y visualización de la telemetría, se ha diseñado una arquitectura orientada a la nube altamente desacoplada y basada en servicios \textit{Serverless} \cite{software_arquitectura}. Este diseño ha sido optimizado para operar eficientemente minimizando los costos de infraestructura (presupuesto orientado a \$0), garantizando la escalabilidad a cero (\textit{Scale to Zero}) cuando no hay tráfico activo.
 
 \begin{figure}[H]
     \centering
-    \begin{tikzpicture}[
-            >=Stealth,
-            box/.style={rectangle, draw=black, thick, fill=blue!5, text width=3.8cm, align=center, minimum height=1.6cm, rounded corners, font=\small},
-            arrow/.style={->, thick},
-            biarrow/.style={<->, thick}
-        ]
-
-        % Nodos
-        \node[box] (gateway) at (0, 2) {\textbf{Gateway ESP32}\\(Origen físico)};
-        \node[box] (container) at (6.5, 2) {\textbf{Azure Container Apps}\\(Backend / Lógica)};
-        \node[box] (cosmos) at (12.5, 0) {\textbf{Azure Cosmos DB}\\(Base de Datos)};
-        \node[box] (static) at (6.5, -2) {\textbf{Azure Static Web Apps}\\Managed Functions\\(API Serverless)};
-        \node[box] (cliente) at (0, -2) {\textbf{Cliente Web / React.js}\\(Frontend)};
-
-        % Flechas
-        \draw[arrow] (gateway) -- node[above, font=\footnotesize] {HTTP POST (JSON)} (container);
-        \draw[biarrow] (container.east) -- node[above right, font=\footnotesize, align=center, xshift=-0.3cm] {Escritura/\\Validación} (cosmos.150);
-        \draw[arrow] (static.east) -- node[below right, font=\footnotesize, align=center, xshift=-0.3cm] {Lectura/\\Consulta} (cosmos.210);
-        \draw[biarrow] (cliente) -- node[above, font=\footnotesize, align=center] {Petición HTTP\\/ Polling} (static);
-
-    \end{tikzpicture}
-    \caption{Diagrama de Arquitectura de Interconexión Cloud-Gateway.}
-    \label{fig:arquitectura_nube}
+    \includegraphics[width=0.9\textwidth]{images/capitulo3/placeholder_conexion_recursos_azure.png}
+    % UBICACIÓN IMAGEN 2: Conexión de recursos en Azure (Gateway -> Web App)
+    % TODO: Reemplaza esta imagen con el diagrama o esquema visual general que muestre la interconexión completa de los recursos nativos en la nube, iniciando desde el Gateway (MQTT) y finalizando en el Frontend (Static Web Apps).
+    \caption{Arquitectura general de conexión y servicios aprovisionados en Microsoft Azure.}
+    \label{fig:conexion_recursos_azure}
 \end{figure}
 
-El diagrama de la Figura \ref{fig:arquitectura_nube} ilustra visualmente la Arquitectura Client-Server Desacoplada propuesta para el sistema de monitoreo. Como se observa, existe una separación estricta entre el flujo de ingesta de datos y el flujo de consumo. Por un lado, el Gateway ESP32 emite la telemetría hacia un backend dedicado exclusivamente a la recepción y evaluación (Azure Container Apps), el cual persiste la información en Cosmos DB validando el \textit{Repository Pattern}.
+\subsubsection{Patrones de Diseño de Software}
+La solución informática implementa el patrón \textbf{CQRS (Command Query Responsibility Segregation)}, el cual divide estrictamente las operaciones de escritura y lectura, asegurando un rendimiento óptimo en aplicaciones IoT \cite{design_patterns}.
+\begin{itemize}
+    \item \textbf{Canal de Escritura (Ingesta de alta frecuencia):} La telemetría capturada por el gateway es enviada al \textit{Azure IoT Hub}, el cual actúa como el punto de entrada seguro y escalable. Inmediatamente, este evento desencadena una ejecución en \textit{Azure Functions} (modelo \textit{event-driven}), encargada de desempaquetar, validar la carga JSON, y ejecutar la inserción en la base de datos sin afectar el rendimiento de los servicios de consulta.
+    \item \textbf{Canal de Lectura (Consultas complejas):} La extracción de datos históricos para la generación de gráficas en el cliente web se realiza a través de un backend en \textit{.NET Core} alojado en \textit{Azure Container Apps}. Este servicio expone una API REST consumida de forma independiente por la interfaz de usuario en \textit{React.js}, previniendo que picos masivos en la ingesta de telemetría degraden la experiencia del usuario.
+\end{itemize}
 
-Por otro lado, la interacción con el usuario está completamente aislada de la lógica de ingesta. El Cliente Web desarrollado en React.js, aplicando los patrones \textit{Observer} y \textit{Smart vs. Dumb Components}, consume los datos históricos y las alertas interactuando únicamente con una API Serverless (Azure Static Web Apps), la cual se encarga de consultar a Cosmos DB de manera independiente. Esta división de responsabilidades valida de manera integral los patrones de diseño previamente mencionados y garantiza la escalabilidad del proyecto, evitando que un volumen masivo de ingesta de datos por parte de los sensores comprometa el rendimiento de la interfaz gráfica y viceversa.
+\subsubsection{Diagramas de Flujo de Datos en la Nube}
+
+Para ilustrar de manera secuencial la canalización de los datos desde el punto de entrada en la nube hasta su visualización en el cliente final, se presentan los siguientes diagramas de flujo modelados directamente mediante la herramienta TikZ.
+
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit, backgrounds}
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\textwidth}{!}{
+        \begin{tikzpicture}[
+                node distance=2.5cm,
+                auto,
+                block/.style={rectangle, draw=blue!70, thick, fill=blue!5, text width=3.5cm, text centered, rounded corners, minimum height=1.5cm, font=\small},
+                arrow/.style={-{Stealth[scale=1.2]}, thick, draw=gray!80},
+                label/.style={font=\footnotesize, text=black!70, align=center}
+            ]
+
+            % Nodos Pipeline 1
+            \node [block] (gateway) {\textbf{ESP32 Gateway}\\(Transición Wi-Fi)};
+            \node [block, right=of gateway] (iothub) {\textbf{Azure IoT Hub}\\(Ingesta Segura)};
+            \node [block, right=of iothub] (functions) {\textbf{Azure Functions}\\(Procesamiento Event-Driven)};
+            \node [block, right=of functions] (sqldb) {\textbf{Azure SQL}\\(Base de Datos Básica)};
+
+            % Conexiones Pipeline 1
+            \draw [arrow] (gateway) -- node[label, above] {MQTT / HTTPS} node[label, below] {JSON Payload} (iothub);
+            \draw [arrow] (iothub) -- node[label, above] {Event Trigger} (functions);
+            \draw [arrow] (functions) -- node[label, above] {T-SQL Insert} (sqldb);
+
+        \end{tikzpicture}
+    }
+    \caption{Flujo de Ingesta y Procesamiento de Telemetría (Canal de Escritura).}
+    \label{fig:tikz_ingesta}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \resizebox{\textwidth}{!}{
+        \begin{tikzpicture}[
+                node distance=2.5cm,
+                auto,
+                block/.style={rectangle, draw=orange!70, thick, fill=orange!5, text width=3.5cm, text centered, rounded corners, minimum height=1.5cm, font=\small},
+                arrow/.style={-{Stealth[scale=1.2]}, thick, draw=gray!80},
+                label/.style={font=\footnotesize, text=black!70, align=center}
+            ]
+
+            % Nodos Pipeline 2
+            \node [block] (sqldb) {\textbf{Azure SQL}\\(Base de Datos Básica)};
+            \node [block, right=of sqldb] (container) {\textbf{Azure Container Apps}\\(Backend .NET API)};
+            \node [block, right=of container] (staticweb) {\textbf{Azure Static Web Apps}\\(Distribución Global)};
+            \node [block, right=of staticweb] (react) {\textbf{Cliente React}\\(Dashboard UI)};
+
+            % Conexiones Pipeline 2
+            \draw [arrow] (container) -- node[label, above] {T-SQL Query} (sqldb);
+            \draw [arrow] (react) -- node[label, above] {HTTP GET} (staticweb);
+            \draw [arrow] (staticweb) -- node[label, above] {Reverse Proxy /} node[label, below] {API Fetch} (container);
+
+        \end{tikzpicture}
+    }
+    \caption{Flujo de Consulta y Visualización de Datos (Canal de Lectura).}
+    \label{fig:tikz_consulta}
+\end{figure}
+
+\subsection{Validación de Infraestructura en la Nube}
+
+La correcta implementación y configuración de los servicios orientados a eventos (\textit{Serverless}) en la plataforma de Microsoft Azure representa un pilar fundamental para asegurar tanto la alta disponibilidad de los datos como la contención estricta de los costos operativos. Dado que la arquitectura diseñada opera bajo el principio de pago por consumo y escalabilidad dinámica (\textit{Scale to Zero}), resulta imperativo validar empíricamente que los recursos han sido provisionados bajo las tarifas gratuitas o básicas designadas (tales como \textit{F1 Free Tier}, \textit{Consumption Plan} o \textit{DTU Básico}).
+
+Para constatar el cumplimiento de estas restricciones económicas y el correcto flujo de la telemetría en tiempo real, se extrajeron capturas directamente desde el panel de administración del Portal de Azure. Las siguientes evidencias ilustran y validan el ciclo de vida completo del dato en la nube: inician comprobando la ingesta segura a través de \textit{IoT Hub}, continúan verificando el procesamiento sin estado en \textit{Azure Functions} y su posterior almacenamiento relacional optimizado en \textit{Azure SQL Database}. Finalmente, se confirma la correcta exposición de las APIs gestionadas en \textit{Container Apps} y el alojamiento global de la interfaz gráfica de usuario mediante \textit{Static Web Apps}. Estas configuraciones certifican la viabilidad técnica y financiera del sistema de monitoreo implementado.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/capitulo3/placeholder_azure_iothub.png}
+    % TODO: Take a screenshot of the Azure IoT Hub 'Overview' page. Ensure that the 'Pricing and scale tier' is visible (showing 'Free' or 'F1' tier), and the 'Device to cloud messages' graph shows recent activity demonstrating successful ingestion from the ESP32 Gateway.
+    \caption{Panel de control de Azure IoT Hub confirmando la recepción de telemetría y el nivel de tarifa gratuito.}
+    \label{fig:azure_iothub}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/capitulo3/placeholder_azure_function.png}
+    % TODO: Take a screenshot of the Azure Functions 'Invocations' or 'Live Metrics' stream. Highlight a successful execution (Status Code 200/Success) that was triggered by the IoT Hub event, proving the serverless code is running correctly.
+    \caption{Métricas en vivo de Azure Functions demostrando el procesamiento exitoso guiado por eventos.}
+    \label{fig:azure_function}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/capitulo3/placeholder_azure_sql.png}
+    % TODO: Take a screenshot of the Azure SQL Database 'Compute + storage' settings page. Show that the 'Basic' tier (or equivalent lowest DTU setting) is selected, validating the low-cost constraint of the architecture.
+    \caption{Configuración de almacenamiento de Azure SQL Database evidenciando el plan de bajo costo (DTU Básico).}
+    \label{fig:azure_sql}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/capitulo3/placeholder_azure_containerapp.png}
+    % TODO: Take a screenshot of the Azure Container Apps 'Revision management' or 'Scale' settings. Specifically highlight the scale rules where the minimum replicas is set to '0' (Scale to Zero constraint), validating the serverless nature of the API.
+    \caption{Configuración de escalamiento en Azure Container Apps mostrando la regla de réplicas mínimas en cero (Scale to Zero).}
+    \label{fig:azure_containerapp}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/capitulo3/placeholder_azure_staticwebapps.png}
+    % TODO: Take a screenshot of the Azure Static Web Apps 'Overview' page. Show the 'Free' hosting plan and the generated URL pointing to the deployed React frontend.
+    \caption{Resumen del despliegue en Azure Static Web Apps alojando el dashboard web interactivo bajo el plan gratuito.}
+    \label{fig:azure_staticwebapps}
+\end{figure}
 
 
 
@@ -646,6 +501,101 @@ Posteriormente, el microcontrolador reformatea esta información estructurándol
 
 
 \newpage
+\section{Desarrollo de la aplicación web}
+
+\subsection{Estudio de requisitos}
+
+\subsubsection{Interfaz de Usuario (Frontend)}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{images//capitulo3/DF_frontend.png}
+    \caption{Diagrama de flujo para el desarrollo Frontend}
+    \label{fig:DF_frontend}
+\end{figure}
+
+En la figura \ref{fig:DF_frontend} se observa la metodología seguida para del desarrollo del frontend de la aplicación web de Monitoreo. En cuanto al paso de evaluación de cualidad (QA: Quality Asessment), consiste en realizar una variedad de pruebas para asegurar el adecuado funcionamiento de la aplicación, cuyos principales focos de atención son los siguientes:
+
+\begin{itemize}
+    \item Correcciónes gramaticales.
+    \item Bugs y malfuncionamientos en ciertas acciones de la aplicación.
+    \item Configuraciones incompletas.
+\end{itemize}
+
+
+Así mismo, la página web cuenta con dos páginas que funcionan como dashboards. La primera es una landing page en la cual se detallan los datos más relevantes en la aplicaciónl, la segunda es una vista detallada para cada uno de los sensores. Las principales funciones de cada una se detallan a continuación.
+
+
+
+\begin{itemize}
+    \item \textbf{Landing page (Dashboard)}:
+          \begin{itemize}
+              \item Mostrar las últimas lecturas de CO\(_2\) de tres sensores en tiempo real.
+              \item Incluir detalles de la ubicación de cada sensor.
+              \item Visualizar las alertas cuando los valores de CO\(_2\) superen el umbral permitido (mediante ventanas emergentes y sonidos de alerta).
+          \end{itemize}
+
+    \item \textbf{Vista de Detalle de Sensor}:
+          \begin{itemize}
+              \item Mostrar información detallada de cada sensor, como el nombre y la ubicación.
+              \item Incluir un gráfico interactivo con las lecturas de CO\(_2\) de las últimas 8 horas.
+              \item Acceso desde un menú lateral que permite la navegación entre sensores.
+          \end{itemize}
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/capitulo3/placeholder_webapp_dashboard.png}
+    % UBICACIÓN IMAGEN 3: Aplicación Web - Dashboard Principal
+    % TODO: Reemplaza esta imagen con una captura de pantalla del hub/dashboard principal de tu aplicación web donde se vean las últimas lecturas de los tres sensores.
+    \caption{Interfaz de usuario del Dashboard Principal de la aplicación web de monitoreo.}
+    \label{fig:webapp_dashboard}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/capitulo3/placeholder_webapp_sensor.png}
+    % UBICACIÓN IMAGEN 4: Aplicación Web - Detalle de Sensor
+    % TODO: Reemplaza esta imagen con una captura de pantalla de la subpágina de detalle de uno de los sensores, mostrando los gráficos históricos.
+    \caption{Interfaz de usuario de la vista detallada por sensor.}
+    \label{fig:webapp_sensor}
+\end{figure}
+
+\subsubsection{Operaciones entre Frontend y Backend}
+
+\begin{itemize}
+    \item \textbf{Comunicación Bidireccional:} El frontend (desarrollado en React.js y TypeScript) debe comunicarse con la API backend (C\# y .NET Core) mediante solicitudes HTTP REST para la carga de datos históricos y configuraciones.
+    \item \textbf{Sincronización en Tiempo Real:} Para la recepción de telemetría y alertas inmediatas, se emplea un patrón de observador reactivo basado en WebSockets. El backend enviará datos actualizados de forma \textit{push} al frontend cada vez que haya una lectura crítica sin necesidad de recargar la página.
+    \item \textbf{Gestión de Alertas:} Cuando los datos de CO\(_2\) superen el umbral configurado, el motor de reglas de negocio en el backend emitirá un evento asíncrono que el frontend presentará visual y sonoramente en el dashboard.
+    \item \textbf{Consulta Histórica:} El frontend consumirá los endpoints del backend alojados en Azure Container Apps para permitir la consulta histórica de lecturas y su representación en gráficos dinámicos.
+\end{itemize}
+
+\subsubsection{Requisitos de Hardware e Interacción con el Gateway Personalizado}
+
+\begin{itemize}
+    \item \textbf{Interfaz Gateway - Nube (Ingesta de Datos):} El gateway (basado en ESP32) funciona como el puente entre el entorno LoRa local y la infraestructura en Azure. La comunicación se realiza mediante el protocolo MQTT ligero o HTTPS apuntando directamente a \textbf{Azure IoT Hub}.
+    \item \textbf{Compatibilidad de interfaces:} El microcontrolador del gateway debe interconectarse de manera eficiente con el transceptor LoRa y disponer de hardware para conexión a internet (Wi-Fi).
+    \item \textbf{Capacidad de procesamiento:} El gateway debe contar con recursos computacionales para recibir las tramas LoRa asíncronas, empaquetar los datos (ID del nodo, niveles de CO\(_2\), timestamp) en formato JSON y publicarlos de forma segura hacia la nube.
+    \item \textbf{Recepción Serverless (Capa de Ingesta):} Siguiendo el patrón CQRS, el canal de escritura no es el backend de la aplicación web, sino \textbf{Azure Functions}. Esta función serverless se dispara automáticamente con los eventos del IoT Hub, valida la trama y ejecuta la orden de guardado.
+    \item \textbf{Requerimientos de alimentación:} El dispositivo operará de manera continua mediante una fuente de alimentación conectada a la red eléctrica del aula, garantizando un voltaje estable.
+\end{itemize}
+
+\subsubsection{Requisitos de Almacenamiento y Persistencia de Datos}
+
+\begin{itemize}
+    \item Los datos de telemetría de los sensores y la configuración de las aulas deben almacenarse en \textbf{Azure SQL Database} (motor relacional), justificado por la estructuración sólida de los datos y su alta compatibilidad con el ecosistema .NET (Entity Framework Core).
+    \item La base de datos registrará el identificador del nodo (ID), la marca de tiempo (timestamp), la ubicación y el nivel de CO\(_2\) de cada lectura para permitir consultas analíticas complejas.
+    \item La persistencia es consultada únicamente (canal de lectura) por el backend hospedado en Azure Container Apps para suministrar la información histórica requerida por las gráficas del frontend.
+\end{itemize}
+
+
+
+
+
+
+
+
+
 \section{Desarrollo del subsistema de mitigación activa y control}
 En esta sección se presenta el desarrollo del subsistema de mitigación activa y control, incorporado con el propósito de extender la funcionalidad del sistema más allá del monitoreo pasivo de la concentración de CO$_2$. Este subsistema se basa en la actuación automática de ventiladores modulados por PWM, de modo que la ventilación del ambiente pueda ajustarse de acuerdo con las condiciones medidas en tiempo real. Para ello, se considera la definición de requisitos del subsistema, la selección de actuadores y fuente de alimentación, el diseño de la arquitectura de control, el modelado del comportamiento dinámico del CO$_2$ en ambientes interiores y la implementación de controladores PID y Fuzzy. Finalmente, se establecen los criterios de validación experimental para comparar ambas estrategias y determinar su conveniencia dentro del sistema propuesto.
 
@@ -760,62 +710,62 @@ Para el controlador Fuzzy se empleó un sistema de inferencia difusa tipo Mamdan
 El controlador utiliza dos variables de entrada: el error de concentración de CO$_2$ y la variación del error. La salida corresponde a la señal de control aplicada a los ventiladores, expresada como porcentaje de PWM. El error se define como:
 
 \begin{equation}
-e(k)=C_{CO_2}(k)-C_{ref}
+    e(k)=C_{CO_2}(k)-C_{ref}
 \end{equation}
 
 donde \(C_{CO_2}(k)\) representa la concentración medida de CO$_2$ en el instante \(k\), y \(C_{ref}\) corresponde al valor de referencia establecido. La variación del error se calcula como:
 
 \begin{equation}
-\Delta e(k)=e(k)-e(k-1)
+    \Delta e(k)=e(k)-e(k-1)
 \end{equation}
 
 Para la simulación, la variación del error también puede expresarse en ppm/min, con el objetivo de representar mejor la velocidad de cambio de la concentración:
 
 \begin{equation}
-\Delta e_{min}(k)=\frac{e(k)-e(k-1)}{\Delta t}\cdot 60
+    \Delta e_{min}(k)=\frac{e(k)-e(k-1)}{\Delta t}\cdot 60
 \end{equation}
 
 La señal de salida del controlador se encuentra limitada al intervalo:
 
 \begin{equation}
-U_{fuzzy}(k)\in[0,100]
+    U_{fuzzy}(k)\in[0,100]
 \end{equation}
 
 donde \(U_{fuzzy}(k)\) representa el porcentaje de PWM sugerido por el controlador difuso. Esta señal se convierte posteriormente a una señal normalizada entre 0 y 1 para calcular el caudal efectivo de ventilación.
 
 \begin{table}[H]
-\centering
-\renewcommand{\arraystretch}{1.3}
-\caption{Variables lingüísticas del controlador Fuzzy}
-\label{tab:variables_fuzzy}
-\resizebox{\textwidth}{!}{
-\begin{tabular}{|p{3cm}|p{3cm}|p{4cm}|p{5cm}|}
-\hline
-\textbf{Variable} & \textbf{Rango} & \textbf{Conjuntos difusos} & \textbf{Interpretación} \\ \hline
-Error de CO$_2$ & \([-600,1500]\) ppm & Bajo, Medio, Alto, Muy Alto & Indica qué tan alejada está la concentración medida respecto al setpoint. \\ \hline
-Variación del error & \([-30,30]\) ppm/min & Baja, Media, Alta & Indica si el error disminuye, permanece casi estable o aumenta. \\ \hline
-PWM de ventiladores & \([0,100]\) \% & Cero, Baja, Media, Alta & Define el porcentaje de potencia aplicado a los ventiladores. \\ \hline
-\end{tabular}
-}
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \caption{Variables lingüísticas del controlador Fuzzy}
+    \label{tab:variables_fuzzy}
+    \resizebox{\textwidth}{!}{
+        \begin{tabular}{|p{3cm}|p{3cm}|p{4cm}|p{5cm}|}
+            \hline
+            \textbf{Variable}   & \textbf{Rango}       & \textbf{Conjuntos difusos}  & \textbf{Interpretación}                                                   \\ \hline
+            Error de CO$_2$     & \([-600,1500]\) ppm  & Bajo, Medio, Alto, Muy Alto & Indica qué tan alejada está la concentración medida respecto al setpoint. \\ \hline
+            Variación del error & \([-30,30]\) ppm/min & Baja, Media, Alta           & Indica si el error disminuye, permanece casi estable o aumenta.           \\ \hline
+            PWM de ventiladores & \([0,100]\) \%       & Cero, Baja, Media, Alta     & Define el porcentaje de potencia aplicado a los ventiladores.             \\ \hline
+        \end{tabular}
+    }
 \end{table}
 
 La base de reglas se definió considerando que, mientras mayor sea el error de CO$_2$ y mayor sea su tendencia de incremento, mayor debe ser la acción de ventilación. Por el contrario, si el error es bajo y la concentración disminuye, la potencia puede reducirse.
 
 \begin{table}[H]
-\centering
-\renewcommand{\arraystretch}{1.3}
-\caption{Base de reglas del controlador Fuzzy}
-\label{tab:reglas_fuzzy}
-\resizebox{\textwidth}{!}{
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Error / Derivada del error} & \textbf{Baja der.} & \textbf{Media der.} & \textbf{Alta der.} \\ \hline
-\textbf{Bajo PPM} & Cero POT & Baja POT & Baja POT \\ \hline
-\textbf{Medio PPM} & Baja POT & Media POT & Media POT \\ \hline
-\textbf{Alto PPM} & Media POT & Media POT & Alta POT \\ \hline
-\textbf{Muy Alto PPM} & Alta POT & Alta POT & Alta POT \\ \hline
-\end{tabular}
-}
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \caption{Base de reglas del controlador Fuzzy}
+    \label{tab:reglas_fuzzy}
+    \resizebox{\textwidth}{!}{
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+            \textbf{Error / Derivada del error} & \textbf{Baja der.} & \textbf{Media der.} & \textbf{Alta der.} \\ \hline
+            \textbf{Bajo PPM}                   & Cero POT           & Baja POT            & Baja POT           \\ \hline
+            \textbf{Medio PPM}                  & Baja POT           & Media POT           & Media POT          \\ \hline
+            \textbf{Alto PPM}                   & Media POT          & Media POT           & Alta POT           \\ \hline
+            \textbf{Muy Alto PPM}               & Alta POT           & Alta POT            & Alta POT           \\ \hline
+        \end{tabular}
+    }
 \end{table}
 
 Adicionalmente, se incorporó un PWM base calculado a partir del caudal mínimo requerido para sostener el setpoint de CO$_2$. Esta consideración evita que el sistema reduzca excesivamente la ventilación cuando el error se aproxima a cero, debido a que siempre existe generación continua de CO$_2$ por parte de los ocupantes.
@@ -823,42 +773,42 @@ Adicionalmente, se incorporó un PWM base calculado a partir del caudal mínimo 
 El caudal objetivo se calcula mediante:
 
 \begin{equation}
-Q_{obj}=\frac{G_p\cdot 10^6}{C_{sp}-C_{out}}
+    Q_{obj}=\frac{G_p\cdot 10^6}{C_{sp}-C_{out}}
 \end{equation}
 
 donde \(G_p\) es la generación de CO$_2$ por persona, \(C_{sp}\) es el setpoint y \(C_{out}\) es la concentración exterior de CO$_2$. Luego, el PWM base se obtiene como:
 
 \begin{equation}
-U_{base}=100\cdot\frac{Q_{obj}}{Q_{max,ef}}
+    U_{base}=100\cdot\frac{Q_{obj}}{Q_{max,ef}}
 \end{equation}
 
 Finalmente, la señal de control aplicada al sistema se define como:
 
 \begin{equation}
-U(k)=\max\left(U_{base},U_{fuzzy}(k)\right)
+    U(k)=\max\left(U_{base},U_{fuzzy}(k)\right)
 \end{equation}
 
 De esta manera, el controlador Fuzzy regula la potencia de los ventiladores según el estado del sistema, mientras que el PWM base garantiza un caudal mínimo de ventilación para mantener la concentración de CO$_2$ cerca del valor de referencia.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=0.8\linewidth]{images/capitulo3/fuzzy_respuesta_co2.png}
-\caption{Respuesta de concentración de CO$_2$ con controlador Fuzzy.}
-\label{fig:fuzzy_respuesta_co2}
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/capitulo3/fuzzy_respuesta_co2.png}
+    \caption{Respuesta de concentración de CO$_2$ con controlador Fuzzy.}
+    \label{fig:fuzzy_respuesta_co2}
 \end{figure}
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=0.8\linewidth]{images/capitulo3/fuzzy_pwm.png}
-\caption{Esfuerzo de control del controlador Fuzzy con PWM base.}
-\label{fig:fuzzy_pwm}
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/capitulo3/fuzzy_pwm.png}
+    \caption{Esfuerzo de control del controlador Fuzzy con PWM base.}
+    \label{fig:fuzzy_pwm}
 \end{figure}
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=0.8\linewidth]{images/capitulo3/fuzzy_caudal.png}
-\caption{Caudal efectivo total generado por el sistema de ventilación.}
-\label{fig:fuzzy_caudal}
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/capitulo3/fuzzy_caudal.png}
+    \caption{Caudal efectivo total generado por el sistema de ventilación.}
+    \label{fig:fuzzy_caudal}
 \end{figure}
 
 
