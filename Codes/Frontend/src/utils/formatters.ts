@@ -59,14 +59,14 @@ export const getTimeRangeLabel = (range: TimeRange): string => {
 
 /**
  * Determina el estado del CO₂ basado en el nivel en ppm.
- * Umbrales basados en estándares ASHRAE:
- * - Normal: < 800 ppm
- * - Elevado: 800-1000 ppm
- * - Crítico: > 1000 ppm
+ * Umbrales alineados con el backend (GetSensors.cs):
+ * - Normal: <= 400 ppm
+ * - Elevado: 400-500 ppm
+ * - Crítico: > 500 ppm
  */
 export const getCO2Status = (ppm: number): CO2Status => {
-  if (ppm > 1000) return 'Crítico';
-  if (ppm > 800) return 'Elevado';
+  if (ppm > 500) return 'Crítico';
+  if (ppm > 400) return 'Elevado';
   return 'Normal';
 };
 

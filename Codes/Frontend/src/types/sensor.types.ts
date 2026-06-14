@@ -33,18 +33,29 @@ export interface Alert {
   time?: string;
 }
 
-/** Registro del historial de alertas */
+/** Registro del historial de alertas (formato string para listas del dashboard) */
 export interface AlertHistoryEntry {
   time: string;
   level: string;
 }
 
-/** Datos de un dataset para gráficas Chart.js */
+/** Una lectura cruda devuelta por /api/readings */
+export interface RawReading {
+  nodeId: string;
+  co2: number;
+  timestamp: string;
+}
+
+/** Datos de un dataset para gráficas Chart.js (data permite nulls para gaps) */
 export interface ChartDataset {
   label: string;
-  data: number[];
+  data: (number | null)[];
   borderColor: string;
+  backgroundColor?: string;
   fill: boolean;
+  tension?: number;
+  pointRadius?: number;
+  pointHoverRadius?: number;
 }
 
 /** Datos formateados para Chart.js */
@@ -61,6 +72,12 @@ export interface SystemStats {
   totalAlerts: number;
 }
 
+/** Entrada de historial de alertas para un sensor individual */
+export interface SensorAlertEntry {
+  time: string;
+  level: number;
+}
+
 /** Datos de detalle de un sensor individual */
 export interface SensorDetailData {
   sensorName: string;
@@ -69,5 +86,5 @@ export interface SensorDetailData {
   currentStatus: string;
   stats: SystemStats;
   chartData: ChartData;
-  alertHistory: { time: string; level: number }[];
+  alertHistory: SensorAlertEntry[];
 }

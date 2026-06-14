@@ -10,289 +10,203 @@ import {
   TimeRange,
   SystemStats,
   SensorDetailData,
+  RawReading,
+  SensorAlertEntry,
 } from '../types/sensor.types';
+import { getCO2Status } from '../utils/formatters';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://func-co2-yfifyk.azurewebsites.net/api';
 
 // =============================================================================
-// DATOS DUMMY — Simulan las respuestas de la API de Azure Container Apps.
-// Reemplazar con llamadas fetch reales cuando el backend esté disponible.
+// Mapeo: id numérico de la URL ↔ NodeId del backend ↔ nombre legible
+// El backend expone "Node_01" en /api/readings y el nombre "Aula 101"
+// en /api/sensors. Mantenemos este mapa sincronizado con el backend.
+// =============================================================================
+export const SENSOR_ID_TO_NODE: Record<number, { nodeId: string; name: string; location: string }> = {
+  1: { nodeId: 'Node_01', name: 'Aula 101', location: 'Piso 1' },
+  2: { nodeId: 'Node_02', name: 'Laboratorio', location: 'Piso 2' },
+  3: { nodeId: 'Node_03', name: 'Biblioteca', location: 'Piso 1' },
+};
+
+export const ALERT_THRESHOLD = 500;
+export const CRITICAL_THRESHOLD = 1000;
+
+// =============================================================================
+// Helpers de transformación
 // =============================================================================
 
-const DUMMY_SENSORS: Sensor[] = [
-  { id: 1, name: 'Aula 101', location: 'Piso 1', currentLevel: 450, status: 'Elevado', lastUpdate: '10:30 AM' },
-  { id: 2, name: 'Laboratorio', location: 'Piso 2', currentLevel: 500, status: 'Crítico', lastUpdate: '10:25 AM' },
-  { id: 3, name: 'Biblioteca', location: 'Piso 1', currentLevel: 420, status: 'Normal', lastUpdate: '10:28 AM' },
-];
-
-const DUMMY_ACTIVE_ALERTS: Alert[] = [
-  { id: 1, location: 'Aula 101', level: '550 ppm', status: 'Elevado' },
-  { id: 2, location: 'Laboratorio', level: '520 ppm', status: 'Crítico' },
-  { id: 3, location: 'Biblioteca', level: '530 ppm', status: 'Elevado' },
-];
-
-const DUMMY_ALERT_HISTORY: AlertHistoryEntry[] = [
-  { time: '08:00', level: '510 ppm' },
-  { time: '06:00', level: '500 ppm' },
-  { time: '04:00', level: '490 ppm' },
-];
-
-const DUMMY_STATS: SystemStats = {
-  averageCO2: 460,
-  maxCO2: 500,
-  alertTimeHours: 2,
-  totalAlerts: 3,
+const safeJson = async <T,>(res: Response, context: string): Promise<T | null> => {
+  try {
+    return (await res.json()) as T;
+  } catch (e) {
+    console.warn(`[api] Invalid JSON in ${context}`, e);
+    return null;
+  }
 };
 
-const DUMMY_CHART_DATA: Record<TimeRange, ChartData> = {
-  '1h': {
-    labels: ['0m', '15m', '30m', '45m', '1h'],
-    datasets: [
-      { label: 'Aula 101', data: [420, 425, 430, 428, 429], borderColor: '#42A5F5', fill: false },
-      { label: 'Laboratorio', data: [450, 452, 453, 451, 450], borderColor: '#66BB6A', fill: false },
-      { label: 'Biblioteca', data: [470, 472, 473, 471, 470], borderColor: '#FFA726', fill: false },
-    ],
-  },
-  '3h': {
-    labels: ['0h', '1h', '2h', '3h'],
-    datasets: [
-      { label: 'Aula 101', data: [420, 430, 440, 445], borderColor: '#42A5F5', fill: false },
-      { label: 'Laboratorio', data: [450, 455, 458, 460], borderColor: '#66BB6A', fill: false },
-      { label: 'Biblioteca', data: [470, 475, 478, 480], borderColor: '#FFA726', fill: false },
-    ],
-  },
-  '12h': {
-    labels: ['0h', '3h', '6h', '9h', '12h'],
-    datasets: [
-      { label: 'Aula 101', data: [420, 430, 450, 460, 470], borderColor: '#42A5F5', fill: false },
-      { label: 'Laboratorio', data: [450, 455, 460, 465, 470], borderColor: '#66BB6A', fill: false },
-      { label: 'Biblioteca', data: [470, 480, 490, 495, 500], borderColor: '#FFA726', fill: false },
-    ],
-  },
-  '24h': {
-    labels: ['0h', '6h', '12h', '18h', '24h'],
-    datasets: [
-      { label: 'Aula 101', data: [420, 440, 460, 470, 480], borderColor: '#42A5F5', fill: false },
-      { label: 'Laboratorio', data: [450, 460, 470, 475, 480], borderColor: '#66BB6A', fill: false },
-      { label: 'Biblioteca', data: [470, 485, 495, 500, 510], borderColor: '#FFA726', fill: false },
-    ],
-  },
-  '7d': {
-    labels: ['1d', '2d', '3d', '4d', '5d', '6d', '7d'],
-    datasets: [
-      { label: 'Aula 101', data: [420, 440, 460, 470, 480, 450, 440], borderColor: '#42A5F5', fill: false },
-      { label: 'Laboratorio', data: [450, 460, 470, 475, 480, 490, 500], borderColor: '#66BB6A', fill: false },
-      { label: 'Biblioteca', data: [470, 485, 495, 500, 510, 520, 530], borderColor: '#FFA726', fill: false },
-    ],
-  },
-  'june': {
-    labels: ['W1', 'W2', 'W3', 'W4'],
-    datasets: [
-      { label: 'Aula 101', data: [420, 440, 460, 470], borderColor: '#42A5F5', fill: false },
-      { label: 'Laboratorio', data: [450, 460, 470, 475], borderColor: '#66BB6A', fill: false },
-      { label: 'Biblioteca', data: [470, 485, 495, 500], borderColor: '#FFA726', fill: false },
-    ],
-  },
+const labelForRange = (d: Date, range: TimeRange): string => {
+  if (range === 'june' || range === '7d' || range === '24h' || range === '12h') {
+    return d.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
-const DUMMY_SENSOR_DETAILS: Record<number, SensorDetailData> = {
-  1: {
-    sensorName: 'Sensor Aula 101',
-    location: 'Aula 101',
-    currentLevel: 480,
-    currentStatus: 'Elevado',
-    stats: { averageCO2: 460, maxCO2: 500, alertTimeHours: 2, totalAlerts: 3 },
-    chartData: {
-      labels: ['0h', '2h', '4h', '6h', '8h'],
-      datasets: [{ label: 'CO₂ ppm', data: [420, 450, 470, 480, 490], borderColor: '#42A5F5', fill: false }],
-    },
-    alertHistory: [
-      { time: '08:00', level: 510 },
-      { time: '06:00', level: 500 },
-      { time: '04:00', level: 490 },
+const buildSingleSensorChart = (readings: RawReading[], range: TimeRange): ChartData => {
+  if (readings.length === 0) {
+    return { labels: [], datasets: [] };
+  }
+
+  const sorted = [...readings].sort(
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+  );
+
+  const labels = sorted.map(r => labelForRange(new Date(r.timestamp), range));
+  const data = sorted.map(r => r.co2);
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'CO₂ ppm',
+        data,
+        borderColor: '#42A5F5',
+        backgroundColor: 'rgba(66,165,245,0.15)',
+        fill: false,
+        tension: 0.25,
+        pointRadius: 2,
+        pointHoverRadius: 5,
+      },
     ],
-  },
-  2: {
-    sensorName: 'Sensor Laboratorio',
-    location: 'Laboratorio',
-    currentLevel: 520,
-    currentStatus: 'Crítico',
-    stats: { averageCO2: 490, maxCO2: 540, alertTimeHours: 4, totalAlerts: 7 },
-    chartData: {
-      labels: ['0h', '2h', '4h', '6h', '8h'],
-      datasets: [{ label: 'CO₂ ppm', data: [480, 500, 510, 530, 520], borderColor: '#66BB6A', fill: false }],
-    },
-    alertHistory: [
-      { time: '09:00', level: 540 },
-      { time: '07:00', level: 530 },
-      { time: '05:00', level: 515 },
-    ],
-  },
-  3: {
-    sensorName: 'Sensor Biblioteca',
-    location: 'Biblioteca',
-    currentLevel: 410,
-    currentStatus: 'Normal',
-    stats: { averageCO2: 400, maxCO2: 430, alertTimeHours: 0, totalAlerts: 0 },
-    chartData: {
-      labels: ['0h', '2h', '4h', '6h', '8h'],
-      datasets: [{ label: 'CO₂ ppm', data: [390, 400, 410, 420, 410], borderColor: '#FFA726', fill: false }],
-    },
-    alertHistory: [],
-  },
+  };
 };
 
-// Datos de gráfica por sensor y rango de tiempo (para la subpágina de detalle)
-const DUMMY_SENSOR_CHART_BY_RANGE: Record<number, Record<TimeRange, ChartData>> = {
-  1: {
-    '1h': {
-      labels: ['0m', '15m', '30m', '45m', '1h'],
-      datasets: [{ label: 'CO₂ ppm', data: [475, 478, 480, 482, 480], borderColor: '#42A5F5', fill: false }],
-    },
-    '3h': {
-      labels: ['0h', '1h', '2h', '3h'],
-      datasets: [{ label: 'CO₂ ppm', data: [460, 470, 478, 480], borderColor: '#42A5F5', fill: false }],
-    },
-    '12h': {
-      labels: ['0h', '3h', '6h', '9h', '12h'],
-      datasets: [{ label: 'CO₂ ppm', data: [430, 445, 460, 475, 480], borderColor: '#42A5F5', fill: false }],
-    },
-    '24h': {
-      labels: ['0h', '4h', '8h', '12h', '16h', '20h', '24h'],
-      datasets: [{ label: 'CO₂ ppm', data: [420, 435, 450, 460, 470, 478, 490], borderColor: '#42A5F5', fill: false }],
-    },
-    '7d': {
-      labels: ['1d', '2d', '3d', '4d', '5d', '6d', '7d'],
-      datasets: [{ label: 'CO₂ ppm', data: [420, 435, 450, 460, 470, 478, 490], borderColor: '#42A5F5', fill: false }],
-    },
-    'june': {
-      labels: ['W1', 'W2', 'W3', 'W4'],
-      datasets: [{ label: 'CO₂ ppm', data: [420, 435, 450, 460], borderColor: '#42A5F5', fill: false }],
-    },
-  },
-  2: {
-    '1h': {
-      labels: ['0m', '15m', '30m', '45m', '1h'],
-      datasets: [{ label: 'CO₂ ppm', data: [515, 518, 520, 522, 520], borderColor: '#66BB6A', fill: false }],
-    },
-    '3h': {
-      labels: ['0h', '1h', '2h', '3h'],
-      datasets: [{ label: 'CO₂ ppm', data: [500, 510, 518, 520], borderColor: '#66BB6A', fill: false }],
-    },
-    '12h': {
-      labels: ['0h', '3h', '6h', '9h', '12h'],
-      datasets: [{ label: 'CO₂ ppm', data: [480, 495, 505, 515, 520], borderColor: '#66BB6A', fill: false }],
-    },
-    '24h': {
-      labels: ['0h', '4h', '8h', '12h', '16h', '20h', '24h'],
-      datasets: [{ label: 'CO₂ ppm', data: [470, 485, 500, 510, 520, 530, 520], borderColor: '#66BB6A', fill: false }],
-    },
-    '7d': {
-      labels: ['1d', '2d', '3d', '4d', '5d', '6d', '7d'],
-      datasets: [{ label: 'CO₂ ppm', data: [470, 485, 500, 510, 520, 530, 520], borderColor: '#66BB6A', fill: false }],
-    },
-    'june': {
-      labels: ['W1', 'W2', 'W3', 'W4'],
-      datasets: [{ label: 'CO₂ ppm', data: [470, 485, 500, 510], borderColor: '#66BB6A', fill: false }],
-    },
-  },
-  3: {
-    '1h': {
-      labels: ['0m', '15m', '30m', '45m', '1h'],
-      datasets: [{ label: 'CO₂ ppm', data: [408, 409, 410, 411, 410], borderColor: '#FFA726', fill: false }],
-    },
-    '3h': {
-      labels: ['0h', '1h', '2h', '3h'],
-      datasets: [{ label: 'CO₂ ppm', data: [400, 405, 408, 410], borderColor: '#FFA726', fill: false }],
-    },
-    '12h': {
-      labels: ['0h', '3h', '6h', '9h', '12h'],
-      datasets: [{ label: 'CO₂ ppm', data: [390, 395, 400, 405, 410], borderColor: '#FFA726', fill: false }],
-    },
-    '24h': {
-      labels: ['0h', '4h', '8h', '12h', '16h', '20h', '24h'],
-      datasets: [{ label: 'CO₂ ppm', data: [380, 385, 390, 395, 400, 405, 410], borderColor: '#FFA726', fill: false }],
-    },
-    '7d': {
-      labels: ['1d', '2d', '3d', '4d', '5d', '6d', '7d'],
-      datasets: [{ label: 'CO₂ ppm', data: [380, 385, 390, 395, 400, 405, 410], borderColor: '#FFA726', fill: false }],
-    },
-    'june': {
-      labels: ['W1', 'W2', 'W3', 'W4'],
-      datasets: [{ label: 'CO₂ ppm', data: [380, 385, 390, 395], borderColor: '#FFA726', fill: false }],
-    },
-  },
+const computeStats = (readings: RawReading[]): SystemStats => {
+  if (readings.length === 0) {
+    return { averageCO2: 0, maxCO2: 0, alertTimeHours: 0, totalAlerts: 0 };
+  }
+  const values = readings.map(r => r.co2);
+  const sum = values.reduce((a, b) => a + b, 0);
+  const average = Math.round(sum / values.length);
+  const max = Math.max(...values);
+  const alertReadings = readings.filter(r => r.co2 > ALERT_THRESHOLD);
+
+  // Asumimos muestreo uniforme: 1 alerta ≈ 1 minuto encima del umbral.
+  // Aproximación razonable hasta que el backend exponga duración real.
+  const alertTimeHours = Math.round((alertReadings.length / 60) * 10) / 10;
+
+  return {
+    averageCO2: average,
+    maxCO2: max,
+    alertTimeHours,
+    totalAlerts: alertReadings.length,
+  };
+};
+
+const computeAlertHistory = (readings: RawReading[], limit = 10): SensorAlertEntry[] => {
+  return readings
+    .filter(r => r.co2 > ALERT_THRESHOLD)
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .slice(0, limit)
+    .map(r => ({
+      time: new Date(r.timestamp).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      level: r.co2,
+    }));
+};
+
+const computeCurrentLevel = (readings: RawReading[]): number => {
+  if (readings.length === 0) return 0;
+  const sorted = [...readings].sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
+  return sorted[0].co2;
 };
 
 // =============================================================================
-// API SERVICE — Funciones que simulan llamadas a la API.
-// Cuando el backend esté listo, reemplazar los returns por fetch().
+// API: Sensores y lecturas
 // =============================================================================
 
 export const fetchSensors = async (): Promise<Sensor[]> => {
   try {
     const res = await fetch(`${API_BASE_URL}/sensors`);
-    if (!res.ok) throw new Error('Failed to fetch from API');
-    return await res.json();
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await safeJson<Sensor[]>(res, 'fetchSensors');
+    if (!Array.isArray(data)) throw new Error('Sensors payload not an array');
+    return data;
   } catch (error) {
-    console.warn('API call failed, falling back to dummy data', error);
-    return Promise.resolve(DUMMY_SENSORS);
+    console.warn('[api] fetchSensors failed', error);
+    return [];
   }
 };
 
 /**
- * Obtiene las alertas activas del sistema.
+ * Construye los datos de detalle de un sensor a partir de las lecturas reales.
+ * Si la API falla, devuelve null para que la UI pueda mostrar estado de error.
  */
-export const fetchActiveAlerts = async (): Promise<Alert[]> => {
-  // TODO: Reemplazar con: const res = await fetch(`${API_BASE_URL}/alerts/active`);
-  return Promise.resolve(DUMMY_ACTIVE_ALERTS);
-};
+export const fetchSensorDetail = async (sensorId: number): Promise<SensorDetailData | null> => {
+  const meta = SENSOR_ID_TO_NODE[sensorId];
+  if (!meta) return null;
 
-/**
- * Obtiene el historial de alertas.
- */
-export const fetchAlertHistory = async (): Promise<AlertHistoryEntry[]> => {
-  // TODO: Reemplazar con: const res = await fetch(`${API_BASE_URL}/alerts/history`);
-  return Promise.resolve(DUMMY_ALERT_HISTORY);
-};
+  try {
+    // Traemos lecturas de 24h para tener el "nivel actual" confiable.
+    const res = await fetch(`${API_BASE_URL}/readings?range=24h`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const raw = (await safeJson<RawReading[]>(res, 'fetchSensorDetail')) ?? [];
 
-/**
- * Obtiene las estadísticas generales del sistema.
- */
-export const fetchStats = async (): Promise<SystemStats> => {
-  // TODO: Reemplazar con: const res = await fetch(`${API_BASE_URL}/stats`);
-  return Promise.resolve(DUMMY_STATS);
-};
+    const nodeReadings = raw.filter(r => r.nodeId === meta.nodeId);
+    const currentLevel = computeCurrentLevel(nodeReadings);
+    const stats = computeStats(nodeReadings);
+    const chartData = buildSingleSensorChart(nodeReadings, '24h');
+    const alertHistory = computeAlertHistory(nodeReadings);
 
-interface RawReading {
-  nodeId: string;
-  co2: number;
-  timestamp: string;
-}
-
-const processChartData = (readings: RawReading[], timeRange: TimeRange): ChartData => {
-  if (readings.length === 0) {
     return {
-      labels: ['Sin datos en este periodo'],
-      datasets: [{ label: 'N/A', data: [], borderColor: 'transparent', fill: false }]
+      sensorName: `Sensor ${meta.name}`,
+      location: meta.location,
+      currentLevel,
+      currentStatus: getCO2Status(currentLevel),
+      stats,
+      chartData,
+      alertHistory,
     };
+  } catch (error) {
+    console.warn('[api] fetchSensorDetail failed', error);
+    return null;
+  }
+};
+
+export const fetchSensorDetailChart = async (
+  sensorId: number,
+  timeRange: TimeRange
+): Promise<ChartData> => {
+  const meta = SENSOR_ID_TO_NODE[sensorId];
+  if (!meta) return { labels: [], datasets: [] };
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/readings?range=${encodeURIComponent(timeRange)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const raw = (await safeJson<RawReading[]>(res, 'fetchSensorDetailChart')) ?? [];
+    const nodeReadings = raw.filter(r => r.nodeId === meta.nodeId);
+    return buildSingleSensorChart(nodeReadings, timeRange);
+  } catch (error) {
+    console.warn('[api] fetchSensorDetailChart failed', error);
+    return { labels: [], datasets: [] };
+  }
+};
+
+// =============================================================================
+// API: Dashboard (chart agregado + alertas + stats)
+// =============================================================================
+
+export const processChartData = (readings: RawReading[], timeRange: TimeRange): ChartData => {
+  if (readings.length === 0) {
+    return { labels: [], datasets: [] };
   }
 
   readings.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
 
   const nodeIds = Array.from(new Set(readings.map(r => r.nodeId)));
-  
-  // Extract all unique raw timestamps to preserve every single data point
   const uniqueTimestamps = Array.from(new Set(readings.map(r => r.timestamp)));
-  
-  const labels = uniqueTimestamps.map(ts => {
-    const d = new Date(ts);
-    if (timeRange === 'june' || timeRange === '7d' || timeRange === '24h' || timeRange === '12h') {
-      return d.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-    }
-    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  });
-  
+
+  const labels = uniqueTimestamps.map(ts => labelForRange(new Date(ts), timeRange));
   const colors = ['#42A5F5', '#66BB6A', '#FFA726', '#AB47BC', '#EC407A'];
 
   const datasets = nodeIds.map((nodeId, idx) => {
@@ -304,7 +218,7 @@ const processChartData = (readings: RawReading[], timeRange: TimeRange): ChartDa
 
     return {
       label: nodeId,
-      data: data as any,
+      data,
       borderColor: colors[idx % colors.length],
       fill: false,
       tension: 0.1,
@@ -318,22 +232,84 @@ const processChartData = (readings: RawReading[], timeRange: TimeRange): ChartDa
 
 export const fetchChartData = async (timeRange: TimeRange): Promise<ChartData> => {
   try {
-    const res = await fetch(`${API_BASE_URL}/readings?range=${timeRange}`);
-    if (!res.ok) throw new Error('Failed to fetch chart data');
-    const rawData: RawReading[] = await res.json();
-    return processChartData(rawData, timeRange);
+    const res = await fetch(`${API_BASE_URL}/readings?range=${encodeURIComponent(timeRange)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const raw = (await safeJson<RawReading[]>(res, 'fetchChartData')) ?? [];
+    return processChartData(raw, timeRange);
   } catch (error) {
-    console.warn('API call failed, falling back to dummy data', error);
-    return Promise.resolve(DUMMY_CHART_DATA[timeRange] || DUMMY_CHART_DATA['24h']);
+    console.warn('[api] fetchChartData failed', error);
+    return { labels: [], datasets: [] };
   }
 };
 
-export const fetchSensorDetail = async (sensorId: number): Promise<SensorDetailData | null> => {
-  return Promise.resolve(DUMMY_SENSOR_DETAILS[sensorId] || null);
+/**
+ * Alertas activas: derivamos de las últimas 24h, filtrando lecturas por encima
+ * del umbral y agrupando por nodo. Una vez que exista un endpoint dedicado,
+ * reemplazar.
+ */
+export const fetchActiveAlerts = async (): Promise<Alert[]> => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/readings?range=24h`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const raw = (await safeJson<RawReading[]>(res, 'fetchActiveAlerts')) ?? [];
+
+    const byNode = new Map<string, RawReading>();
+    raw.forEach(r => {
+      const prev = byNode.get(r.nodeId);
+      if (!prev || new Date(r.timestamp) > new Date(prev.timestamp)) {
+        byNode.set(r.nodeId, r);
+      }
+    });
+
+    const alerts: Alert[] = [];
+    let counter = 1;
+    byNode.forEach(reading => {
+      if (reading.co2 > ALERT_THRESHOLD) {
+        const status = reading.co2 > CRITICAL_THRESHOLD ? 'Crítico' : 'Elevado';
+        alerts.push({
+          id: counter++,
+          location: reading.nodeId,
+          level: `${reading.co2} ppm`,
+          status,
+          time: new Date(reading.timestamp).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        });
+      }
+    });
+    return alerts;
+  } catch (error) {
+    console.warn('[api] fetchActiveAlerts failed', error);
+    return [];
+  }
 };
 
-export const fetchSensorDetailChart = async (sensorId: number, timeRange: TimeRange): Promise<ChartData> => {
-  const sensorCharts = DUMMY_SENSOR_CHART_BY_RANGE[sensorId];
-  if (!sensorCharts) return { labels: [], datasets: [] };
-  return Promise.resolve(sensorCharts[timeRange] || sensorCharts['24h']);
+export const fetchAlertHistory = async (): Promise<AlertHistoryEntry[]> => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/readings?range=24h`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const raw = (await safeJson<RawReading[]>(res, 'fetchAlertHistory')) ?? [];
+
+    return raw
+      .filter(r => r.co2 > ALERT_THRESHOLD)
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, 10)
+      .map(r => ({
+        time: new Date(r.timestamp).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        level: `${r.co2} ppm`,
+      }));
+  } catch (error) {
+    console.warn('[api] fetchAlertHistory failed', error);
+    return [];
+  }
+};
+
+export const fetchStats = async (): Promise<SystemStats> => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/readings?range=24h`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const raw = (await safeJson<RawReading[]>(res, 'fetchStats')) ?? [];
+    return computeStats(raw);
+  } catch (error) {
+    console.warn('[api] fetchStats failed', error);
+    return { averageCO2: 0, maxCO2: 0, alertTimeHours: 0, totalAlerts: 0 };
+  }
 };

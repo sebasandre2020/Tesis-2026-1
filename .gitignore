@@ -28,3 +28,7 @@ local.settings.json
 .vs/
 
 notebooklm-config.json
+
+skills-lock.json
+
+.agents/
