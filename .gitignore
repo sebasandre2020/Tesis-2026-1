@@ -17,6 +17,14 @@
 *.synctex.gz
 *.pdf
 
-Codes/
+# Codes/
+
+# C# build artifacts and settings
+[Bb]in/
+[Oo]bj/
+[Pp]ublish/
+*.zip
+local.settings.json
+.vs/
 
 notebooklm-config.json
