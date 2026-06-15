@@ -20,3 +20,42 @@ Congratulations! The entire IoT CO₂ Monitoring System is now live in the cloud
 - If you intend to use GitHub Actions in the future (as planned initially), the workflows are ready in `.github/workflows`. You simply need to push the code to a GitHub repository and add the following repository secrets:
   - `AZURE_STATIC_WEB_APPS_API_TOKEN` (for the frontend deployment)
   - `AZURE_CREDENTIALS` (for the backend deployment)
+
+## 6. Apply database migrations (REQUIRED before first deploy, and after every schema change)
+
+Schema changes are **not** part of the function code. They live as
+versioned, idempotent SQL files in
+[`Codes/Backend/Migrations/`](../Backend/Migrations/README.md).
+
+Apply them **before** deploying a new version of the Azure Functions
+code that depends on the new schema (e.g. the `DustLevel`,
+`Temperature`, `Humidity` columns added in V001).
+
+Quickest path via Azure Portal:
+
+1. SQL database `sqldb-co2-telemetry` → **Query editor (preview)**.
+2. Sign in as `adminuser` (or any account with `db_owner` / `db_ddladmin`).
+3. Paste and run the contents of each migration file in order:
+   - `Migrations/V000__baseline.sql`
+   - `Migrations/V001__add_dust_temperature_humidity.sql`
+   - (future: `V002__…sql`, …)
+
+The scripts are idempotent — running them twice is a no-op.
+
+For CI/CD usage and verification queries, see
+[`Migrations/README.md`](../Backend/Migrations/README.md).
+
+### Managed-identity permission model (post-cleanup)
+
+The function app's system-assigned managed identity now only needs:
+
+- `db_datareader` — to read `TelemetryReadings`.
+- `db_datawriter` — to insert telemetry rows.
+
+It does **not** need `db_ddladmin`. If you previously granted it
+during a manual fix-up, it's safe to revoke:
+
+```sql
+-- Run as AAD admin in master
+ALTER ROLE db_ddladmin DROP MEMBER [<MI_NAME>];
+```

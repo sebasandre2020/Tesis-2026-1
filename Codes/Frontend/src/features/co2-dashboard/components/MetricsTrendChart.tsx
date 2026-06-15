@@ -1,11 +1,12 @@
 // src/features/co2-dashboard/components/MetricsTrendChart.tsx
-// Componente PRESENTACIONAL — Gráfica comparativa de métricas (multi-sensor) entre
-// los nodos. Las tabs permiten alternar entre CO₂ / Polvo / Temperatura / Humedad.
+// Componente PRESENTACIONAL — Gráfica comparativa de métricas entre los
+// nodos, con tabs de métrica y líneas de umbral (dashed) por métrica.
 
 import React from 'react';
 import { Chart } from 'primereact/chart';
 import { ChartData, MetricType, TimeRange } from '../../../types/sensor.types';
 import { METRIC_META, getTimeRangeLabel } from '../../../utils/formatters';
+import { THRESHOLD_LINES } from '../../../utils/chartThresholds';
 import MetricTabs from '../../../components/MetricTabs';
 
 interface MetricsTrendChartProps {
@@ -39,6 +40,9 @@ const MetricsTrendChart: React.FC<MetricsTrendChartProps> = ({
               ? `${ctx.dataset.label ?? ''}: sin datos`
               : `${ctx.dataset.label ?? ''}: ${ctx.parsed.y.toFixed(meta.decimals)} ${meta.unit}`,
         },
+      },
+      thresholdAnnotation: {
+        lines: THRESHOLD_LINES[metric],
       },
     },
     scales: {

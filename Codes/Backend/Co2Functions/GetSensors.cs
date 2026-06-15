@@ -15,17 +15,16 @@ namespace Co2Functions
         private readonly ILogger _logger;
 
         // Umbrales alineados con el frontend (getCO2Status / getMetricStatus).
+        // Capa única: si los modificas aquí, replica en
+        // Codes/Frontend/src/utils/formatters.ts.
         private const int CO2Elevado = 400;
         private const int CO2Critico = 500;
-        // PM2.5 µg/m³ (OMS 2021): 0-35 normal, 35-55 elevado, >55 crítico
         private const int DustElevado = 35;
         private const int DustCritico = 55;
-        // Temperatura °C (confort): 18-26 normal, fuera crítico si >30 o <16
         private const decimal TempLowCritico = 16m;
         private const decimal TempHighCritico = 30m;
         private const decimal TempLowElevado = 18m;
         private const decimal TempHighElevado = 26m;
-        // Humedad %: 30-60 normal, fuera crítico si >75 o <20
         private const decimal HumLowCritico = 20m;
         private const decimal HumHighCritico = 75m;
         private const decimal HumLowElevado = 30m;
@@ -61,35 +60,10 @@ namespace Co2Functions
                 {
                     await conn.OpenAsync();
 
-                    // 1. Crear tabla si no existe (seed legacy)
-                    var initDbSql = @"
-                        IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='TelemetryReadings' and xtype='U')
-                        BEGIN
-                            CREATE TABLE TelemetryReadings (
-                                Id INT IDENTITY(1,1) PRIMARY KEY,
-                                NodeId NVARCHAR(50) NOT NULL,
-                                Co2Level INT NOT NULL,
-                                Timestamp DATETIME DEFAULT GETDATE()
-                            );
-
-                            INSERT INTO TelemetryReadings (NodeId, Co2Level) VALUES
-                            ('Aula 101', 450),
-                            ('Laboratorio', 500),
-                            ('Biblioteca', 420);
-                        END
-                    ";
-                    using (SqlCommand initCmd = new SqlCommand(initDbSql, conn))
-                    {
-                        await initCmd.ExecuteNonQueryAsync();
-                    }
-
-                    // 2. Migración idempotente: añade las nuevas columnas si la tabla ya existía.
-                    //    Esto es seguro de ejecutar en cada arranque; sin pérdida de datos.
-                    await EnsureColumnAsync(conn, "TelemetryReadings", "DustLevel", "INT NULL");
-                    await EnsureColumnAsync(conn, "TelemetryReadings", "Temperature", "DECIMAL(5,2) NULL");
-                    await EnsureColumnAsync(conn, "TelemetryReadings", "Humidity", "DECIMAL(5,2) NULL");
-
-                    // 3. Última lectura por nodo (incluyendo las métricas nuevas).
+                    // Lectura pura: la tabla es creada/migrada por
+                    // Codes/Backend/Migrations/V000__baseline.sql y
+                    // V001__add_dust_temperature_humidity.sql.
+                    // Esta function ya NO hace DDL.
                     var text = @"
                         WITH RankedReadings AS (
                             SELECT
@@ -150,7 +124,11 @@ namespace Co2Functions
             catch (Exception ex)
             {
                 _logger.LogError($"Error querying SQL Database: {ex.Message}");
-                // No datos fake: el frontend ya no debe depender de valores dummy.
+                // Devolvemos 500 para que el error sea visible; ya no swallow
+                // errores de DDL porque esta function no hace DDL.
+                var errorResponse = req.CreateResponse(HttpStatusCode.InternalServerError);
+                await errorResponse.WriteStringAsync(JsonSerializer.Serialize(new { error = ex.Message }));
+                return errorResponse;
             }
 
             var response = req.CreateResponse(HttpStatusCode.OK);
@@ -160,25 +138,6 @@ namespace Co2Functions
             await response.WriteStringAsync(jsonString);
 
             return response;
-        }
-
-        private async Task EnsureColumnAsync(SqlConnection conn, string table, string column, string definition)
-        {
-            var sql = $@"
-                IF NOT EXISTS (
-                    SELECT 1 FROM sys.columns
-                    WHERE object_id = OBJECT_ID(@Table) AND name = @Column
-                )
-                BEGIN
-                    EXEC('ALTER TABLE ' + @Table + ' ADD ' + @Column + ' ' + @Definition);
-                END";
-            using (var cmd = new SqlCommand(sql, conn))
-            {
-                cmd.Parameters.AddWithValue("@Table", table);
-                cmd.Parameters.AddWithValue("@Column", column);
-                cmd.Parameters.AddWithValue("@Definition", definition);
-                await cmd.ExecuteNonQueryAsync();
-            }
         }
 
         private static string ComputeCO2Status(int? ppm)

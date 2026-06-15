@@ -1,10 +1,12 @@
 // src/features/sensor-detail/components/SensorReadingsChart.tsx
-// Componente PRESENTACIONAL — Gráfica de lecturas recientes de un sensor con tabs de métrica.
+// Componente PRESENTACIONAL — Gráfica de lecturas recientes de un sensor con
+// tabs de métrica + líneas de umbral (dashed) por métrica.
 
 import React from 'react';
 import { Chart } from 'primereact/chart';
 import { ChartData, MetricType, TimeRange } from '../../../types/sensor.types';
 import { METRIC_META, getTimeRangeLabel } from '../../../utils/formatters';
+import { THRESHOLD_LINES } from '../../../utils/chartThresholds';
 import MetricTabs from '../../../components/MetricTabs';
 
 interface SensorReadingsChartProps {
@@ -36,6 +38,10 @@ const SensorReadingsChart: React.FC<SensorReadingsChartProps> = ({
           label: (ctx: { parsed: { y: number | null } }) =>
             ctx.parsed.y === null ? 'Sin datos' : `${ctx.parsed.y.toFixed(meta.decimals)} ${meta.unit}`,
         },
+      },
+      // El plugin custom dibuja las líneas de umbral leyendo este array.
+      thresholdAnnotation: {
+        lines: THRESHOLD_LINES[metric],
       },
     },
     scales: {

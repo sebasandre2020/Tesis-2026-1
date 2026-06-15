@@ -3,6 +3,11 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { registerThresholdAnnotationPlugin } from './utils/thresholdAnnotationPlugin';
+
+// Registramos el plugin de líneas de umbral una sola vez al arrancar la app.
+// El plugin lee options.plugins.thresholdAnnotation.lines por instancia de Chart.
+registerThresholdAnnotationPlugin();
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
