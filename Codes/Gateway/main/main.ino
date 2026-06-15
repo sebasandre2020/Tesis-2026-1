@@ -30,7 +30,7 @@ unsigned long lastSampleTime = 0;
 void setup() {
     Serial.begin(115200);
     delay(1000);
-    Serial.println("Starting IoT CO2 Gateway (Simulation Mode)...");
+    Serial.println("Starting IoT Multi-Sensor Gateway (Simulation Mode)...");
 
     // Initialize LoRa Module (Kept for hardware readiness, though we bypass it for now)
     lora.begin();
@@ -49,12 +49,27 @@ void loop() {
     if (currentMillis - lastSampleTime >= IAQ_SAMPLING_INTERVAL_MS || lastSampleTime == 0) {
         lastSampleTime = currentMillis;
 
-        // Simulate realistic classroom CO2 varying between 400 (fresh air) and 1200 (stuffy)
+        // === SIMULACIÓN DE SENSORES ===
+        // CO2 (MH-Z19): 400-1200 ppm
         int simulatedCO2 = random(400, 1200);
-        
-        // Construct the JSON payload for Node_01
-        String payload = "{\"node_id\": \"Node_01\", \"co2\": " + String(simulatedCO2) + "}";
-        
+
+        // Polvo (Sharp GP2Y1010AU0F): 0-150 µg/m³ (PM2.5-ish, valores indoor típicos)
+        int simulatedDust = random(0, 150);
+
+        // Temperatura (DHT22): 16-30 °C con 1 decimal
+        float simulatedTemp = random(160, 300) / 10.0f;
+
+        // Humedad relativa (DHT22): 25-75 %
+        float simulatedHum = random(250, 750) / 10.0f;
+
+        // Payload JSON con los 4 sensores: co2 (MH-Z19) + polvo (Sharp) + temp/humedad (DHT22)
+        String payload = "{\"node_id\":\"Node_01\""
+                       + ",\"co2\":" + String(simulatedCO2)
+                       + ",\"dust\":" + String(simulatedDust)
+                       + ",\"temperature\":" + String(simulatedTemp, 1)
+                       + ",\"humidity\":" + String(simulatedHum, 1)
+                       + "}";
+
         Serial.print("[SIMULATION] Generated payload: ");
         Serial.println(payload);
 

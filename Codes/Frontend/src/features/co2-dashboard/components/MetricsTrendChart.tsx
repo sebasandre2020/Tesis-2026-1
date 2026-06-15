@@ -1,5 +1,6 @@
-// src/features/sensor-detail/components/SensorReadingsChart.tsx
-// Componente PRESENTACIONAL — Gráfica de lecturas recientes de un sensor con tabs de métrica.
+// src/features/co2-dashboard/components/MetricsTrendChart.tsx
+// Componente PRESENTACIONAL — Gráfica comparativa de métricas (multi-sensor) entre
+// los nodos. Las tabs permiten alternar entre CO₂ / Polvo / Temperatura / Humedad.
 
 import React from 'react';
 import { Chart } from 'primereact/chart';
@@ -7,18 +8,18 @@ import { ChartData, MetricType, TimeRange } from '../../../types/sensor.types';
 import { METRIC_META, getTimeRangeLabel } from '../../../utils/formatters';
 import MetricTabs from '../../../components/MetricTabs';
 
-interface SensorReadingsChartProps {
+interface MetricsTrendChartProps {
   data: ChartData;
   metric: MetricType;
   onMetricChange: (m: MetricType) => void;
-  timeRange?: TimeRange;
+  timeRange: TimeRange;
   loading?: boolean;
 }
 
 const hasData = (data: ChartData) =>
-  data.datasets.length > 0 && data.datasets.some(d => d.data.length > 0);
+  data.datasets.length > 0 && data.datasets.some(d => d.data.some(v => v !== null && v !== undefined));
 
-const SensorReadingsChart: React.FC<SensorReadingsChartProps> = ({
+const MetricsTrendChart: React.FC<MetricsTrendChartProps> = ({
   data,
   metric,
   onMetricChange,
@@ -30,11 +31,13 @@ const SensorReadingsChart: React.FC<SensorReadingsChartProps> = ({
     maintainAspectRatio: false,
     responsive: true,
     plugins: {
-      legend: { display: false },
+      legend: { display: true, position: 'top' as const },
       tooltip: {
         callbacks: {
-          label: (ctx: { parsed: { y: number | null } }) =>
-            ctx.parsed.y === null ? 'Sin datos' : `${ctx.parsed.y.toFixed(meta.decimals)} ${meta.unit}`,
+          label: (ctx: { parsed: { y: number | null }; dataset: { label?: string } }) =>
+            ctx.parsed.y === null
+              ? `${ctx.dataset.label ?? ''}: sin datos`
+              : `${ctx.dataset.label ?? ''}: ${ctx.parsed.y.toFixed(meta.decimals)} ${meta.unit}`,
         },
       },
     },
@@ -46,34 +49,30 @@ const SensorReadingsChart: React.FC<SensorReadingsChartProps> = ({
     },
   };
 
-  const title = timeRange
-    ? `Lecturas — ${getTimeRangeLabel(timeRange)}`
-    : 'Lecturas Recientes';
-
   return (
     <div
-      id={`chart-panel-${metric}`}
+      id={`dashboard-chart-panel-${metric}`}
       role="tabpanel"
-      aria-label={`Gráfica de ${meta.label}`}
+      aria-label={`Gráfica comparativa de ${meta.label}`}
       className="bg-white p-4 rounded-lg shadow-md border border-gray-200 h-full flex flex-col"
     >
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
-        <h3 className="text-lg font-semibold">{title}</h3>
-      </div>
+      <h2 className="text-xl font-semibold mb-2">
+        Tendencias de {meta.label} — {getTimeRangeLabel(timeRange)}
+      </h2>
 
-      <MetricTabs value={metric} onChange={onMetricChange} className="mb-2" />
+      <MetricTabs value={metric} onChange={onMetricChange} className="mb-3" />
 
-      <div className="relative flex-1 min-h-[280px]">
+      <div className="relative flex-1 min-h-[320px]">
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/70 z-10">
-            <p className="text-gray-500">Cargando lecturas...</p>
+            <p className="text-gray-500">Cargando datos...</p>
           </div>
         )}
         {!loading && !hasData(data) ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
             <p className="text-gray-500 font-medium">Sin lecturas de {meta.label.toLowerCase()} en este período.</p>
             <p className="text-sm text-gray-400 mt-1">
-              Este sensor aún no tiene datos para la métrica seleccionada.
+              Aún no se han recibido lecturas para esta métrica en el rango seleccionado.
             </p>
           </div>
         ) : (
@@ -84,4 +83,4 @@ const SensorReadingsChart: React.FC<SensorReadingsChartProps> = ({
   );
 };
 
-export default SensorReadingsChart;
+export default MetricsTrendChart;

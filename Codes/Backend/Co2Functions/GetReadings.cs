@@ -57,16 +57,16 @@ namespace Co2Functions
                 {
                     await conn.OpenAsync();
 
-                    var text = isJune 
+                    var text = isJune
                         ? @"
-                            SELECT NodeId, Co2Level, Timestamp 
-                            FROM TelemetryReadings 
+                            SELECT NodeId, Co2Level, DustLevel, Temperature, Humidity, Timestamp
+                            FROM TelemetryReadings
                             WHERE Timestamp >= '2026-06-01T00:00:00Z' AND Timestamp < '2026-07-01T00:00:00Z'
                             ORDER BY Timestamp ASC;
                         "
                         : @"
-                            SELECT NodeId, Co2Level, Timestamp 
-                            FROM TelemetryReadings 
+                            SELECT NodeId, Co2Level, DustLevel, Temperature, Humidity, Timestamp
+                            FROM TelemetryReadings
                             WHERE Timestamp >= DATEADD(hour, -@Hours, GETUTCDATE())
                             ORDER BY Timestamp ASC;
                         ";
@@ -87,15 +87,21 @@ namespace Co2Functions
                                 else if (nodeId == "Node_02") name = "Laboratorio";
                                 else if (nodeId == "Node_03") name = "Biblioteca";
 
-                                var co2Level = reader.GetInt32(1);
-                                var timestamp = reader.GetDateTime(2);
+                                var co2Level = reader.IsDBNull(1) ? (int?)null : reader.GetInt32(1);
+                                int? dustLevel = reader.IsDBNull(2) ? (int?)null : reader.GetInt32(2);
+                                decimal? temperature = reader.IsDBNull(3) ? (decimal?)null : reader.GetDecimal(3);
+                                decimal? humidity = reader.IsDBNull(4) ? (decimal?)null : reader.GetDecimal(4);
+                                var timestamp = reader.GetDateTime(5);
 
                                 readings.Add(new
                                 {
                                     nodeId = name,
                                     co2 = co2Level,
+                                    dust = dustLevel,
+                                    temperature = temperature,
+                                    humidity = humidity,
                                     // Specify 'Z' so the frontend knows it's UTC
-                                    timestamp = DateTime.SpecifyKind(timestamp, DateTimeKind.Utc).ToString("o") 
+                                    timestamp = DateTime.SpecifyKind(timestamp, DateTimeKind.Utc).ToString("o")
                                 });
                             }
                         }
@@ -105,12 +111,12 @@ namespace Co2Functions
             catch (Exception ex)
             {
                 _logger.LogError($"Error querying SQL Database: {ex.Message}");
-                // Return empty array on failure
+                // Return empty array on failure (frontend already handles empty)
             }
 
             var response = req.CreateResponse(HttpStatusCode.OK);
             response.Headers.Add("Content-Type", "application/json");
-            
+
             var jsonString = JsonSerializer.Serialize(readings, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
             await response.WriteStringAsync(jsonString);
 

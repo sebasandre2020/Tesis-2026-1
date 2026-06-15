@@ -1,16 +1,22 @@
 // src/features/sensor-detail/containers/SensorDetailContainer.tsx
-// Componente CONTENEDOR (Smart) — Obtiene datos del sensor desde la capa de servicios
-// y los pasa a componentes presentacionales.
+// Componente CONTENEDOR (Smart) — Datos del sensor desde la API + tab de métrica
+// para la gráfica. La métrica principal (CO₂) sigue siendo la base de las
+// alertas y el "snapshot" actual; Polvo / Temperatura / Humedad se exponen
+// en el widget de lecturas actuales y como pestañas de la gráfica.
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { FaExclamationTriangle, FaSyncAlt } from 'react-icons/fa';
+import { FaExclamationTriangle, FaInfoCircle, FaSyncAlt } from 'react-icons/fa';
 import Sidebar from '../../../components/Sidebar';
 import SensorReadingsChart from '../components/SensorReadingsChart';
 import SensorStatsPanel from '../components/SensorStatsPanel';
-import CurrentCO2Widget from '../components/CurrentCO2Widget';
-import { fetchSensorDetail, fetchSensorDetailChart, SENSOR_ID_TO_NODE } from '../../../services/api';
-import { SensorDetailData, ChartData, TimeRange } from '../../../types/sensor.types';
+import CurrentReadingsWidget from '../components/CurrentReadingsWidget';
+import {
+  fetchSensorDetail,
+  fetchSensorDetailChart,
+  SENSOR_ID_TO_NODE,
+} from '../../../services/api';
+import { SensorDetailData, ChartData, TimeRange, MetricType } from '../../../types/sensor.types';
 import { getTimeRangeLabel } from '../../../utils/formatters';
 
 const TIME_RANGE_OPTIONS: { value: TimeRange; label: string }[] = [
@@ -34,13 +40,13 @@ const SensorDetailContainer: React.FC = () => {
   const sensorId = parseSensorId(id);
 
   const [timeRange, setTimeRange] = useState<TimeRange>('24h');
+  const [metric, setMetric] = useState<MetricType>('co2');
   const [sensorData, setSensorData] = useState<SensorDetailData | null>(null);
   const [chartData, setChartData] = useState<ChartData>({ labels: [], datasets: [] });
   const [loading, setLoading] = useState(true);
   const [chartLoading, setChartLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Carga inicial: datos del sensor (stats, alertas, info general)
   useEffect(() => {
     if (sensorId === null) {
       setError('ID de sensor inválido. Use 1, 2 o 3.');
@@ -76,7 +82,6 @@ const SensorDetailContainer: React.FC = () => {
     };
   }, [sensorId]);
 
-  // Carga reactiva: gráfica según timeRange
   useEffect(() => {
     if (sensorId === null) return;
 
@@ -84,7 +89,7 @@ const SensorDetailContainer: React.FC = () => {
     setChartLoading(true);
     setChartData({ labels: [], datasets: [] });
 
-    fetchSensorDetailChart(sensorId, timeRange)
+    fetchSensorDetailChart(sensorId, timeRange, metric)
       .then(chart => {
         if (!cancelled) setChartData(chart);
       })
@@ -98,7 +103,7 @@ const SensorDetailContainer: React.FC = () => {
     return () => {
       cancelled = true;
     };
-  }, [sensorId, timeRange]);
+  }, [sensorId, timeRange, metric]);
 
   if (sensorId === null) {
     return (
@@ -153,22 +158,43 @@ const SensorDetailContainer: React.FC = () => {
           <p className="text-gray-600">Ubicación: {sensorData.location}</p>
         </div>
 
+        {sensorData.hasPartialReadings && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-lg p-3 flex items-start gap-2">
+            <FaInfoCircle className="mt-0.5 flex-shrink-0" />
+            <span>
+              Algunas lecturas anteriores a la migración aún no incluyen los 3 sensores nuevos.
+              Esos puntos se omiten automáticamente en la gráfica cuando es posible.
+            </span>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 min-h-0">
           <div className="lg:col-span-2 min-h-[360px]">
             <SensorReadingsChart
               data={chartData}
+              metric={metric}
+              onMetricChange={setMetric}
+              timeRange={timeRange}
               loading={chartLoading}
-              title={`Lecturas — ${getTimeRangeLabel(timeRange)}`}
             />
           </div>
 
           <div className="flex flex-col gap-4 min-h-[360px]">
-            <CurrentCO2Widget currentLevel={sensorData.currentLevel} currentStatus={sensorData.currentStatus} />
+            <CurrentReadingsWidget
+              co2={sensorData.currentLevel}
+              co2Status={sensorData.currentStatus}
+              dust={sensorData.currentDust}
+              dustStatus={sensorData.currentDustStatus}
+              temperature={sensorData.currentTemperature}
+              temperatureStatus={sensorData.currentTemperatureStatus}
+              humidity={sensorData.currentHumidity}
+              humidityStatus={sensorData.currentHumidityStatus}
+            />
             <SensorStatsPanel stats={sensorData.stats} />
             <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
-              <h3 className="text-lg font-semibold mb-2">Filtrar por Período</h3>
+              <h3 className="text-sm font-semibold mb-2">Filtrar por Período</h3>
               <select
-                className="w-full p-2 border rounded"
+                className="w-full p-2 border rounded text-sm"
                 value={timeRange}
                 onChange={(e) => setTimeRange(e.target.value as TimeRange)}
               >
@@ -176,11 +202,14 @@ const SensorDetailContainer: React.FC = () => {
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
+              <p className="text-[10px] text-gray-500 mt-1.5">
+                Mostrando: {getTimeRangeLabel(timeRange)}
+              </p>
             </div>
           </div>
 
           <div className="lg:col-span-3 bg-white p-4 rounded-lg shadow-md border border-gray-200">
-            <h3 className="text-lg font-semibold mb-4">Historial de Alertas</h3>
+            <h3 className="text-lg font-semibold mb-4">Historial de Alertas (CO₂)</h3>
             {sensorData.alertHistory.length === 0 ? (
               <p className="text-gray-500 text-center py-4">No hay alertas registradas para este sensor.</p>
             ) : (

@@ -23,7 +23,7 @@ namespace Co2Functions
             foreach (var message in messages)
             {
                 _logger.LogInformation($"C# IoT Hub trigger function processed a message: {message}");
-                await InsertIntoDatabaseAsync("Debug_Raw", 0, message);
+                await InsertIntoDatabaseAsync("Debug_Raw", 0, null, null, null, message);
 
                 try
                 {
@@ -32,6 +32,9 @@ namespace Co2Functions
                         var root = document.RootElement;
                         string nodeId = "";
                         int co2Level = 0;
+                        int? dustLevel = null;
+                        decimal? temperature = null;
+                        decimal? humidity = null;
 
                         if (root.TryGetProperty("node_id", out JsonElement nodeElement) || root.TryGetProperty("NodeId", out nodeElement))
                         {
@@ -40,32 +43,64 @@ namespace Co2Functions
 
                         if (root.TryGetProperty("co2", out JsonElement co2Element) || root.TryGetProperty("Co2Level", out co2Element))
                         {
-                            if (co2Element.ValueKind == JsonValueKind.Number) co2Level = co2Element.GetInt32();
-                            else if (co2Element.ValueKind == JsonValueKind.String) int.TryParse(co2Element.GetString(), out co2Level);
+                            co2Level = ReadInt(co2Element);
+                        }
+
+                        // Nuevos sensores: toleramos ausencia (mensajes legacy) con NULL.
+                        if (root.TryGetProperty("dust", out JsonElement dustElement) || root.TryGetProperty("DustLevel", out dustElement))
+                        {
+                            int parsed = ReadInt(dustElement);
+                            dustLevel = parsed >= 0 ? parsed : (int?)null;
+                        }
+
+                        if (root.TryGetProperty("temperature", out JsonElement tempElement) || root.TryGetProperty("Temperature", out tempElement))
+                        {
+                            decimal parsed = ReadDecimal(tempElement);
+                            temperature = parsed > -100m && parsed < 100m ? parsed : (decimal?)null;
+                        }
+
+                        if (root.TryGetProperty("humidity", out JsonElement humElement) || root.TryGetProperty("Humidity", out humElement))
+                        {
+                            decimal parsed = ReadDecimal(humElement);
+                            humidity = parsed >= 0m && parsed <= 100m ? parsed : (decimal?)null;
                         }
 
                         if (string.IsNullOrEmpty(nodeId))
                         {
                             nodeId = "Unknown_Node";
                         }
-                        
+
                         if (nodeId != "Unknown_Node")
                         {
-                            await InsertIntoDatabaseAsync(nodeId, co2Level, message);
+                            await InsertIntoDatabaseAsync(nodeId, co2Level, dustLevel, temperature, humidity, message);
                         }
-                        
-                        _logger.LogInformation($"Successfully processed reading for {nodeId} with CO2: {co2Level}");
+
+                        _logger.LogInformation($"Successfully processed reading for {nodeId} (co2={co2Level}, dust={dustLevel}, temp={temperature}, hum={humidity})");
                     }
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError($"Failed to parse JSON: {ex.Message}");
-                    await InsertIntoDatabaseAsync("Exception", 0, "EXCEPTION PARSING: " + ex.Message + " | RAW: " + message);
+                    await InsertIntoDatabaseAsync("Exception", 0, null, null, null, "EXCEPTION PARSING: " + ex.Message + " | RAW: " + message);
                 }
             }
         }
 
-        private async Task InsertIntoDatabaseAsync(string nodeId, int co2Level, string rawMessage)
+        private static int ReadInt(JsonElement el)
+        {
+            if (el.ValueKind == JsonValueKind.Number) return el.GetInt32();
+            if (el.ValueKind == JsonValueKind.String && int.TryParse(el.GetString(), out var n)) return n;
+            return 0;
+        }
+
+        private static decimal ReadDecimal(JsonElement el)
+        {
+            if (el.ValueKind == JsonValueKind.Number) return el.GetDecimal();
+            if (el.ValueKind == JsonValueKind.String && decimal.TryParse(el.GetString(), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var d)) return d;
+            return 0m;
+        }
+
+        private async Task InsertIntoDatabaseAsync(string nodeId, int co2Level, int? dustLevel, decimal? temperature, decimal? humidity, string rawMessage)
         {
             var connectionString = Environment.GetEnvironmentVariable("SqlEndpoint");
             if (string.IsNullOrEmpty(connectionString)) return;
@@ -81,11 +116,16 @@ namespace Co2Functions
                 {
                     await conn.OpenAsync();
 
-                    var text = "INSERT INTO TelemetryReadings (NodeId, Co2Level) VALUES (@NodeId, @Co2Level);";
+                    // INSERT con columnas nuevas; pasamos DBNull cuando el valor es null.
+                    var text = @"INSERT INTO TelemetryReadings (NodeId, Co2Level, DustLevel, Temperature, Humidity)
+                                 VALUES (@NodeId, @Co2Level, @DustLevel, @Temperature, @Humidity);";
                     using (SqlCommand cmd = new SqlCommand(text, conn))
                     {
                         cmd.Parameters.AddWithValue("@NodeId", nodeId);
                         cmd.Parameters.AddWithValue("@Co2Level", co2Level);
+                        cmd.Parameters.AddWithValue("@DustLevel", (object?)dustLevel ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("@Temperature", (object?)temperature ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("@Humidity", (object?)humidity ?? DBNull.Value);
                         await cmd.ExecuteNonQueryAsync();
                     }
                 }
@@ -101,5 +141,8 @@ namespace Co2Functions
     {
         public string node_id { get; set; } = string.Empty;
         public int co2 { get; set; }
+        public int? dust { get; set; }
+        public decimal? temperature { get; set; }
+        public decimal? humidity { get; set; }
     }
 }

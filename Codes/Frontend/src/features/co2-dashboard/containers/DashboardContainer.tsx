@@ -1,11 +1,11 @@
 // src/features/co2-dashboard/containers/DashboardContainer.tsx
-// Componente CONTENEDOR (Smart) — Gestiona la lógica de negocio y el estado.
-// Se comunica con la capa de servicios y pasa datos a componentes presentacionales.
+// Componente CONTENEDOR (Smart) — Carga los datos del dashboard y coordina
+// la métrica seleccionada para la gráfica comparativa.
 
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../../../components/Sidebar';
 import SensorCard from '../components/SensorCard';
-import CO2TrendChart from '../components/CO2TrendChart';
+import MetricsTrendChart from '../components/MetricsTrendChart';
 import StatisticsPanel from '../components/StatisticsPanel';
 import AlertHistoryList from '../components/AlertHistoryList';
 import AlertList from '../components/AlertList';
@@ -18,7 +18,9 @@ import {
   fetchStats,
   fetchChartData,
 } from '../../../services/api';
-import { Sensor, Alert, AlertHistoryEntry, SystemStats, ChartData } from '../../../types/sensor.types';
+import {
+  Sensor, Alert, AlertHistoryEntry, SystemStats, ChartData, MetricType,
+} from '../../../types/sensor.types';
 
 interface DashboardData {
   sensors: Sensor[];
@@ -38,10 +40,12 @@ const EMPTY: DashboardData = {
 
 const DashboardContainer: React.FC = () => {
   const { timeRange, setTimeRange } = useTimeRange('24h');
+  const [metric, setMetric] = useState<MetricType>('co2');
   const [data, setData] = useState<DashboardData>(EMPTY);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Sensores + alertas + stats no dependen de la métrica → cargan una sola vez.
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -52,12 +56,11 @@ const DashboardContainer: React.FC = () => {
       fetchActiveAlerts(),
       fetchAlertHistory(),
       fetchStats(),
-      fetchChartData(timeRange),
     ])
-      .then(([sensors, alerts, history, stats, chartData]) => {
+      .then(([sensors, alerts, history, stats]) => {
         if (cancelled) return;
-        setData({ sensors, alerts, history, stats, chartData });
-        if (sensors.length === 0 && chartData.datasets.length === 0) {
+        setData(prev => ({ ...prev, sensors, alerts, history, stats }));
+        if (sensors.length === 0) {
           setError('No se pudieron obtener datos. Verifica la conexión con la API.');
         }
       })
@@ -73,7 +76,22 @@ const DashboardContainer: React.FC = () => {
     return () => {
       cancelled = true;
     };
-  }, [timeRange]);
+  }, []);
+
+  // El chart comparativo depende de timeRange + métrica → recarga dedicada.
+  useEffect(() => {
+    let cancelled = false;
+    fetchChartData(timeRange, metric)
+      .then(chartData => {
+        if (!cancelled) setData(prev => ({ ...prev, chartData }));
+      })
+      .catch(err => {
+        if (!cancelled) console.error(err);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [timeRange, metric]);
 
   return (
     <div className="dashboard flex h-screen overflow-hidden">
@@ -87,7 +105,7 @@ const DashboardContainer: React.FC = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 min-h-[180px]">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 min-h-[200px]">
           <div className="lg:col-span-3 sensor-overview">
             {loading && data.sensors.length === 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 h-full">
@@ -112,8 +130,14 @@ const DashboardContainer: React.FC = () => {
           </div>
         </div>
 
-        <div className="min-h-[360px]">
-          <CO2TrendChart data={data.chartData} timeRange={timeRange} loading={loading} />
+        <div className="min-h-[400px]">
+          <MetricsTrendChart
+            data={data.chartData}
+            metric={metric}
+            onMetricChange={setMetric}
+            timeRange={timeRange}
+            loading={loading && data.chartData.datasets.length === 0}
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
