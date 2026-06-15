@@ -82,10 +82,14 @@ namespace Co2Functions
                                 var nodeId = reader.GetString(0);
                                 if (!nodeId.StartsWith("Node_")) continue; // Skip Debug_Raw, Exception, etc.
 
-                                string name = nodeId;
-                                if (nodeId == "Node_01") name = "Aula 101";
-                                else if (nodeId == "Node_02") name = "Laboratorio";
-                                else if (nodeId == "Node_03") name = "Biblioteca";
+                                // Mantenemos nodeId canónico (Node_01) como id principal
+                                // y exponemos un displayName separado para que el
+                                // frontend pueda usar el id para filtrar y el nombre
+                                // legible para mostrar al usuario (chart legend, etc.).
+                                string displayName = nodeId;
+                                if (nodeId == "Node_01") displayName = "Aula 101";
+                                else if (nodeId == "Node_02") displayName = "Laboratorio";
+                                else if (nodeId == "Node_03") displayName = "Biblioteca";
 
                                 var co2Level = reader.IsDBNull(1) ? (int?)null : reader.GetInt32(1);
                                 int? dustLevel = reader.IsDBNull(2) ? (int?)null : reader.GetInt32(2);
@@ -95,7 +99,8 @@ namespace Co2Functions
 
                                 readings.Add(new
                                 {
-                                    nodeId = name,
+                                    nodeId = nodeId,
+                                    displayName = displayName,
                                     co2 = co2Level,
                                     dust = dustLevel,
                                     temperature = temperature,

@@ -34,6 +34,13 @@ export const SENSOR_ID_TO_NODE: Record<number, { nodeId: string; name: string; l
   3: { nodeId: 'Node_03', name: 'Biblioteca', location: 'Piso 1' },
 };
 
+/** Tabla de nodeId -> nombre legible (para legends/labels en la UI). */
+const NODE_ID_TO_NAME: Record<string, string> = Object.values(SENSOR_ID_TO_NODE)
+  .reduce((acc, s) => { acc[s.nodeId] = s.name; return acc; }, {} as Record<string, string>);
+
+const displayName = (r: RawReading): string =>
+  r.displayName || NODE_ID_TO_NAME[r.nodeId] || r.nodeId;
+
 export const CO2_ALERT_THRESHOLD = 500;
 
 // =============================================================================
@@ -56,7 +63,6 @@ const labelForRange = (d: Date, range: TimeRange): string => {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
-/** Extrae el valor numérico de la métrica solicitada, devolviendo null si falta. */
 const valueFor = (r: RawReading, metric: MetricType): number | null => {
   switch (metric) {
     case 'co2': return r.co2;
@@ -66,15 +72,11 @@ const valueFor = (r: RawReading, metric: MetricType): number | null => {
   }
 };
 
-const hasAnyMetricValue = (r: RawReading, metrics: MetricType[]): boolean =>
-  metrics.some(m => valueFor(r, m) !== null);
-
 const buildSingleSensorChart = (
   readings: RawReading[],
   range: TimeRange,
   metric: MetricType
 ): ChartData => {
-  // Filtramos lecturas que tengan la métrica (saltamos nulls para evitar huecos falsos).
   const filtered = readings.filter(r => valueFor(r, metric) !== null);
   if (filtered.length === 0) return { labels: [], datasets: [] };
 
@@ -103,7 +105,6 @@ const buildSingleSensorChart = (
 };
 
 const computeStats = (readings: RawReading[]): SystemStats => {
-  // Las stats de IAQ se calculan sobre CO2 (métrica principal de alertas).
   const co2Readings = readings.filter(r => r.co2 !== null);
   if (co2Readings.length === 0) {
     return { averageCO2: 0, maxCO2: 0, alertTimeHours: 0, totalAlerts: 0 };
@@ -113,7 +114,6 @@ const computeStats = (readings: RawReading[]): SystemStats => {
   const average = Math.round(sum / values.length);
   const max = Math.max(...values);
   const alertReadings = co2Readings.filter(r => (r.co2 as number) > CO2_ALERT_THRESHOLD);
-  // Aproximación: 1 lectura ≈ 1 minuto (muestreo del gateway).
   const alertTimeHours = Math.round((alertReadings.length / 60) * 10) / 10;
   return {
     averageCO2: average,
@@ -134,15 +134,6 @@ const computeAlertHistory = (readings: RawReading[], limit = 10): SensorAlertEnt
     }));
 };
 
-const computeCurrentLevel = (readings: RawReading[]): number => {
-  const withCo2 = readings.filter(r => r.co2 !== null);
-  if (withCo2.length === 0) return 0;
-  const sorted = [...withCo2].sort(
-    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-  );
-  return sorted[0].co2 as number;
-};
-
 const computeLatestNumeric = (readings: RawReading[], metric: MetricType): number | null => {
   const withMetric = readings.filter(r => valueFor(r, metric) !== null);
   if (withMetric.length === 0) return null;
@@ -150,6 +141,15 @@ const computeLatestNumeric = (readings: RawReading[], metric: MetricType): numbe
     (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
   );
   return valueFor(sorted[0], metric);
+};
+
+const computeCurrentLevel = (readings: RawReading[]): number => {
+  const withCo2 = readings.filter(r => r.co2 !== null);
+  if (withCo2.length === 0) return 0;
+  const sorted = [...withCo2].sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
+  return sorted[0].co2 as number;
 };
 
 // =============================================================================
@@ -169,27 +169,62 @@ export const fetchSensors = async (): Promise<Sensor[]> => {
   }
 };
 
+/**
+ * Datos completos del sensor para la página de detalle.
+ *
+ * Estrategia de "latest reading" para los widgets de lecturas actuales:
+ *  - El widget debe mostrar la última lectura conocida, no la última del rango
+ *    seleccionado (que puede estar vacío si los datos son antiguos).
+ *  - Por eso, además de /readings?range=24h (para chart+stats+alerts),
+ *    también llamamos a /sensors que devuelve la última lectura por nodo
+ *    sin filtro de tiempo.
+ *  - Si /sensors tiene la lectura más reciente que /readings?range=24h,
+ *    usamos esa para los widgets. Si /sensors falla, caemos al cómputo
+ *    desde /readings.
+ */
 export const fetchSensorDetail = async (sensorId: number): Promise<SensorDetailData | null> => {
   const meta = SENSOR_ID_TO_NODE[sensorId];
   if (!meta) return null;
 
   try {
-    const res = await fetch(`${API_BASE_URL}/readings?range=24h`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const raw = (await safeJson<RawReading[]>(res, 'fetchSensorDetail')) ?? [];
-
+    // Traemos lecturas del rango seleccionado para chart/stats/alerts.
+    // (Usamos 24h como baseline; el chart específico se carga después con
+    // el rango que el usuario elija en la UI.)
+    const [res24h, sensors] = await Promise.all([
+      fetch(`${API_BASE_URL}/readings?range=24h`).then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r;
+      }),
+      fetchSensors(),
+    ]);
+    const raw = (await safeJson<RawReading[]>(res24h, 'fetchSensorDetail')) ?? [];
     const nodeReadings = raw.filter(r => r.nodeId === meta.nodeId);
 
-    const currentLevel = computeCurrentLevel(nodeReadings);
-    const currentDust = computeLatestNumeric(nodeReadings, 'dust');
-    const currentTemperature = computeLatestNumeric(nodeReadings, 'temperature');
-    const currentHumidity = computeLatestNumeric(nodeReadings, 'humidity');
+    // Para los widgets de "lectura actual", usamos /sensors (que devuelve
+    // la última lectura sin importar el rango de tiempo).
+    const sensorFromSensors = sensors.find(
+      s => s.nodeId === meta.nodeId || NODE_ID_TO_NAME[s.nodeId ?? ''] === meta.name
+    );
+
+    const fallbackReadings = sensorFromSensors ? [{
+      co2: sensorFromSensors.currentLevel ?? null,
+      dust: sensorFromSensors.dustLevel ?? null,
+      temperature: sensorFromSensors.temperature ?? null,
+      humidity: sensorFromSensors.humidity ?? null,
+      timestamp: new Date().toISOString(),
+    } as RawReading] : [];
+
+    const sourceReadings = nodeReadings.length > 0 ? nodeReadings : fallbackReadings;
+
+    const currentLevel = computeCurrentLevel(sourceReadings);
+    const currentDust = sensorFromSensors?.dustLevel ?? computeLatestNumeric(sourceReadings, 'dust');
+    const currentTemperature = sensorFromSensors?.temperature ?? computeLatestNumeric(sourceReadings, 'temperature');
+    const currentHumidity = sensorFromSensors?.humidity ?? computeLatestNumeric(sourceReadings, 'humidity');
 
     const stats = computeStats(nodeReadings);
     const chartData = buildSingleSensorChart(nodeReadings, '24h', 'co2');
     const alertHistory = computeAlertHistory(nodeReadings);
 
-    // hasPartialReadings = true si al menos una lectura tiene CO2 pero no las nuevas métricas.
     const hasPartialReadings = nodeReadings.some(
       r => r.co2 !== null && (r.dust === null || r.temperature === null || r.humidity === null)
     );
@@ -199,12 +234,12 @@ export const fetchSensorDetail = async (sensorId: number): Promise<SensorDetailD
       location: meta.location,
       currentLevel,
       currentStatus: getCO2Status(currentLevel),
-      currentDust,
-      currentDustStatus: currentDust === null ? 'Normal' : getDustStatus(currentDust),
-      currentTemperature,
-      currentTemperatureStatus: currentTemperature === null ? 'Normal' : getTemperatureStatus(currentTemperature),
-      currentHumidity,
-      currentHumidityStatus: currentHumidity === null ? 'Normal' : getHumidityStatus(currentHumidity),
+      currentDust: currentDust ?? null,
+      currentDustStatus: currentDust === null || currentDust === undefined ? 'Normal' : getDustStatus(currentDust),
+      currentTemperature: currentTemperature ?? null,
+      currentTemperatureStatus: currentTemperature === null || currentTemperature === undefined ? 'Normal' : getTemperatureStatus(currentTemperature),
+      currentHumidity: currentHumidity ?? null,
+      currentHumidityStatus: currentHumidity === null || currentHumidity === undefined ? 'Normal' : getHumidityStatus(currentHumidity),
       stats,
       chartData,
       alertHistory,
@@ -242,14 +277,14 @@ export const fetchSensorDetailChart = async (
 
 /**
  * Construye un ChartData comparativo entre todos los nodos para una métrica.
- * Las lecturas sin la métrica se cuentan como huecos (null) en la serie del nodo.
+ * Las etiquetas usan el displayName (no el nodeId crudo) para que la
+ * leyenda se vea amigable ("Aula 101" en vez de "Node_01").
  */
 export const processChartData = (
   readings: RawReading[],
   timeRange: TimeRange,
   metric: MetricType
 ): ChartData => {
-  // Solo lecturas que tengan al menos la métrica solicitada.
   const filtered = readings.filter(r => valueFor(r, metric) !== null);
   if (filtered.length === 0) return { labels: [], datasets: [] };
 
@@ -271,7 +306,7 @@ export const processChartData = (
     });
 
     return {
-      label: nodeId,
+      label: displayName(nodeReadings[0]) || nodeId,
       data,
       borderColor: colors[idx % colors.length],
       fill: false,
@@ -299,10 +334,6 @@ export const fetchChartData = async (
   }
 };
 
-/**
- * Alertas activas: derivamos de las últimas 24h usando CO2 (métrica IAQ principal).
- * Una vez que exista un endpoint dedicado, reemplazar.
- */
 export const fetchActiveAlerts = async (): Promise<Alert[]> => {
   try {
     const res = await fetch(`${API_BASE_URL}/readings?range=24h`);
@@ -324,7 +355,7 @@ export const fetchActiveAlerts = async (): Promise<Alert[]> => {
         const status = reading.co2 > 1000 ? 'Crítico' : 'Elevado';
         alerts.push({
           id: counter++,
-          location: reading.nodeId,
+          location: displayName(reading),
           level: `${reading.co2} ppm`,
           status,
           time: new Date(reading.timestamp).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
@@ -369,6 +400,3 @@ export const fetchStats = async (): Promise<SystemStats> => {
     return { averageCO2: 0, maxCO2: 0, alertTimeHours: 0, totalAlerts: 0 };
   }
 };
-
-// Re-exporta la lista de métricas que la UI consume
-export { hasAnyMetricValue };

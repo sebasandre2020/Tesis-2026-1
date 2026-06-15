@@ -176,6 +176,8 @@ const SensorDetailContainer: React.FC = () => {
               onMetricChange={setMetric}
               timeRange={timeRange}
               loading={chartLoading}
+              suggestedRange="7d"
+              onSuggestedRangeClick={() => setTimeRange('7d')}
             />
           </div>
 

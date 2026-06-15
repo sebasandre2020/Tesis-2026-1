@@ -41,7 +41,10 @@ export interface CO2Reading {
 
 /** Una lectura cruda devuelta por /api/readings */
 export interface RawReading {
+  /** Identificador canónico del nodo (e.g. "Node_01"). Sirve para filtrar. */
   nodeId: string;
+  /** Nombre legible para mostrar al usuario (e.g. "Aula 101"). */
+  displayName?: string;
   co2: number | null;
   dust: number | null;
   temperature: number | null;

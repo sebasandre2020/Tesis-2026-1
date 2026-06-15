@@ -15,6 +15,10 @@ interface SensorReadingsChartProps {
   onMetricChange: (m: MetricType) => void;
   timeRange?: TimeRange;
   loading?: boolean;
+  /** Cuando hay un rango con datos sugerido (ej. "7d"), lo mostramos como acción. */
+  suggestedRange?: TimeRange;
+  /** Callback al click en el botón de rango sugerido. */
+  onSuggestedRangeClick?: () => void;
 }
 
 const hasData = (data: ChartData) =>
@@ -26,6 +30,8 @@ const SensorReadingsChart: React.FC<SensorReadingsChartProps> = ({
   onMetricChange,
   timeRange,
   loading = false,
+  suggestedRange,
+  onSuggestedRangeClick,
 }) => {
   const meta = METRIC_META[metric];
   const options = {
@@ -39,7 +45,6 @@ const SensorReadingsChart: React.FC<SensorReadingsChartProps> = ({
             ctx.parsed.y === null ? 'Sin datos' : `${ctx.parsed.y.toFixed(meta.decimals)} ${meta.unit}`,
         },
       },
-      // El plugin custom dibuja las líneas de umbral leyendo este array.
       thresholdAnnotation: {
         lines: THRESHOLD_LINES[metric],
       },
@@ -78,9 +83,21 @@ const SensorReadingsChart: React.FC<SensorReadingsChartProps> = ({
         {!loading && !hasData(data) ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
             <p className="text-gray-500 font-medium">Sin lecturas de {meta.label.toLowerCase()} en este período.</p>
-            <p className="text-sm text-gray-400 mt-1">
-              Este sensor aún no tiene datos para la métrica seleccionada.
+            <p className="text-sm text-gray-400 mt-1 max-w-sm">
+              El sensor no tiene datos para esta métrica en el rango seleccionado.
+              {suggestedRange && onSuggestedRangeClick && (
+                <> Prueba ampliando el rango de tiempo.</>
+              )}
             </p>
+            {suggestedRange && onSuggestedRangeClick && (
+              <button
+                type="button"
+                onClick={onSuggestedRangeClick}
+                className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded transition-colors"
+              >
+                Ver {getTimeRangeLabel(suggestedRange).toLowerCase()}
+              </button>
+            )}
           </div>
         ) : (
           <Chart type="line" data={data} options={options} style={{ height: '100%' }} />
