@@ -230,7 +230,7 @@ export const fetchSensorDetail = async (sensorId: number): Promise<SensorDetailD
     );
 
     return {
-      sensorName: `Sensor ${meta.name}`,
+      sensorName: `Nodo ${meta.name}`,
       location: meta.location,
       currentLevel,
       currentStatus: getCO2Status(currentLevel),

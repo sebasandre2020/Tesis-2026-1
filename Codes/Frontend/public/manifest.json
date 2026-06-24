@@ -1,6 +1,6 @@
 {
-  "short_name": "Monitor CO₂",
-  "name": "Sistema de Monitoreo IoT de CO₂ - UTEC",
+  "short_name": "Calidad de Aire",
+  "name": "Sistema de Monitoreo IoT de Calidad de Aire Interior - UTEC",
   "icons": [
     {
       "src": "favicon.ico",

@@ -44,7 +44,7 @@ const Sidebar: React.FC = () => {
 
   return (
     <aside className="w-64 h-screen bg-blue-800 text-white fixed flex flex-col p-6 overflow-y-auto">
-      <h2 className="text-2xl font-bold mb-6 tracking-wide">Monitor de CO₂</h2>
+      <h2 className="text-2xl font-bold mb-6 tracking-wide">Monitor de Calidad de Aire Interior</h2>
       <nav className="flex flex-col space-y-4">
         <Link to="/" className={getLinkClasses('/', true)}>
           <FaHome className="mr-3" /> Dashboard
@@ -72,7 +72,7 @@ const Sidebar: React.FC = () => {
                   to={`/sensor/${sid}`}
                   className={getLinkClasses(`/sensor/${sid}`, true)}
                 >
-                  <FaThermometer className="mr-3" /> Sensor {sid}
+                  <FaThermometer className="mr-3" /> Nodo {sid}
                 </Link>
               ))}
             </div>
@@ -88,7 +88,7 @@ const Sidebar: React.FC = () => {
       </nav>
       {activeSensorId !== null && (
         <div className="mt-auto pt-6 text-xs text-blue-200">
-          Viendo: <span className="font-semibold">Sensor {activeSensorId}</span>
+          Viendo: <span className="font-semibold">Nodo {activeSensorId}</span>
         </div>
       )}
     </aside>

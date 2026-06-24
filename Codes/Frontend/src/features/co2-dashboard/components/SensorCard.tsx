@@ -32,7 +32,7 @@ const SensorCard: React.FC<SensorCardProps> = ({ sensor }) => {
   return (
     <Link to={`/sensor/${sensor.id}`} className="block h-full">
       <div className="shadow-md p-4 rounded-lg border border-gray-200 bg-white h-full hover:shadow-lg hover:border-blue-300 transition-all duration-200 cursor-pointer flex flex-col">
-        <h3 className="font-bold text-lg">{sensor.name || 'Sensor sin nombre'}</h3>
+        <h3 className="font-bold text-lg">{sensor.name || 'Nodo sin nombre'}</h3>
         <p className="text-gray-600 text-xs">{sensor.location || 'Ubicación desconocida'}</p>
 
         <p className="text-gray-600 mt-2">

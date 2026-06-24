@@ -110,7 +110,7 @@ const SensorDetailContainer: React.FC = () => {
       <div className="flex h-screen">
         <Sidebar />
         <div className="p-6 bg-gray-100 flex-1 flex items-center justify-center ml-64">
-          <p className="text-gray-500 text-lg">Sensor no encontrado.</p>
+          <p className="text-gray-500 text-lg">Nodo no encontrado.</p>
         </div>
       </div>
     );

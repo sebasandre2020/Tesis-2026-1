@@ -99,7 +99,7 @@ const DashboardContainer: React.FC = () => {
 
       <div className="ml-64 p-6 w-full bg-gray-100 flex flex-col gap-4 overflow-y-auto">
         <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 text-center">
-          <h1 className="text-2xl font-bold">Dashboard de Monitoreo de CO₂</h1>
+          <h1 className="text-2xl font-bold">Dashboard de Monitoreo de Calidad de Aire Interior</h1>
           {error && (
             <p className="text-sm text-red-600 mt-1" role="alert">{error}</p>
           )}
