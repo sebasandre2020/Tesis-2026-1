@@ -374,6 +374,45 @@ En la etapa media y final del ensayo, la velocidad presenta oscilaciones entre a
 En conjunto, los resultados experimentales muestran que el controlador Fuzzy PI agresivo logró reducir la concentración de CO\(_2\) desde valores cercanos a 2350--2400 ppm hasta una zona próxima al setpoint de 900 ppm. El tiempo aproximado de llegada a la zona objetivo fue de 105 a 110 minutos. Además, la evolución del error, el esfuerzo de control, la integral del error y las RPM del ventilador evidencian que el sistema respondió de manera coherente: aplicó una acción de ventilación elevada al inicio y luego redujo progresivamente el esfuerzo conforme la concentración se acercó al valor de referencia. Aunque la respuesta experimental presenta oscilaciones, estas son esperables debido al ruido del sensor, la dinámica del ambiente y la respuesta física del ventilador.
 
 
+\section{Resultados experimentales del controlador LQR}
+
+En esta sección se presentan los resultados experimentales obtenidos mediante la implementación del controlador LQR en el sistema físico de ventilación. Para esta prueba se analizaron la evolución de la concentración de CO\(_2\), el esfuerzo de control aplicado y la velocidad del ventilador monitoreado. A diferencia de los ensayos anteriores, el controlador LQR busca regular la ventilación mediante una acción correctiva que disminuye conforme la concentración se aproxima al setpoint.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/LQR_CO2_Experimental.png}
+    \caption{Evolución experimental de la concentración de CO\(_2\) con controlador LQR.}
+    \label{fig:lqr_exp_co2}
+\end{figure}
+
+Como se observa en la Figura \ref{fig:lqr_exp_co2}, la concentración inicial de CO\(_2\) se encuentra cerca de 2000 ppm, lo cual representa una condición inicial elevada respecto al setpoint de 900 ppm. Durante los primeros minutos, la concentración disminuye de manera rápida debido a la acción inicial del controlador. En la gráfica se observa un punto de referencia a los 6.837 minutos, donde la concentración alcanza aproximadamente 1492.38 ppm, evidenciando una reducción considerable durante la etapa inicial del ensayo.
+
+Posteriormente, la concentración continúa disminuyendo de forma progresiva hasta aproximarse al valor de referencia. Alrededor de los 49.42 minutos, la concentración registrada es aproximadamente 887.922 ppm, valor ligeramente inferior al setpoint. Esto indica que el sistema ingresó a la zona cercana al objetivo alrededor de los 49 a 50 minutos. Luego de este punto, la respuesta se mantiene oscilando alrededor del setpoint, aproximadamente entre 870 ppm y 910 ppm durante gran parte de la etapa final. Considerando una banda aproximada de \(\pm 5\%\) respecto al setpoint de 900 ppm, el tiempo de establecimiento experimental del controlador LQR puede estimarse alrededor de los 50 minutos.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/LQR_Esfuerzo_Experimental.png}
+    \caption{Esfuerzo de control experimental aplicado por el controlador LQR.}
+    \label{fig:lqr_exp_esfuerzo}
+\end{figure}
+
+La Figura \ref{fig:lqr_exp_esfuerzo} muestra el esfuerzo de control aplicado durante la prueba experimental. Al inicio del ensayo, el PWM total se encuentra cercano al 100\%, debido a que la concentración de CO\(_2\) está muy por encima del setpoint. En esta misma etapa, la corrección LQR también presenta un valor elevado, aproximadamente entre 50\% y 55\%, lo que permite aplicar una acción intensa de ventilación para reducir rápidamente la concentración del contaminante.
+
+Durante los primeros 20 minutos, el PWM total disminuye de manera progresiva desde valores cercanos al 100\% hasta aproximadamente 55\% o 60\%. Luego, entre los 40 y 50 minutos, el esfuerzo de control se aproxima al PWM base, cercano al 45\%. A partir de ese momento, la corrección LQR se mantiene alrededor de cero, con pequeñas oscilaciones positivas y negativas, mientras que el PWM total permanece principalmente entre 40\% y 45\%. Este comportamiento evidencia que el controlador reduce la acción correctiva cuando la concentración de CO\(_2\) se acerca al setpoint y mantiene una ventilación mínima mediante el PWM base.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/LQR_RPM_Experimental.png}
+    \caption{Velocidad del ventilador monitoreado durante la prueba experimental con controlador LQR.}
+    \label{fig:lqr_exp_rpm}
+\end{figure}
+
+En la Figura \ref{fig:lqr_exp_rpm} se presenta la velocidad del ventilador monitoreado durante la prueba experimental. Al inicio, la velocidad se encuentra aproximadamente entre 1900 y 1950 RPM, lo cual coincide con la etapa de mayor esfuerzo de control. Luego, conforme el PWM total disminuye, las RPM también se reducen de manera progresiva. Alrededor de los 10 minutos, la velocidad baja aproximadamente hasta 1400 RPM, y cerca de los 30 a 40 minutos se ubica alrededor de 1000 a 1100 RPM.
+
+Después de los 50 minutos, cuando la concentración de CO\(_2\) ya se encuentra en una zona cercana al setpoint, la velocidad del ventilador se estabiliza aproximadamente entre 850 y 1050 RPM, con oscilaciones propias de la respuesta física del ventilador y de las variaciones del control. Esta tendencia confirma que la reducción del esfuerzo de control tuvo un efecto directo sobre el actuador, ya que la velocidad disminuyó conforme la concentración de CO\(_2\) se acercó al valor de referencia.
+
+En conjunto, los resultados experimentales muestran que el controlador LQR logró reducir la concentración de CO\(_2\) desde un valor inicial cercano a 2000 ppm hasta una zona próxima al setpoint de 900 ppm. La respuesta alcanzó la zona objetivo aproximadamente entre los 49 y 50 minutos, con una concentración cercana a 887.922 ppm. Además, el esfuerzo de control disminuyó desde valores cercanos al 100\% de PWM hasta mantenerse alrededor del PWM base, mientras que las RPM del ventilador descendieron desde aproximadamente 1900--1950 RPM hasta una zona cercana a 900--1000 RPM. Estos resultados evidencian que el controlador LQR permitió una reducción rápida y estable de CO\(_2\), ajustando progresivamente la ventilación conforme el sistema se aproximó al valor de referencia.
+
 
 
 \section{Página web para la lectura de los sensores}
