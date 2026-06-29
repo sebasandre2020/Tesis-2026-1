@@ -116,6 +116,58 @@ La Figura \ref{fig:fuzzy_caudal_simulacion} presenta el caudal efectivo total ge
 En conjunto, los resultados de simulación del controlador Fuzzy PI base muestran una respuesta estable, suave y progresiva para la reducción de CO\(_2\). El sistema logra aproximarse al setpoint de 900 ppm en un tiempo estimado de 170 a 180 minutos, con un esfuerzo de control moderado y sostenido durante la mayor parte de la simulación. En comparación con el controlador PI/PID simulado, el Fuzzy PI base presenta una respuesta más lenta, pero utiliza un menor esfuerzo inicial de ventilación, ya que no requiere mantener el PWM en 100\% durante la etapa inicial. Esto lo convierte en una estrategia menos agresiva, pero más gradual en términos de actuación sobre los ventiladores.
 
 
+\subsection{Resultados de simulación del controlador Fuzzy PI agresivo}
+
+En esta sección se presentan los resultados obtenidos mediante la simulación del controlador Fuzzy PI agresivo. Esta variante fue diseñada con el propósito de incrementar la acción de ventilación ante errores medios y altos de concentración de CO\(_2\), utilizando una base de reglas más intensa y una salida difusa orientada a mayores valores de PWM. De esta manera, se busca reducir el tiempo de llegada a la zona cercana al setpoint, aunque con un mayor esfuerzo de control respecto al Fuzzy PI base.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/Fuzzy_Agresivo_Reglas_Simulacion.png}
+    \caption{Base de reglas utilizada en la simulación del controlador Fuzzy PI agresivo.}
+    \label{fig:fuzzy_agresivo_reglas_simulacion}
+\end{figure}
+
+La Figura \ref{fig:fuzzy_agresivo_reglas_simulacion} muestra la base de reglas utilizada para la variante agresiva del controlador Fuzzy PI. En esta configuración, las combinaciones asociadas a errores medios, altos y muy altos generan con mayor frecuencia salidas de potencia media o alta. Esto permite que el sistema incremente la ventilación en etapas tempranas de la simulación, especialmente cuando la concentración de CO\(_2\) se encuentra considerablemente por encima del valor de referencia.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/Fuzzy_Agresivo_CO2_Simulacion.png}
+    \caption{Respuesta simulada de la concentración de CO\(_2\) con controlador Fuzzy PI agresivo.}
+    \label{fig:fuzzy_agresivo_co2_simulacion}
+\end{figure}
+
+Como se observa en la Figura \ref{fig:fuzzy_agresivo_co2_simulacion}, la concentración de CO\(_2\) inicia en un valor cercano a 1500 ppm y disminuye de forma sostenida debido a la acción del controlador. La respuesta ingresa a una zona cercana al setpoint alrededor de los 120.6 minutos, donde la concentración medida es aproximadamente 904.296 ppm. Posteriormente, el sistema continúa reduciendo ligeramente la concentración hasta ubicarse por debajo del valor de referencia, para luego estabilizarse gradualmente en torno a 900 ppm. En comparación con el Fuzzy PI base, esta variante alcanza la zona cercana al setpoint en menor tiempo, evidenciando una respuesta más rápida.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/Fuzzy_Agresivo_Error_Simulacion.png}
+    \caption{Evolución del error de control durante la simulación del controlador Fuzzy PI agresivo.}
+    \label{fig:fuzzy_agresivo_error_simulacion}
+\end{figure}
+
+La Figura \ref{fig:fuzzy_agresivo_error_simulacion} presenta la evolución del error de control. Al inicio de la simulación, el error es aproximadamente de 600 ppm, debido a que la concentración inicial de CO\(_2\) se encuentra muy por encima del setpoint. Durante los primeros minutos, el error disminuye rápidamente como consecuencia del mayor esfuerzo de ventilación aplicado por el controlador agresivo. Cerca de los 120 a 150 minutos, el error se aproxima a cero y posteriormente toma valores ligeramente negativos, lo que indica que la concentración de CO\(_2\) desciende temporalmente por debajo del valor de referencia. Finalmente, el error tiende nuevamente a cero, mostrando la estabilización progresiva del sistema.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/Fuzzy_Agresivo_Esfuerzo_Simulacion.png}
+    \caption{Esfuerzo de control simulado del controlador Fuzzy PI agresivo.}
+    \label{fig:fuzzy_agresivo_esfuerzo_simulacion}
+\end{figure}
+
+En la Figura \ref{fig:fuzzy_agresivo_esfuerzo_simulacion} se muestra el esfuerzo de control generado por el controlador Fuzzy PI agresivo. Durante la etapa inicial, el PWM aplicado se mantiene cercano al 90\%, lo que refleja una acción de ventilación más intensa que la observada en el Fuzzy PI base. Luego, la señal disminuye progresivamente hasta valores cercanos al 60\% alrededor de los 140 minutos. Cuando el sistema alcanza la zona del setpoint, la salida Fuzzy pura cae hasta aproximadamente 24\% a 25\%; sin embargo, debido al PWM base, el PWM aplicado se mantiene alrededor de 44\% a 45\%. Este comportamiento permite conservar una ventilación mínima para sostener la concentración de CO\(_2\) cerca del valor objetivo.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/Fuzzy_Agresivo_Caudal_Simulacion.png}
+    \caption{Caudal efectivo simulado generado por el sistema de ventilación con controlador Fuzzy PI agresivo.}
+    \label{fig:fuzzy_agresivo_caudal_simulacion}
+\end{figure}
+
+La Figura \ref{fig:fuzzy_agresivo_caudal_simulacion} muestra el caudal efectivo total producido por los ventiladores durante la simulación. Al inicio, el caudal se encuentra aproximadamente entre 375 y 380 m\(^3\)/h, valor superior al observado en el Fuzzy PI base. Posteriormente, el caudal disminuye de manera progresiva conforme la concentración de CO\(_2\) se aproxima al setpoint, ubicándose cerca de 260 m\(^3\)/h alrededor de los 120 a 140 minutos. Finalmente, cuando la respuesta entra en la zona cercana al valor de referencia, el caudal desciende abruptamente hasta aproximadamente 188 m\(^3\)/h, manteniéndose estable durante la etapa final de la simulación. Esta evolución es coherente con la disminución del esfuerzo de control mostrada previamente.
+
+En conjunto, los resultados de simulación del controlador Fuzzy PI agresivo muestran una respuesta más rápida que la obtenida con el Fuzzy PI base. La concentración de CO\(_2\) ingresa a una zona cercana al setpoint aproximadamente a los 120.6 minutos, frente al comportamiento más lento del Fuzzy PI base. No obstante, esta mejora en rapidez se obtiene a costa de un mayor esfuerzo inicial de control, ya que el PWM aplicado inicia cerca del 90\% y el caudal efectivo alcanza valores próximos a 380 m\(^3\)/h. Por ello, esta variante puede considerarse más adecuada cuando se prioriza una reducción más rápida de CO\(_2\), aunque implica una mayor demanda de ventilación durante la etapa inicial.
+
+
 
 
 \section{Resultados experimentales del controlador PI/PID}
