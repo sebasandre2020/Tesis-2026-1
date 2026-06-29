@@ -168,6 +168,49 @@ La Figura \ref{fig:fuzzy_agresivo_caudal_simulacion} muestra el caudal efectivo 
 En conjunto, los resultados de simulación del controlador Fuzzy PI agresivo muestran una respuesta más rápida que la obtenida con el Fuzzy PI base. La concentración de CO\(_2\) ingresa a una zona cercana al setpoint aproximadamente a los 120.6 minutos, frente al comportamiento más lento del Fuzzy PI base. No obstante, esta mejora en rapidez se obtiene a costa de un mayor esfuerzo inicial de control, ya que el PWM aplicado inicia cerca del 90\% y el caudal efectivo alcanza valores próximos a 380 m\(^3\)/h. Por ello, esta variante puede considerarse más adecuada cuando se prioriza una reducción más rápida de CO\(_2\), aunque implica una mayor demanda de ventilación durante la etapa inicial.
 
 
+\subsection{Resultados de simulación del controlador LQR}
+
+En esta sección se presentan los resultados obtenidos mediante la simulación del controlador LQR aplicado al modelo de concentración de CO\(_2\) del aula. Esta estrategia de control se basa en la realimentación de estados y busca regular la ventilación considerando un compromiso entre la rapidez de respuesta y el esfuerzo de control aplicado. Para la simulación se mantuvieron las mismas condiciones generales empleadas en las estrategias anteriores, considerando una concentración inicial elevada de CO\(_2\), un setpoint de 900 ppm y la actuación de cinco ventiladores.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/LQR_CO2_Simulacion.png}
+    \caption{Respuesta simulada de la concentración de CO\(_2\) con controlador LQR.}
+    \label{fig:lqr_co2_simulacion}
+\end{figure}
+
+Como se observa en la Figura \ref{fig:lqr_co2_simulacion}, la concentración de CO\(_2\) inicia en un valor cercano a 1500 ppm y disminuye progresivamente debido a la acción del controlador LQR. La respuesta alcanza una zona cercana al setpoint alrededor de los 74.8 minutos, donde la concentración medida es aproximadamente 903.567 ppm. Posteriormente, el sistema continúa acercándose al valor de referencia de 900 ppm sin presentar oscilaciones importantes. Este comportamiento evidencia que el controlador LQR permite reducir la concentración de CO\(_2\) de manera estable y con un tiempo de respuesta menor al observado en los controladores Fuzzy PI base y Fuzzy PI agresivo.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/LQR_Error_Simulacion.png}
+    \caption{Evolución del error de control durante la simulación del controlador LQR.}
+    \label{fig:lqr_error_simulacion}
+\end{figure}
+
+La Figura \ref{fig:lqr_error_simulacion} muestra la evolución del error de CO\(_2\) durante la simulación. Al inicio, el error es aproximadamente de 600 ppm, debido a la diferencia entre la concentración inicial de 1500 ppm y el setpoint de 900 ppm. Conforme actúa el sistema de ventilación, el error disminuye de forma continua hasta aproximarse a cero alrededor de los 75 minutos. A diferencia de otras respuestas, no se observa un sobrepaso negativo considerable, lo cual indica que el sistema se aproxima al valor de referencia de manera controlada y estable.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/LQR_Esfuerzo_Simulacion.png}
+    \caption{Esfuerzo de control simulado del controlador LQR.}
+    \label{fig:lqr_esfuerzo_simulacion}
+\end{figure}
+
+En la Figura \ref{fig:lqr_esfuerzo_simulacion} se presenta el esfuerzo de control generado por el controlador LQR, expresado como PWM equivalente. Durante la etapa inicial de la simulación, el PWM aplicado se mantiene en un valor elevado, cercano al 90\%, debido a que la concentración de CO\(_2\) se encuentra muy por encima del setpoint. Alrededor de los 75 minutos, cuando el sistema se aproxima al valor de referencia, el esfuerzo de control disminuye rápidamente hasta ubicarse cerca del PWM base, aproximadamente entre 44\% y 45\%. Esto indica que el controlador reduce la ventilación una vez alcanzada la zona objetivo, manteniendo solo la acción necesaria para sostener la concentración cercana al setpoint.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/LQR_Caudal_Simulacion.png}
+    \caption{Caudal efectivo simulado generado por el sistema de ventilación con controlador LQR.}
+    \label{fig:lqr_caudal_simulacion}
+\end{figure}
+
+La Figura \ref{fig:lqr_caudal_simulacion} muestra el caudal efectivo total generado por los ventiladores durante la simulación. En la etapa inicial, el caudal se mantiene aproximadamente en 420 m\(^3\)/h, correspondiente a una alta demanda de ventilación para reducir rápidamente la concentración de CO\(_2\). Cuando el sistema se aproxima al setpoint, cerca de los 75 minutos, el caudal disminuye de manera abrupta hasta un valor cercano a 188 m\(^3\)/h. Este valor se mantiene prácticamente constante durante la etapa final, lo cual es coherente con la reducción del esfuerzo de control observada en la Figura \ref{fig:lqr_esfuerzo_simulacion}.
+
+En conjunto, los resultados de simulación del controlador LQR muestran una respuesta estable y rápida frente a una concentración inicial elevada de CO\(_2\). El sistema alcanza una zona cercana al setpoint aproximadamente a los 74.8 minutos, con una concentración de 903.567 ppm, y luego se estabiliza alrededor del valor de referencia sin oscilaciones significativas. En comparación con los controladores Fuzzy PI base y Fuzzy PI agresivo, el LQR presenta un menor tiempo de llegada a la zona objetivo. Sin embargo, esta mejora se obtiene mediante un esfuerzo inicial elevado, con un PWM cercano al 90\% y un caudal aproximado de 420 m\(^3\)/h durante la etapa inicial. Por ello, el controlador LQR representa una estrategia eficiente para reducir el tiempo de mitigación, manteniendo una respuesta estable después de alcanzar el setpoint.
+
+
 
 
 \section{Resultados experimentales del controlador PI/PID}
