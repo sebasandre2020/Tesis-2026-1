@@ -211,6 +211,43 @@ La Figura \ref{fig:lqr_caudal_simulacion} muestra el caudal efectivo total gener
 En conjunto, los resultados de simulación del controlador LQR muestran una respuesta estable y rápida frente a una concentración inicial elevada de CO\(_2\). El sistema alcanza una zona cercana al setpoint aproximadamente a los 74.8 minutos, con una concentración de 903.567 ppm, y luego se estabiliza alrededor del valor de referencia sin oscilaciones significativas. En comparación con los controladores Fuzzy PI base y Fuzzy PI agresivo, el LQR presenta un menor tiempo de llegada a la zona objetivo. Sin embargo, esta mejora se obtiene mediante un esfuerzo inicial elevado, con un PWM cercano al 90\% y un caudal aproximado de 420 m\(^3\)/h durante la etapa inicial. Por ello, el controlador LQR representa una estrategia eficiente para reducir el tiempo de mitigación, manteniendo una respuesta estable después de alcanzar el setpoint.
 
 
+\subsection{Comparación general de los controladores simulados}
+
+Con el propósito de evaluar el desempeño de las estrategias de control implementadas en simulación, se realizó una comparación entre el controlador PI/PID, el controlador Fuzzy PI base, el controlador Fuzzy PI agresivo y el controlador LQR. Para esta comparación se consideraron criterios como el tiempo aproximado de llegada a la zona cercana al setpoint, el esfuerzo inicial de control, el caudal efectivo inicial, la estabilidad de la respuesta y la observación general del comportamiento de cada estrategia.
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.4}
+    \caption{Comparación de desempeño de los controladores simulados}
+    \label{tabla:comparacion_controladores_simulados}
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|p{3cm}|p{3cm}|p{3cm}|p{3cm}|p{4.5cm}|}
+        \hline
+        \textbf{Controlador} & \textbf{Tiempo aprox. de llegada al setpoint} & \textbf{Esfuerzo inicial de control} & \textbf{Caudal inicial aprox.} & \textbf{Observación general} \\ \hline
+
+        PI/PID & 60.3 min & 100\% PWM & 515 m\(^3\)/h & Presenta la respuesta más rápida en simulación, pero requiere la actuación máxima de los ventiladores durante la etapa inicial. \\ \hline
+
+        Fuzzy PI base & 170--180 min & 69\% PWM aprox. & 290 m\(^3\)/h & Presenta una respuesta más lenta, pero con una acción de control más suave y menor demanda inicial de ventilación. \\ \hline
+
+        Fuzzy PI agresivo & 120.6 min & 90\% PWM aprox. & 375--380 m\(^3\)/h & Mejora el tiempo de respuesta respecto al Fuzzy PI base, pero incrementa el esfuerzo de control y la ventilación inicial. \\ \hline
+
+        LQR & 74.8 min & 90\% PWM aprox. & 420 m\(^3\)/h & Presenta una respuesta rápida y estable, con menor tiempo que los controladores Fuzzy y sin oscilaciones significativas. \\ \hline
+
+    \end{tabular}
+    }
+\end{table}
+
+Como se observa en la Tabla \ref{tabla:comparacion_controladores_simulados}, el controlador PI/PID alcanza la zona cercana al setpoint en el menor tiempo, aproximadamente a los 60.3 minutos. Este resultado se debe a que el controlador mantiene una actuación máxima durante la etapa inicial, con un PWM cercano al 100\% y un caudal efectivo aproximado de 515 m\(^3\)/h. Por ello, aunque presenta la reducción más rápida de CO\(_2\), también es la estrategia con mayor exigencia inicial sobre los ventiladores.
+
+El controlador Fuzzy PI base presenta el comportamiento más conservador. Su tiempo de llegada a la zona cercana al setpoint se encuentra aproximadamente entre 170 y 180 minutos, lo que evidencia una respuesta más lenta frente a la concentración inicial elevada de CO\(_2\). Sin embargo, este controlador utiliza un esfuerzo inicial menor, cercano al 69\% de PWM, y un caudal inicial aproximado de 290 m\(^3\)/h. Esto indica que su acción de ventilación es más gradual, por lo que puede ser útil en escenarios donde se prioriza una actuación menos agresiva del sistema.
+
+Por otro lado, el controlador Fuzzy PI agresivo mejora el desempeño del Fuzzy PI base al reducir el tiempo de llegada a la zona cercana al setpoint hasta aproximadamente 120.6 minutos. Esta mejora se obtiene mediante una mayor acción de control inicial, con un PWM cercano al 90\% y un caudal efectivo aproximado entre 375 y 380 m\(^3\)/h. En ese sentido, esta variante representa un punto intermedio entre el Fuzzy PI base y las estrategias más rápidas, ya que reduce el tiempo de mitigación, pero aumenta el esfuerzo de ventilación.
+
+Finalmente, el controlador LQR alcanza una zona cercana al setpoint alrededor de los 74.8 minutos, con una concentración aproximada de 903.567 ppm. Su respuesta es más rápida que la de los controladores Fuzzy PI base y Fuzzy PI agresivo, y se mantiene estable luego de aproximarse al valor de referencia. Aunque también requiere un esfuerzo inicial elevado, cercano al 90\% de PWM, su comportamiento muestra una transición ordenada hacia el PWM base, lo que evidencia un buen compromiso entre rapidez y estabilidad.
+
+En conjunto, la comparación permite identificar que el controlador PI/PID ofrece la mayor rapidez de mitigación, mientras que el Fuzzy PI base presenta la actuación más suave. El Fuzzy PI agresivo mejora el tiempo de respuesta del controlador difuso, aunque con mayor esfuerzo inicial. Por su parte, el LQR muestra un desempeño equilibrado, ya que logra una respuesta rápida y estable sin presentar oscilaciones significativas. Por ello, la selección de la estrategia más adecuada dependerá del criterio priorizado: rapidez de reducción de CO\(_2\), suavidad de actuación, estabilidad o consumo energético asociado a la ventilación.
+
+
 
 
 \section{Resultados experimentales del controlador PI/PID}
