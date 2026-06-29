@@ -414,6 +414,43 @@ Después de los 50 minutos, cuando la concentración de CO\(_2\) ya se encuentra
 En conjunto, los resultados experimentales muestran que el controlador LQR logró reducir la concentración de CO\(_2\) desde un valor inicial cercano a 2000 ppm hasta una zona próxima al setpoint de 900 ppm. La respuesta alcanzó la zona objetivo aproximadamente entre los 49 y 50 minutos, con una concentración cercana a 887.922 ppm. Además, el esfuerzo de control disminuyó desde valores cercanos al 100\% de PWM hasta mantenerse alrededor del PWM base, mientras que las RPM del ventilador descendieron desde aproximadamente 1900--1950 RPM hasta una zona cercana a 900--1000 RPM. Estos resultados evidencian que el controlador LQR permitió una reducción rápida y estable de CO\(_2\), ajustando progresivamente la ventilación conforme el sistema se aproximó al valor de referencia.
 
 
+\section{Comparación de resultados experimentales de los controladores}
+
+Con el propósito de evaluar el desempeño experimental de las estrategias implementadas, se realizó una comparación entre el controlador PI/PID, el controlador Fuzzy PI agresivo y el controlador LQR. Para esta comparación se consideraron la condición inicial de CO\(_2\), el tiempo aproximado de llegada a la zona cercana al setpoint, el comportamiento del esfuerzo de control, la respuesta del ventilador y la estabilidad final alrededor del valor de referencia.
+
+Es importante señalar que las pruebas experimentales no iniciaron exactamente desde la misma concentración de CO\(_2\). El controlador PI/PID inició cerca de 1480 ppm y alcanzó un pico aproximado de 1580 ppm, mientras que el controlador Fuzzy PI agresivo inició desde una condición más severa, cercana a 2350--2400 ppm. Por su parte, el controlador LQR inició alrededor de 2000 ppm. Por ello, la comparación no debe interpretarse únicamente como una competencia directa de tiempos, sino como una evaluación del comportamiento de cada controlador frente a condiciones reales de operación.
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.4}
+    \caption{Comparación experimental de los controladores implementados}
+    \label{tabla:comparacion_controladores_experimentales}
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|p{2.8cm}|p{3.2cm}|p{3.2cm}|p{3.2cm}|p{5cm}|}
+        \hline
+        \textbf{Controlador} & \textbf{Condición inicial de CO\(_2\)} & \textbf{Tiempo aprox. de llegada a la zona del setpoint} & \textbf{Respuesta del actuador} & \textbf{Observación general} \\ \hline
+
+        PI/PID & Inicia cerca de 1480 ppm y alcanza un pico aproximado de 1580 ppm & 25--30 min & PWM cercano al 100\% al inicio; luego cae hasta valores cercanos a 0\%. RPM inicial de 1800--1900 RPM y final de 700--900 RPM. & Presenta la llegada más rápida a la zona del setpoint, aunque parte desde una concentración inicial menor que los otros ensayos. Luego presenta oscilaciones y valores por debajo de 900 ppm. \\ \hline
+
+        Fuzzy PI agresivo & Inicia cerca de 2350--2400 ppm & 105--110 min & PWM inicial aproximado de 65--70\%, luego se aproxima al PWM base de 45\%. RPM inicial de 2000--2100 RPM y etapa final entre 1500--1750 RPM. & Parte desde la condición inicial más severa. Su respuesta es más lenta, pero logra reducir el CO\(_2\) de forma progresiva hasta una zona cercana al setpoint. \\ \hline
+
+        LQR & Inicia cerca de 2000 ppm & 49--50 min & PWM inicial cercano al 100\%, luego se estabiliza cerca del PWM base de 40--45\%. RPM inicial de 1900--1950 RPM y etapa final cercana a 900--1000 RPM. & Presenta una respuesta rápida y estable. Alcanza la zona cercana al setpoint en menor tiempo que el Fuzzy PI agresivo, aun partiendo desde una concentración inicial elevada. \\ \hline
+
+    \end{tabular}
+    }
+\end{table}
+
+Como se observa en la Tabla \ref{tabla:comparacion_controladores_experimentales}, el controlador PI/PID alcanzó la zona cercana al setpoint en el menor tiempo experimental, aproximadamente entre los 25 y 30 minutos. Sin embargo, este resultado debe interpretarse considerando que la prueba inició con una concentración menor que las pruebas de Fuzzy PI agresivo y LQR. Además, el PID presentó una acción de control muy intensa al inicio, con un PWM cercano al 100\%, y posteriormente redujo la señal hasta valores cercanos a 0\% cuando la concentración descendió por debajo del setpoint. Esto permitió una reducción rápida, pero también generó una respuesta con sobrepaso por debajo de los 900 ppm.
+
+El controlador Fuzzy PI agresivo presentó el mayor tiempo de llegada a la zona objetivo, aproximadamente entre 105 y 110 minutos. No obstante, esta prueba inició desde la condición más crítica, con una concentración cercana a 2350--2400 ppm. A pesar de ello, el controlador logró reducir progresivamente la concentración hasta valores cercanos al setpoint. Su esfuerzo de control inició aproximadamente entre 65\% y 70\% de PWM, y luego disminuyó hasta mantenerse cerca del PWM base de 45\%. Este comportamiento muestra una acción menos abrupta que la del PID, aunque con una respuesta más lenta frente a la elevada concentración inicial.
+
+Por otro lado, el controlador LQR mostró un comportamiento experimental equilibrado. La concentración inicial fue cercana a 2000 ppm y el sistema alcanzó la zona cercana al setpoint aproximadamente entre los 49 y 50 minutos, con una concentración registrada cercana a 887.922 ppm. Durante la etapa inicial, el PWM total se mantuvo cerca del 100\%, lo que permitió una reducción rápida del CO\(_2\). Posteriormente, el esfuerzo de control disminuyó de forma progresiva hasta estabilizarse alrededor del PWM base, entre 40\% y 45\%. Asimismo, las RPM del ventilador descendieron desde valores cercanos a 1900--1950 RPM hasta una zona aproximada de 900--1000 RPM, evidenciando una reducción coherente de la actuación del sistema.
+
+En términos comparativos, el PI/PID fue el controlador que alcanzó más rápido la zona cercana al setpoint, pero también fue el ensayo con menor concentración inicial y con una reducción más agresiva de la señal de control después de superar la referencia. El Fuzzy PI agresivo fue el más lento, aunque debe destacarse que enfrentó la condición inicial más exigente. Finalmente, el LQR presentó un mejor equilibrio entre rapidez y estabilidad, ya que logró reducir una concentración inicial elevada en un tiempo menor que el Fuzzy PI agresivo y mantuvo una respuesta final estable alrededor del setpoint.
+
+En conjunto, los resultados experimentales permiten concluir que las tres estrategias fueron capaces de reducir la concentración de CO\(_2\) hasta una zona cercana al valor de referencia de 900 ppm. Sin embargo, cada controlador presentó un comportamiento distinto: el PI/PID destacó por su rapidez, el Fuzzy PI agresivo por su reducción progresiva frente a una condición inicial severa, y el LQR por su respuesta rápida y estable ante una concentración inicial elevada. Por ello, considerando únicamente los ensayos experimentales, el LQR representa una alternativa con buen compromiso entre tiempo de respuesta, estabilidad y reducción progresiva del esfuerzo de control.
+
+
 
 \section{Página web para la lectura de los sensores}
 
