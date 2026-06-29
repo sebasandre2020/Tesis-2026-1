@@ -312,6 +312,68 @@ En conjunto, los resultados experimentales muestran que el controlador PI/PID fu
 
 
 
+\section{Resultados experimentales del controlador Fuzzy PI agresivo}
+
+En esta sección se presentan los resultados experimentales obtenidos con la implementación del controlador Fuzzy PI agresivo. A diferencia del controlador Fuzzy PI base, esta versión fue ajustada para aplicar una acción de ventilación más intensa ante concentraciones elevadas de CO\(_2\). Por ello, se analizaron la concentración de CO\(_2\), el error de control, el esfuerzo aplicado, la integral del error y la velocidad del ventilador monitoreado.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/FUZZY_CO2_Experimental.png}
+    \caption{Evolución experimental de la concentración de CO\(_2\) con controlador Fuzzy PI agresivo.}
+    \label{fig:fuzzy_exp_co2}
+\end{figure}
+
+Como se observa en la Figura \ref{fig:fuzzy_exp_co2}, la concentración inicial de CO\(_2\) se encuentra cerca de 2350 a 2400 ppm, lo que representa una condición inicial elevada dentro del ambiente evaluado. Durante los primeros minutos, la concentración disminuye rápidamente hasta valores cercanos a 1500 ppm. Luego, la reducción continúa de manera progresiva, alcanzando aproximadamente 1250 ppm alrededor de los 15 a 20 minutos, 1100 ppm cerca de los 35 a 40 minutos y valores próximos a 1000 ppm entre los 60 y 75 minutos.
+
+Posteriormente, la concentración sigue descendiendo hasta aproximarse al setpoint de 900 ppm alrededor de los 105 a 110 minutos. En la etapa final, la respuesta presenta pequeñas oscilaciones alrededor del valor de referencia, con valores cercanos a 880--920 ppm. Este comportamiento evidencia que el controlador Fuzzy PI agresivo logró reducir la concentración de CO\(_2\) desde una condición inicial severa hasta una zona cercana al setpoint. Considerando una banda aproximada cercana al valor de referencia, el tiempo de llegada a la zona objetivo se encuentra alrededor de los 105 a 110 minutos.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/FUZZY_Error_Experimental.png}
+    \caption{Evolución experimental del error de control con controlador Fuzzy PI agresivo.}
+    \label{fig:fuzzy_exp_error}
+\end{figure}
+
+La Figura \ref{fig:fuzzy_exp_error} muestra el comportamiento del error durante la prueba experimental. Al inicio, el error alcanza un valor aproximado de 1450 ppm, debido a que la concentración inicial de CO\(_2\) se encontraba muy por encima del setpoint de 900 ppm. En los primeros minutos, el error disminuye rápidamente, bajando hasta valores cercanos a 400 ppm alrededor de los 15 minutos. Posteriormente, la reducción continúa de forma gradual, ubicándose cerca de 200 ppm entre los 40 y 45 minutos, y alrededor de 100 ppm entre los 60 y 80 minutos.
+
+A partir de los 100 minutos, el error se aproxima a cero, lo cual indica que la concentración de CO\(_2\) se encuentra cercana al valor de referencia. Luego se observa un pequeño sobrepaso negativo, aproximadamente entre -20 y -40 ppm, lo que significa que la concentración descendió ligeramente por debajo del setpoint. Finalmente, el error vuelve a mantenerse cerca de cero, evidenciando que el sistema logró estabilizarse alrededor de la referencia.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/FUZZY_Esfuerzo_Experimental.png}
+    \caption{Esfuerzo de control experimental aplicado por el controlador Fuzzy PI agresivo.}
+    \label{fig:fuzzy_exp_esfuerzo}
+\end{figure}
+
+En la Figura \ref{fig:fuzzy_exp_esfuerzo} se presenta el esfuerzo de control generado durante la prueba. Al inicio, el PWM aplicado se encuentra aproximadamente entre 65\% y 70\%, lo que confirma que el controlador Fuzzy PI agresivo aplica una acción elevada de ventilación frente a la alta concentración inicial de CO\(_2\). Durante los primeros 40 a 50 minutos, el esfuerzo de control disminuye progresivamente conforme la concentración se reduce.
+
+Alrededor de los 50 a 55 minutos, el PWM aplicado llega a la zona del PWM base, aproximadamente 45\%. A partir de ese punto, la señal aplicada se mantiene cercana a dicho valor, evitando que la ventilación caiga por debajo de un mínimo necesario. También se observa que la salida Fuzzy pura desciende por debajo del PWM base durante la etapa final, pero el PWM aplicado se mantiene alrededor del valor mínimo establecido. Hacia los 110 a 125 minutos aparecen ligeros incrementos del PWM aplicado, asociados a las pequeñas oscilaciones del sistema alrededor del setpoint.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/FUZZY_IntegralError_Experimental.png}
+    \caption{Integral del error durante la prueba experimental con controlador Fuzzy PI agresivo.}
+    \label{fig:fuzzy_exp_integral}
+\end{figure}
+
+La Figura \ref{fig:fuzzy_exp_integral} muestra la evolución de la integral del error. Se observa que la integral acumulada permanece saturada cerca de 5000 durante gran parte del ensayo, especialmente mientras la concentración de CO\(_2\) se mantiene por encima del setpoint. Este comportamiento es coherente con la condición inicial elevada, ya que el error positivo se acumula durante un periodo prolongado.
+
+Cuando el sistema se aproxima a la zona del setpoint, aproximadamente después de los 100 minutos, la integral acumulada presenta una caída pronunciada y posteriormente algunas oscilaciones. Esto indica que la componente integral tuvo una participación importante durante la etapa transitoria y que su efecto disminuyó cuando el error se acercó a cero. Además, la gráfica de la integral escalada al FIS se mantiene en un rango bajo en comparación con la integral acumulada, lo cual evidencia que el controlador limita o escala esta variable antes de utilizarla en el sistema difuso.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/FUZZY_RPM_Experimental.png}
+    \caption{Velocidad del ventilador monitoreado durante la prueba experimental con controlador Fuzzy PI agresivo.}
+    \label{fig:fuzzy_exp_rpm}
+\end{figure}
+
+En la Figura \ref{fig:fuzzy_exp_rpm} se muestra la velocidad del ventilador monitoreado durante el ensayo. Al inicio, la velocidad se encuentra aproximadamente entre 2000 y 2100 RPM, lo que coincide con la etapa de mayor esfuerzo de control. Luego, conforme la concentración de CO\(_2\) disminuye, la velocidad del ventilador también se reduce. Entre los 20 y 40 minutos, la velocidad se ubica aproximadamente entre 1700 y 1850 RPM.
+
+En la etapa media y final del ensayo, la velocidad presenta oscilaciones entre aproximadamente 1500 y 1750 RPM. Estas variaciones son coherentes con los cambios observados en la señal de control y con la dinámica real del ventilador. En general, la gráfica confirma que la salida del controlador tuvo un efecto físico sobre el sistema de ventilación, reduciendo la velocidad del ventilador conforme el CO\(_2\) se acercó al setpoint.
+
+En conjunto, los resultados experimentales muestran que el controlador Fuzzy PI agresivo logró reducir la concentración de CO\(_2\) desde valores cercanos a 2350--2400 ppm hasta una zona próxima al setpoint de 900 ppm. El tiempo aproximado de llegada a la zona objetivo fue de 105 a 110 minutos. Además, la evolución del error, el esfuerzo de control, la integral del error y las RPM del ventilador evidencian que el sistema respondió de manera coherente: aplicó una acción de ventilación elevada al inicio y luego redujo progresivamente el esfuerzo conforme la concentración se acercó al valor de referencia. Aunque la respuesta experimental presenta oscilaciones, estas son esperables debido al ruido del sensor, la dinámica del ambiente y la respuesta física del ventilador.
+
+
 
 
 \section{Página web para la lectura de los sensores}
