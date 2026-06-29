@@ -36,6 +36,60 @@ Se realizaron las conexiones entre la placa de prototipado Arduino UNO, el senso
 \end{table}
 
 
+\section{Resultados experimentales del controlador PI/PID}
+
+En esta sección se presentan los resultados experimentales obtenidos durante la implementación del controlador PI/PID para la mitigación activa de CO\(_2\). La prueba permitió analizar la evolución de la concentración de CO\(_2\), el error de control, el esfuerzo aplicado por el controlador, el caudal efectivo estimado y la respuesta en RPM del ventilador monitoreado.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/CO2vsTiempo.png}
+    \caption{Evolución de la concentración de CO\(_2\) durante la prueba experimental con controlador PI/PID.}
+    \label{fig:pid_co2_tiempo}
+\end{figure}
+
+Como se observa en la Figura \ref{fig:pid_co2_tiempo}, la concentración de CO\(_2\) inicia en un valor elevado, cercano a 1500 ppm, y posteriormente disminuye de manera progresiva debido a la acción de los ventiladores. El sistema logra aproximarse al setpoint establecido de 900 ppm y luego se mantiene en una zona cercana o inferior a dicho valor. Este comportamiento evidencia que el controlador PI/PID permite reducir la concentración de CO\(_2\) desde una condición inicial desfavorable hasta un rango más adecuado para el ambiente evaluado.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/ERRORvsTiempo.png}
+    \caption{Evolución del error de control durante la prueba experimental con controlador PI/PID.}
+    \label{fig:pid_error_tiempo}
+\end{figure}
+
+La Figura \ref{fig:pid_error_tiempo} muestra la evolución del error de control, calculado como la diferencia entre la concentración medida de CO\(_2\) y el setpoint. Al inicio de la prueba, el error es elevado debido a que la concentración de CO\(_2\) se encuentra por encima del valor de referencia. Conforme avanza la ventilación, el error disminuye progresivamente hasta aproximarse a cero. Las oscilaciones posteriores alrededor del error nulo pueden atribuirse al ruido del sensor, a la dinámica propia del ambiente y a las variaciones generadas por la actuación de los ventiladores.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/EsfuerzoControl.png}
+    \caption{Esfuerzo de control aplicado por el controlador PI/PID.}
+    \label{fig:pid_esfuerzo_control}
+\end{figure}
+
+En la Figura \ref{fig:pid_esfuerzo_control} se presenta el esfuerzo de control aplicado al sistema. Durante la etapa inicial, la señal de control total se mantiene en valores elevados, debido a que la concentración de CO\(_2\) supera ampliamente el setpoint. A medida que la concentración disminuye, el esfuerzo de control también se reduce, lo cual indica que el controlador disminuye progresivamente la ventilación cuando el sistema se aproxima al valor de referencia.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/Caudal.png}
+    \caption{Caudal efectivo estimado durante la prueba experimental con controlador PI/PID.}
+    \label{fig:pid_caudal}
+\end{figure}
+
+La Figura \ref{fig:pid_caudal} muestra el caudal efectivo estimado a partir de la señal de control aplicada a los ventiladores. Al inicio de la prueba, el caudal se mantiene en un valor alto debido a la necesidad de reducir rápidamente la concentración de CO\(_2\). Posteriormente, conforme el sistema se acerca al setpoint, el caudal disminuye hasta valores cercanos a cero. Este resultado es coherente con la reducción del esfuerzo de control observada previamente.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/RPM.png}
+    \caption{RPM del ventilador monitoreado durante la prueba experimental con controlador PI/PID.}
+    \label{fig:pid_rpm}
+\end{figure}
+
+Finalmente, la Figura \ref{fig:pid_rpm} presenta la velocidad de giro del ventilador monitoreado. Se observa que, durante los primeros minutos, las RPM se mantienen en valores elevados, lo cual coincide con la alta señal de control aplicada por el controlador. Luego, conforme disminuye el requerimiento de ventilación, las RPM también se reducen. Esta gráfica permite validar que la señal PWM generada por el sistema tiene un efecto directo sobre la actuación física del ventilador.
+
+En conjunto, los resultados experimentales muestran que el controlador PI/PID implementado permite reducir la concentración de CO\(_2\) hasta una zona cercana al setpoint y ajustar progresivamente la ventilación aplicada. Además, las gráficas de esfuerzo de control, caudal y RPM permiten verificar que la disminución de CO\(_2\) está asociada a una actuación real de los ventiladores. No obstante, se observan pequeñas oscilaciones alrededor del valor de referencia, las cuales pueden relacionarse con el ruido de medición, la dinámica del ambiente y la sensibilidad del sistema frente a cambios en la señal PWM.
+
+
+
+
 \section{Página web para la lectura de los sensores}
 
 
