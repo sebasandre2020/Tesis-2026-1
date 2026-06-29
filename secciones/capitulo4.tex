@@ -1,7 +1,7 @@
 \chapter{RESULTADOS}
-Sección por desarrollar.
+\label{ch:resultados}
 
-En el presente capítulo, se muestra el análisis de los resultados obtenidos en el marco metodológico.
+En el presente capítulo, se muestra el análisis de los resultados obtenidos a partir de la simulación e implementación de las estrategias de control desarrolladas en el marco metodológico. Se presentan las conexiones del nodo sensor, los resultados de simulación del controlador PI/PID, los resultados experimentales del controlador PI/PID y la validación de la página web para la lectura de los sensores.
 
 \section{Conexiones del nodo sensor}
 
@@ -34,6 +34,88 @@ Se realizaron las conexiones entre la placa de prototipado Arduino UNO, el senso
         TX (D1)                        & -                          & RX                              \\ \hline
     \end{tabular}
 \end{table}
+
+
+
+\section{Resultados de simulación de los controladores}
+
+\subsection{Resultados de simulación del controlador PI/PID}
+
+En esta sección se presentan los resultados obtenidos mediante la simulación del controlador PI/PID aplicado al modelo de concentración de CO\(_2\) en el aula. La simulación considera una condición inicial elevada de CO\(_2\), un valor de referencia de 900 ppm y la actuación de cinco ventiladores como mecanismo de mitigación activa. Los resultados permiten analizar la evolución de la concentración de CO\(_2\), el esfuerzo de control aplicado y el caudal efectivo generado por el sistema de ventilación.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/PI_CO2_Simulacion.png}
+    \caption{Respuesta simulada de la concentración de CO\(_2\) con controlador PI/PID.}
+    \label{fig:PI_CO2_Simulacion}
+\end{figure}
+
+Como se observa en la Figura \ref{fig:PI_CO2_Simulacion}, la concentración de CO\(_2\) inicia en un valor cercano a 1500 ppm y disminuye progresivamente como consecuencia de la ventilación aplicada por el controlador. El sistema alcanza el valor de referencia de 900 ppm aproximadamente a los 60.3 minutos, con una concentración de 899.968 ppm. A partir de ese instante, la respuesta se mantiene próxima al setpoint, lo que evidencia que el controlador PI/PID permite reducir la concentración de CO\(_2\) desde una condición inicial desfavorable hasta el nivel objetivo establecido.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/PI_Esfuerzo_Simulacion.png}
+    \caption{Esfuerzo de control simulado del controlador PI/PID.}
+    \label{fig:PI_Esfuerzo_Simulacion}
+\end{figure}
+
+La Figura \ref{fig:PI_Esfuerzo_Simulacion} muestra el esfuerzo de control equivalente en porcentaje de PWM. Durante los primeros 60 minutos, la señal de control se mantiene cercana al 100\%, debido a que la concentración de CO\(_2\) se encuentra muy por encima del valor de referencia. Cuando el sistema alcanza la zona del setpoint, el esfuerzo de control disminuye de manera brusca y presenta una breve oscilación transitoria. Posteriormente, la señal se estabiliza alrededor de un valor aproximado de 35\% a 36\%, suficiente para mantener la concentración de CO\(_2\) cercana al valor objetivo.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/PI_Caudal_Simulacion.png}
+    \caption{Caudal efectivo simulado generado por el sistema de ventilación con controlador PI/PID.}
+    \label{fig:PI_Caudal_Simulacion}
+\end{figure}
+
+En la Figura \ref{fig:PI_Caudal_Simulacion} se presenta el caudal efectivo total generado por el sistema de ventilación. Durante la etapa inicial, el caudal se mantiene aproximadamente en 515 m\(^3\)/h, correspondiente a una actuación máxima de los ventiladores. Alrededor de los 60 minutos, cuando la concentración de CO\(_2\) alcanza el setpoint, el caudal disminuye rápidamente y presenta un comportamiento transitorio asociado al reajuste del controlador. Finalmente, el caudal se estabiliza cerca de 185 a 190 m\(^3\)/h, lo que indica que el sistema reduce la ventilación una vez alcanzada la concentración objetivo, pero mantiene un caudal mínimo necesario para conservar el equilibrio del ambiente.
+
+En conjunto, los resultados de simulación del controlador PI/PID muestran una respuesta estable y progresiva para la reducción de CO\(_2\). El tiempo aproximado de llegada al setpoint fue de 60.3 minutos, con una actuación máxima durante la etapa inicial y una reducción posterior del esfuerzo de control hasta un valor estacionario cercano al 35\%. Este comportamiento demuestra que el controlador PI/PID es capaz de disminuir la concentración de CO\(_2\) y ajustar la ventilación de manera progresiva, por lo que estos resultados sirven como referencia para comparar posteriormente el desempeño de las estrategias Fuzzy PI, Fuzzy PI agresiva y LQR.
+
+
+\subsection{Resultados de simulación del controlador Fuzzy PI base}
+
+En esta sección se presentan los resultados obtenidos mediante la simulación del controlador Fuzzy PI base aplicado al modelo de concentración de CO\(_2\) del aula. A diferencia del controlador PI/PID, esta estrategia emplea una base de reglas difusas para determinar el porcentaje de ventilación en función del error de concentración de CO\(_2\) y la acumulación del error. La simulación permite analizar la evolución de la concentración de CO\(_2\), el error de control, el esfuerzo de control aplicado y el caudal efectivo generado por los ventiladores.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/FUZZY_CO2_Simulacion.png}
+    \caption{Respuesta simulada de la concentración de CO\(_2\) con controlador Fuzzy PI base.}
+    \label{fig:fuzzy_co2_simulacion}
+\end{figure}
+
+Como se observa en la Figura \ref{fig:fuzzy_co2_simulacion}, la concentración de CO\(_2\) inicia en un valor cercano a 1500 ppm y disminuye progresivamente debido a la acción del controlador Fuzzy PI. La respuesta presenta una reducción suave y continua, alcanzando una zona cercana al setpoint de 900 ppm aproximadamente entre los 170 y 180 minutos. Posteriormente, la concentración desciende ligeramente por debajo del valor de referencia, llegando a una zona aproximada de 890 ppm alrededor de los 190 a 210 minutos, para luego estabilizarse nuevamente cerca del setpoint. Este comportamiento muestra que el controlador Fuzzy PI logra reducir la concentración de CO\(_2\), aunque con una respuesta más lenta que la obtenida con el controlador PI/PID simulado.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/FUZZY_Error_Simulacion.jpg}
+    \caption{Evolución del error de control durante la simulación del controlador Fuzzy PI base.}
+    \label{fig:fuzzy_error_simulacion}
+\end{figure}
+
+La Figura \ref{fig:fuzzy_error_simulacion} muestra la evolución del error de control durante la simulación. Al inicio, el error es elevado, con un valor aproximado de 600 ppm, debido a que la concentración de CO\(_2\) se encuentra muy por encima del setpoint. A medida que avanza la ventilación, el error disminuye de forma gradual hasta aproximarse a cero alrededor de los 150 a 180 minutos. Luego, el error se vuelve ligeramente negativo durante un intervalo corto, lo cual coincide con la reducción de la concentración de CO\(_2\) por debajo del setpoint. Finalmente, el error tiende nuevamente a cero, evidenciando una estabilización progresiva del sistema.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/FUZZY_Esfuerzo_Simulacion.png}
+    \caption{Esfuerzo de control simulado del controlador Fuzzy PI base.}
+    \label{fig:fuzzy_esfuerzo_simulacion}
+\end{figure}
+
+En la Figura \ref{fig:fuzzy_esfuerzo_simulacion} se observa el esfuerzo de control generado por el controlador Fuzzy PI. La salida Fuzzy pura inicia cerca del 69\% de PWM y disminuye rápidamente hasta una zona aproximada de 58\% durante los primeros minutos. Posteriormente, la acción de control se mantiene casi constante entre 57\% y 59\% hasta cerca de los 180 minutos, lo cual indica una actuación moderada y sostenida de los ventiladores. Cuando el sistema se aproxima al setpoint, la salida Fuzzy pura disminuye bruscamente hasta valores cercanos al 27\% o 28\%. Sin embargo, debido a la incorporación de un PWM base, el PWM aplicado se mantiene alrededor de 44\% a 45\%, evitando que la ventilación caiga por debajo del caudal mínimo requerido para sostener la concentración de CO\(_2\) cercana al valor de referencia.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/capitulo4/FUZZY_Caudal_Simulacion.png}
+    \caption{Caudal efectivo simulado generado por el sistema de ventilación con controlador Fuzzy PI base.}
+    \label{fig:fuzzy_caudal_simulacion}
+\end{figure}
+
+La Figura \ref{fig:fuzzy_caudal_simulacion} presenta el caudal efectivo total generado por el sistema de ventilación. Al inicio de la simulación, el caudal se encuentra cerca de 290 m\(^3\)/h y disminuye rápidamente hasta aproximadamente 245 m\(^3\)/h durante los primeros minutos. Luego, el caudal se mantiene prácticamente estable entre 242 y 245 m\(^3\)/h hasta cerca de los 180 minutos. Al aproximarse la concentración de CO\(_2\) al setpoint, el caudal disminuye de forma abrupta hasta un valor cercano a 187 m\(^3\)/h, manteniéndose estable durante la etapa final de la simulación. Este comportamiento es coherente con la reducción del esfuerzo de control observada en la Figura \ref{fig:fuzzy_esfuerzo_simulacion}.
+
+En conjunto, los resultados de simulación del controlador Fuzzy PI base muestran una respuesta estable, suave y progresiva para la reducción de CO\(_2\). El sistema logra aproximarse al setpoint de 900 ppm en un tiempo estimado de 170 a 180 minutos, con un esfuerzo de control moderado y sostenido durante la mayor parte de la simulación. En comparación con el controlador PI/PID simulado, el Fuzzy PI base presenta una respuesta más lenta, pero utiliza un menor esfuerzo inicial de ventilación, ya que no requiere mantener el PWM en 100\% durante la etapa inicial. Esto lo convierte en una estrategia menos agresiva, pero más gradual en términos de actuación sobre los ventiladores.
+
+
 
 
 \section{Resultados experimentales del controlador PI/PID}
