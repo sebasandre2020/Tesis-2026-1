@@ -320,20 +320,34 @@ Para ilustrar de manera más detallada las diferencias técnicas y económicas, 
         \label{tabla:gateways_comerciales}
         \begin{tabular}{|p{2.5cm}|p{1cm}|p{2.5cm}|p{1.7cm}|p{3cm}|p{2.3cm}|p{1.7cm}|p{2cm}|p{1.3cm}|}
             \hline
-            \textbf{Modelo / Marca} & \textbf{Canales} & \textbf{Frecuencias} & \textbf{Sensibilidad (dBm)} & \textbf{Soporte de Seguridad (TLS/SSL)} & \textbf{Interfaces Backhaul} & \textbf{Consumo Energético} & \textbf{Velocidad de Transmisión} & \textbf{Precio (USD)} \\ \hline
-            RAK7268V2 (WisGate Edge Lite 2) & 8 & AU915, US915, AS923, EU868, etc. & -139 & Hardware (ATECC608) / Software & Ethernet PoE, Wi-Fi, Celular (Opc) & 3 -- 12 W & 100 Mbps (LAN), 300 Mbps (Wi-Fi) & \$239.00 \\ \hline
-            Milesight UG63 & 8 & CN470, IN865, EU868, AU915, US915 & -140 & Software Avanzado (IPsec, OpenVPN) & Ethernet, Celular (Opc) & 1.3 -- 3.3 W & 100 Mbps (LAN) & \$270.00 \\ \hline
-            SenseCAP M2 Multi-Platform & 8 & IN865, EU868, AU915, US915, AS923 & -139 & Hardware (ECC608) & Ethernet PoE, Wi-Fi, Celular (Opc) & 24 W (Máx) & 100 Mbps (LAN), 150 Mbps (Wi-Fi) & \$199.00 \\ \hline
-            Dragino LPS8v2 & 8 & Pre-configurado globalmente (AU915, US915, EU868) & -140 & Software (Debian OS, OpenVPN) & Ethernet WAN, Wi-Fi AP, Celular & 10 W (Máx) & 100 Mbps (LAN), 150 Mbps (Wi-Fi) & \$170.00 \\ \hline
-            Heltec HT-M7603 & 8 & 470$\sim$510MHz, 863$\sim$870MHz, 902$\sim$928MHz (Comp. AU/US) & -139 & Software (Firmware ESP32) & Ethernet LAN, Wi-Fi directa & 2.25 W (Máx) & 100 Mbps (LAN), 150 Mbps (Wi-Fi) & \$89.00 \\ \hline
-            MikroTik wAP LoRa8 Kit & 8 & 863--870MHz, 902--928 MHz (Soporte AU915/US915) & -137 & Software (RouterOS) & Ethernet PoE, Wi-Fi, Celular & 7 W (Máx) & 100 Mbps (LAN), 300 Mbps (Wi-Fi) & \$169.00 \\ \hline
-            \cellcolor{green!15}\textbf{Gateway Personalizado (Propuesto)} & \cellcolor{green!15}\textbf{1} & \cellcolor{green!15}\textbf{Sub-GHz (915 MHz)} & \cellcolor{green!15}\textbf{-147} & \cellcolor{green!15}\textbf{Software (Firmware ESP32, MQTT sobre TLS)} & \cellcolor{green!15}\textbf{Wi-Fi (Nativo ESP32)} & \cellcolor{green!15}\textbf{$\sim$ 4 W (Máx)} & \cellcolor{green!15}\textbf{150 Mbps (Wi-Fi)} & \cellcolor{green!15}\textbf{\$48.68} \\ \hline
+            \textbf{Modelo / Marca}                                        & \textbf{Canales}               & \textbf{Frecuencias}                                            & \textbf{Sensibilidad (dBm)}       & \textbf{Soporte de Seguridad (TLS/SSL)}                                & \textbf{Interfaces Backhaul}                      & \textbf{Consumo Energético}            & \textbf{Velocidad de Transmisión}             & \textbf{Precio (USD)}                \\ \hline
+            RAK7268V2 (WisGate Edge Lite 2)                                & 8                              & AU915, US915, AS923, EU868, etc.                                & -139                              & Hardware (ATECC608) / Software                                         & Ethernet PoE, Wi-Fi, Celular (Opc)                & 12 W                                   & 100 Mbps (LAN), 300 Mbps (Wi-Fi)              & \$239.00                             \\ \hline
+            Milesight UG63                                                 & 8                              & CN470, IN865, EU868, AU915, US915                               & -140                              & Software Avanzado (IPsec, OpenVPN)                                     & Ethernet, Celular (Opc)                           & 1.3 -- 3.3 W                           & 100 Mbps (LAN)                                & \$270.00                             \\ \hline
+            SenseCAP M2 Multi-Platform                                     & 8                              & IN865, EU868, AU915, US915, AS923                               & -139                              & Hardware (ECC608)                                                      & Ethernet PoE, Wi-Fi, Celular (Opc)                & 24 W (Máx)                             & 100 Mbps (LAN), 150 Mbps (Wi-Fi)              & \$199.00                             \\ \hline
+            Dragino LPS8v2                                                 & 8                              & Pre-configurado globalmente (AU915, US915, EU868)               & -140                              & Software (Debian OS, OpenVPN)                                          & Ethernet WAN, Wi-Fi AP, Celular                   & 10 W (Máx)                             & 100 Mbps (LAN), 150 Mbps (Wi-Fi)              & \$170.00                             \\ \hline
+            Heltec HT-M7603                                                & 8                              & 470$\sim$510MHz, 863$\sim$870MHz, 902$\sim$928MHz (Comp. AU/US) & -139                              & Software (Firmware ESP32)                                              & Ethernet LAN, Wi-Fi directa                       & 2.25 W (Máx)                           & 100 Mbps (LAN), 150 Mbps (Wi-Fi)              & \$89.00                              \\ \hline
+            MikroTik wAP LoRa8 Kit                                         & 8                              & 863--870MHz, 902--928 MHz (Soporte AU915/US915)                 & -137                              & Software (RouterOS)                                                    & Ethernet PoE, Wi-Fi, Celular                      & 7 W (Máx)                              & 100 Mbps (LAN), 300 Mbps (Wi-Fi)              & \$169.00                             \\ \hline
+            \cellcolor{green!15}\textbf{Gateway Personalizado (Propuesto)} & \cellcolor{green!15}\textbf{1} & \cellcolor{green!15}\textbf{Sub-GHz (915 MHz)}                  & \cellcolor{green!15}\textbf{-147} & \cellcolor{green!15}\textbf{Software (Firmware ESP32, MQTT sobre TLS)} & \cellcolor{green!15}\textbf{Wi-Fi (Nativo ESP32)} & \cellcolor{green!15}\textbf{4 W (Máx)} & \cellcolor{green!15}\textbf{150 Mbps (Wi-Fi)} & \cellcolor{green!15}\textbf{\$48.68} \\ \hline
         \end{tabular}
     \end{table}
 \end{landscape}
 \FloatBarrier
 
-Como se observa en la Tabla \ref{tabla:gateways_comerciales}, los equipos comerciales ofrecen prestaciones superiores en términos de concurrencia al soportar 8 canales simultáneos y proporcionar múltiples interfaces de red de respaldo (Ethernet, conectividad celular 4G/LTE), e incluso en algunos casos integran chips criptográficos dedicados por hardware para máxima seguridad. Sin embargo, su costo de adquisición varía entre los \$89.00 y \$270.00 USD, a lo que frecuentemente se suman costos ocultos por licencias de software propietario, plataformas de gestión en la nube y gastos de importación. En contraste, la implementación del gateway personalizado representa una reducción significativa del costo de hardware, con un gasto total de 185 soles (aproximadamente \$48.68 USD), y carece de costos de licenciamiento de software al emplear herramientas de código abierto. Aunque presenta limitaciones técnicas como la operación monocanal y la dependencia exclusiva del Wi-Fi para el enlace ascendente, estas restricciones son altamente tolerables y balanceadas para un entorno de investigación académica, donde el volumen de tráfico de datos (telemetría esporádica de una cantidad reducida de nodos sensores) no justifica la inversión económica en un concentrador multicanal. Además, el manejo de la seguridad mediante software en el firmware del ESP32 (MQTT sobre TLS) es lo suficientemente robusto para garantizar la integridad y confidencialidad de los datos sin incurrir en los costos de agregar hardware criptográfico dedicado. De este modo, el desarrollo de un gateway a la medida se posiciona como la opción idónea en la relación costo-beneficio para este tipo de despliegue.
+Como se observa en la Tabla \ref{tabla:gateways_comerciales}, los equipos comerciales ofrecen prestaciones superiores en términos de concurrencia al soportar 8 canales simultáneos y proporcionar múltiples interfaces de red de respaldo (Ethernet, conectividad celular 4G/LTE), e incluso en algunos casos integran chips criptográficos dedicados por hardware para máxima seguridad. Sin embargo, su costo de adquisición varía entre los \$89.00 y \$270.00 USD, a lo que frecuentemente se suman costos ocultos por licencias de software propietario, plataformas de gestión en la nube y gastos de importación. En contraste, la implementación del gateway personalizado representa una reducción significativa del costo de hardware, con un gasto total de 185 soles (aproximadamente \$48.68 USD), y carece de costos de licenciamiento de software al emplear herramientas de código abierto.
+
+Para validar el consumo energético del gateway personalizado reportado en la Tabla \ref{tabla:gateways_comerciales} ($\sim 4\text{ W}$), se formuló el cálculo considerando el escenario de máxima demanda de corriente. Este pico de consumo ocurre cuando el microcontrolador ESP32 y el transceptor LoRa E220-900T30D transmiten datos simultáneamente. Empleando la ley de Watt, la potencia máxima ($P_{\text{máx}}$) se obtiene multiplicando el voltaje de alimentación ($V_{in}$) por la suma de las corrientes pico de ambos módulos ($I_{\text{ESP32\_TX}}$ e $I_{\text{LoRa\_TX}}$):
+
+\begin{equation}
+    P_{\text{máx}} = V_{in} \times (I_{\text{ESP32\_TX}} + I_{\text{LoRa\_TX}})
+\end{equation}
+
+Según las especificaciones técnicas, el módulo LoRa Ebyte E220-900T30D consume aproximadamente $620\text{ mA}$ al transmitir a su potencia máxima de $30\text{ dBm}$. Por su parte, el ESP32 demanda un promedio de $240\text{ mA}$ durante la transmisión Wi-Fi activa. Alimentando el sistema a $5\text{ V}$ para asegurar el rendimiento óptimo del amplificador de radiofrecuencia, se obtiene:
+
+\begin{equation}
+    P_{\text{máx}} = 5\text{ V} \times (0.24\text{ A} + 0.62\text{ A}) = 5\text{ V} \times 0.86\text{ A} = 4.3\text{ W}
+\end{equation}
+
+Este valor máximo teórico ($4.3\text{ W}$) sustenta la cifra consolidada en la comparativa y es altamente competitivo frente a los consumos de $10\text{ W}$ o $24\text{ W}$ de ciertos gateways comerciales. Cabe destacar como consideración de uso que el gateway operará la gran mayoría del tiempo en modo de recepción (RX) esperando datos de los nodos sensores, escenario donde el consumo cae a unos $100\text{ mA}$ para el ESP32 y $17.2\text{ mA}$ para el módulo LoRa, resultando en una potencia nominal continua cercana a los $0.6\text{ W}$, lo que valida su excepcional eficiencia energética. Aunque presenta limitaciones técnicas como la operación monocanal y la dependencia exclusiva del Wi-Fi para el enlace ascendente, estas restricciones son altamente tolerables y balanceadas para un entorno de investigación académica, donde el volumen de tráfico de datos (telemetría esporádica de una cantidad reducida de nodos sensores) no justifica la inversión económica en un concentrador multicanal. Además, el manejo de la seguridad mediante software en el firmware del ESP32 (MQTT sobre TLS) es lo suficientemente robusto para garantizar la integridad y confidencialidad de los datos sin incurrir en los costos de agregar hardware criptográfico dedicado. De este modo, el desarrollo de un gateway a la medida se posiciona como la opción idónea en la relación costo-beneficio para este tipo de despliegue.
 
 En conclusión, para este proyecto universitario desarrollado en Lima, Perú, se determina la viabilidad técnica y académica de optar por el diseño e implementación de un \textbf{gateway personalizado}. La priorización de la flexibilidad para configurar nodos simples, la reducción contundente del CAPEX y la alineación con los objetivos de diseño embebido respaldan sólidamente esta decisión frente al sobredimensionamiento y rigidez de los equipos comerciales. Esta elección fundamenta, a su vez, la necesidad de una evaluación exhaustiva de microcontroladores y módulos de comunicación para el ensamble tanto del nodo sensor como del gateway.
 
@@ -691,28 +705,28 @@ Esta arquitectura permite implementar distintas estrategias de control sobre una
 Con el objetivo de visualizar la operación de las estrategias de control implementadas, se elaboraron diagramas de bloques para los controladores PI/PID, Fuzzy PI y LQR. Estas representaciones permiten identificar la relación entre la señal de referencia, la medición de CO\(_2\), el cálculo de la acción de control y la actuación de los ventiladores sobre el ambiente. De esta manera, los diagramas complementan la descripción matemática y facilitan la comprensión del flujo de señales dentro del subsistema de mitigación activa.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=0.95\linewidth]{images/capitulo3/Diagrama_PID.png}
-\caption{Diagrama de bloques del controlador PI/PID aplicado al sistema de ventilación.}
-\label{fig:diagrama_pid}
+    \centering
+    \includegraphics[width=0.95\linewidth]{images/capitulo3/Diagrama_PID.png}
+    \caption{Diagrama de bloques del controlador PI/PID aplicado al sistema de ventilación.}
+    \label{fig:diagrama_pid}
 \end{figure}
 
 Como se observa en la Figura \ref{fig:diagrama_pid}, el controlador PI/PID utiliza el error entre la concentración de referencia y la concentración medida de CO\(_2\) para generar una señal de control. Esta señal se convierte posteriormente en una modulación PWM, la cual regula la velocidad de los ventiladores y modifica el caudal de ventilación aplicado al ambiente.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=0.95\linewidth]{images/capitulo3/Diagrama_Fuzzy.png}
-\caption{Diagrama de bloques del controlador Fuzzy PI aplicado al sistema de ventilación.}
-\label{fig:diagrama_fuzzy}
+    \centering
+    \includegraphics[width=0.95\linewidth]{images/capitulo3/Diagrama_Fuzzy.png}
+    \caption{Diagrama de bloques del controlador Fuzzy PI aplicado al sistema de ventilación.}
+    \label{fig:diagrama_fuzzy}
 \end{figure}
 
 En la Figura \ref{fig:diagrama_fuzzy} se presenta la estructura del controlador Fuzzy PI. En este caso, las entradas del sistema difuso corresponden al error de CO\(_2\) y a la integral del error. Estas variables son procesadas mediante funciones de membresía, una base de reglas lingüísticas y un mecanismo de inferencia tipo Mamdani, obteniéndose como salida un porcentaje de PWM aplicado a los ventiladores.
 
 \begin{figure}[H]
-\centering
-\includegraphics[width=0.95\linewidth]{images/capitulo3/Diagrama_LQR.png}
-\caption{Diagrama de bloques del controlador LQR aplicado al sistema de ventilación.}
-\label{fig:diagrama_lqr}
+    \centering
+    \includegraphics[width=0.95\linewidth]{images/capitulo3/Diagrama_LQR.png}
+    \caption{Diagrama de bloques del controlador LQR aplicado al sistema de ventilación.}
+    \label{fig:diagrama_lqr}
 \end{figure}
 
 La Figura \ref{fig:diagrama_lqr} muestra la estructura del controlador LQR. A diferencia de los controladores basados directamente en el error, esta estrategia emplea una representación en espacio de estados del sistema, considerando las desviaciones de la concentración de CO\(_2\) respecto al punto de operación. A partir de estos estados, el controlador calcula una acción de control orientada a minimizar una función de costo asociada al error de concentración y al esfuerzo de ventilación.
@@ -800,19 +814,19 @@ donde \(U_{fuzzy}(k)\) representa el porcentaje de PWM sugerido por el controlad
 
 
 
-\centering
-\renewcommand{\arraystretch}{1.3}
-\caption{Variables lingüísticas del controlador Fuzzy}
-\label{tab:variables_fuzzy}
-\resizebox{\textwidth}{!}{
-\begin{tabular}{|p{3cm}|p{3cm}|p{4cm}|p{5cm}|}
-\hline
-\textbf{Variable} & \textbf{Rango} & \textbf{Conjuntos difusos} & \textbf{Interpretación} \\ \hline
-Error de CO$_2$ & \([-600,1500]\) ppm & Bajo, Medio, Alto, Muy Alto & Indica qué tan alejada está la concentración medida respecto al setpoint. \\ \hline
-Integral del error & \([-30,30]\) ppm/min & Baja, Media, Alta & Indica si el error disminuye, permanece casi estable o aumenta. \\ \hline
-PWM de ventiladores & \([0,100]\) \% & Cero, Baja, Media, Alta & Define el porcentaje de potencia aplicado a los ventiladores. \\ \hline
-\end{tabular}
-}
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \caption{Variables lingüísticas del controlador Fuzzy}
+    \label{tab:variables_fuzzy}
+    \resizebox{\textwidth}{!}{
+        \begin{tabular}{|p{3cm}|p{3cm}|p{4cm}|p{5cm}|}
+            \hline
+            \textbf{Variable}   & \textbf{Rango}       & \textbf{Conjuntos difusos}  & \textbf{Interpretación}                                                   \\ \hline
+            Error de CO$_2$     & \([-600,1500]\) ppm  & Bajo, Medio, Alto, Muy Alto & Indica qué tan alejada está la concentración medida respecto al setpoint. \\ \hline
+            Integral del error  & \([-30,30]\) ppm/min & Baja, Media, Alta           & Indica si el error disminuye, permanece casi estable o aumenta.           \\ \hline
+            PWM de ventiladores & \([0,100]\) \%       & Cero, Baja, Media, Alta     & Define el porcentaje de potencia aplicado a los ventiladores.             \\ \hline
+        \end{tabular}
+    }
 
 \end{table}
 
@@ -822,20 +836,20 @@ La base de reglas se definió considerando que, mientras mayor sea el error de C
 
 
 
-\centering
-\renewcommand{\arraystretch}{1.3}
-\caption{Base de reglas del controlador Fuzzy}
-\label{tab:reglas_fuzzy}
-\resizebox{\textwidth}{!}{
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Error / Integral del error} & \textbf{Baja} & \textbf{Media} & \textbf{Alta}\\ \hline
-\textbf{Bajo PPM} & Cero POT & Baja POT & Baja POT \\ \hline
-\textbf{Medio PPM} & Baja POT & Media POT & Media POT \\ \hline
-\textbf{Alto PPM} & Media POT & Media POT & Alta POT \\ \hline
-\textbf{Muy Alto PPM} & Alta POT & Alta POT & Alta POT \\ \hline
-\end{tabular}
-}
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \caption{Base de reglas del controlador Fuzzy}
+    \label{tab:reglas_fuzzy}
+    \resizebox{\textwidth}{!}{
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+            \textbf{Error / Integral del error} & \textbf{Baja} & \textbf{Media} & \textbf{Alta} \\ \hline
+            \textbf{Bajo PPM}                   & Cero POT      & Baja POT       & Baja POT      \\ \hline
+            \textbf{Medio PPM}                  & Baja POT      & Media POT      & Media POT     \\ \hline
+            \textbf{Alto PPM}                   & Media POT     & Media POT      & Alta POT      \\ \hline
+            \textbf{Muy Alto PPM}               & Alta POT      & Alta POT       & Alta POT      \\ \hline
+        \end{tabular}
+    }
 
 \end{table}
 
