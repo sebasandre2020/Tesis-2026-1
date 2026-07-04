@@ -18,17 +18,14 @@
 #include <SoftwareSerial.h>
 
 // =============================================================================
-// NODE_ID — must be unique per physical node. The gateway forwards whatever
-// node_id arrives to Azure, so this controls how the dashboard labels the
-// readings.
-// =============================================================================
-#define NODE_ID "Node_01"
-// =============================================================================
+// List of simulated node IDs to rotate through
+const char* NODE_IDS[] = {"Node_01", "Node_02", "Node_03"};
+int currentNodeIndex = 0;
 
 // =============================================================================
-// SEND INTERVAL — milliseconds between telemetry packets.
+// SEND INTERVAL — milliseconds between telemetry packets (10 seconds as requested).
 // =============================================================================
-#define NODE_SEND_INTERVAL_MS 60000UL // 60 s
+#define NODE_SEND_INTERVAL_MS 10000UL // 10 s
 // =============================================================================
 
 // =============================================================================
@@ -46,11 +43,9 @@
 //   UNO 5V                        ------>  E220 VCC
 //   UNO GND                       ------>  E220 GND
 // =============================================================================
-#define LORA_RX_PIN  10
-#define LORA_TX_PIN  11
-#define LORA_M0_PIN  5
-#define LORA_M1_PIN  6
-#define LORA_AUX_PIN 7
+#define LORA_RX_PIN  2
+#define LORA_TX_PIN  3
+#define LORA_AUX_PIN 4
 
 // E220-900T30D factory default UART: 9600 baud, 8N1.
 #define LORA_BAUD 9600
@@ -67,15 +62,7 @@ unsigned long lastSendMs = 0;
 bool randomSeeded = false;
 
 void loraInit() {
-  pinMode(LORA_AUX_PIN, INPUT);
-  pinMode(LORA_M0_PIN, OUTPUT);
-  pinMode(LORA_M1_PIN, OUTPUT);
-
-  // Normal transparent transmission mode (M0 = 0, M1 = 0). The gateway
-  // runs in the same mode, on the E220 factory default channel/address,
-  // so they can talk out of the box.
-  digitalWrite(LORA_M0_PIN, LOW);
-  digitalWrite(LORA_M1_PIN, LOW);
+  pinMode(LORA_AUX_PIN, INPUT_PULLUP);
 
   loraSerial.begin(LORA_BAUD);
   delay(500); // Let the module stabilize.
@@ -107,7 +94,7 @@ void generateReading(int &co2, int &dust, float &tempC, float &humPct) {
 }
 
 // Build the JSON payload into `out`. Returns false on formatting failure.
-bool buildPayload(char *out, size_t outSize) {
+bool buildPayload(char *out, size_t outSize, const char* nodeId) {
   int co2, dust;
   float tempC, humPct;
   generateReading(co2, dust, tempC, humPct);
@@ -123,15 +110,16 @@ bool buildPayload(char *out, size_t outSize) {
   int n = snprintf(out, outSize,
                    "{\"node_id\":\"%s\",\"co2\":%d,\"dust\":%d,"
                    "\"temperature\":%s,\"humidity\":%s}",
-                   NODE_ID, co2, dust, tempStr, humStr);
+                   nodeId, co2, dust, tempStr, humStr);
 
   return (n > 0 && (size_t)n < outSize);
 }
 
 void sendTelemetryPacket() {
   char payload[PAYLOAD_BUFFER_SIZE];
+  const char* nodeId = NODE_IDS[currentNodeIndex];
 
-  if (!buildPayload(payload, sizeof(payload))) {
+  if (!buildPayload(payload, sizeof(payload), nodeId)) {
     Serial.println("[TX] payload build failed (buffer too small).");
     return;
   }
@@ -142,8 +130,8 @@ void sendTelemetryPacket() {
   unsigned long waitStart = millis();
   while (!loraReady()) {
     if (millis() - waitStart > AUX_WAIT_TIMEOUT_MS) {
-      Serial.println("[TX] E220 AUX stuck LOW for >1s; aborting send.");
-      return;
+      Serial.println("[TX] Warning: E220 AUX stuck LOW for >1s; sending anyway.");
+      break;
     }
   }
 
@@ -152,6 +140,9 @@ void sendTelemetryPacket() {
 
   Serial.print("[TX] ");
   Serial.println(payload);
+
+  // Rotate to the next node for the next transmission
+  currentNodeIndex = (currentNodeIndex + 1) % 3;
 }
 
 void setup() {
@@ -159,9 +150,7 @@ void setup() {
   delay(500);
 
   Serial.println();
-  Serial.print("Arduino UNO node \"");
-  Serial.print(NODE_ID);
-  Serial.println("\" starting...");
+  Serial.println("Arduino UNO node starting (simulating Node_01, Node_02, Node_03 sequentially)...");
 
   loraInit();
 

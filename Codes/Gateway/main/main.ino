@@ -12,7 +12,7 @@
 //           by physical Arduino UNO + E220-900T30D nodes and forwards each
 //           one to Azure unchanged. The SimulationManager is compiled out.
 // =============================================================================
-#define USE_LORA_REAL false
+#define USE_LORA_REAL true
 // =============================================================================
 
 // To compile correctly, rename 'secrets.h.template' to 'secrets.h' and fill in
@@ -36,15 +36,12 @@
 // module is initialized either way — in simulation mode we just don't read
 // from it).
 // =============================================================================
-#define LORA_RX_PIN 17 // ESP32 RX2 <- E220 TXD
-#define LORA_TX_PIN 16 // ESP32 TX2 -> E220 RXD
-#define LORA_AUX_PIN 15
-#define LORA_M0_PIN 4
-#define LORA_M1_PIN 5
+#define LORA_RX_PIN 16 // ESP32 RX2 <- E220 TXD
+#define LORA_TX_PIN 17 // ESP32 TX2 -> E220 RXD
+#define LORA_AUX_PIN 4
 
 // Global managers.
-LoRaManager lora(LORA_RX_PIN, LORA_TX_PIN, LORA_AUX_PIN, LORA_M0_PIN,
-                 LORA_M1_PIN);
+LoRaManager lora(LORA_RX_PIN, LORA_TX_PIN, LORA_AUX_PIN);
 AzureIoTManager azureIoT(WIFI_SSID, WIFI_PASSWORD, IOT_HUB_CONN_STRING);
 
 #if !USE_LORA_REAL
