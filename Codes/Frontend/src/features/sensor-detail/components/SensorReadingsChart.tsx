@@ -68,11 +68,11 @@ const SensorReadingsChart: React.FC<SensorReadingsChartProps> = ({
       aria-label={`Gráfica de ${meta.label}`}
       className="bg-white p-4 rounded-lg shadow-md border border-gray-200 h-full flex flex-col"
     >
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2 flex-shrink-0">
         <h3 className="text-lg font-semibold">{title}</h3>
       </div>
 
-      <MetricTabs value={metric} onChange={onMetricChange} className="mb-2" />
+      <MetricTabs value={metric} onChange={onMetricChange} className="mb-2 flex-shrink-0" />
 
       <div className="relative flex-1 min-h-[280px]">
         {loading && (

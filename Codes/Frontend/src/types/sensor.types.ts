@@ -83,6 +83,7 @@ export interface ChartDataset {
   tension?: number;
   pointRadius?: number;
   pointHoverRadius?: number;
+  spanGaps?: boolean;
 }
 
 /** Datos formateados para Chart.js */

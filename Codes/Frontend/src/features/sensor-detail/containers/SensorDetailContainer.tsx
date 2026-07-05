@@ -169,7 +169,7 @@ const SensorDetailContainer: React.FC = () => {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 min-h-0">
-          <div className="lg:col-span-2 min-h-[360px]">
+          <div className="lg:col-span-2 min-h-[420px] flex-shrink-0">
             <SensorReadingsChart
               data={chartData}
               metric={metric}
@@ -181,7 +181,7 @@ const SensorDetailContainer: React.FC = () => {
             />
           </div>
 
-          <div className="flex flex-col gap-4 min-h-[360px]">
+          <div className="flex flex-col gap-4 min-h-[420px]">
             <CurrentReadingsWidget
               co2={sensorData.currentLevel}
               co2Status={sensorData.currentStatus}

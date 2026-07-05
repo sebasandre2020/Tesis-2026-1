@@ -60,11 +60,11 @@ const MetricsTrendChart: React.FC<MetricsTrendChartProps> = ({
       aria-label={`Gráfica comparativa de ${meta.label}`}
       className="bg-white p-4 rounded-lg shadow-md border border-gray-200 h-full flex flex-col"
     >
-      <h2 className="text-xl font-semibold mb-2">
+      <h2 className="text-xl font-semibold mb-2 flex-shrink-0">
         Tendencias de {meta.label} — {getTimeRangeLabel(timeRange)}
       </h2>
 
-      <MetricTabs value={metric} onChange={onMetricChange} className="mb-3" />
+      <MetricTabs value={metric} onChange={onMetricChange} className="mb-3 flex-shrink-0" />
 
       <div className="relative flex-1 min-h-[320px]">
         {loading && (

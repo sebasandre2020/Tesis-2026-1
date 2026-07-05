@@ -313,6 +313,7 @@ export const processChartData = (
       tension: 0.1,
       pointRadius: 1,
       pointHoverRadius: 4,
+      spanGaps: true,
     };
   });
 

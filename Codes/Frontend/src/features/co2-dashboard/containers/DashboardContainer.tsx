@@ -130,7 +130,7 @@ const DashboardContainer: React.FC = () => {
           </div>
         </div>
 
-        <div className="min-h-[400px]">
+        <div className="min-h-[460px] flex-shrink-0">
           <MetricsTrendChart
             data={data.chartData}
             metric={metric}
