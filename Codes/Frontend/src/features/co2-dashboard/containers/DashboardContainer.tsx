@@ -11,6 +11,7 @@ import AlertHistoryList from '../components/AlertHistoryList';
 import AlertList from '../components/AlertList';
 import TimeRangeFilter from '../components/TimeRangeFilter';
 import { useTimeRange } from '../../../hooks/useTimeRange';
+import { toUtcIsoString, getCustomTimeRangeLabel } from '../../../utils/formatters';
 import {
   fetchSensors,
   fetchActiveAlerts,
@@ -44,6 +45,28 @@ const DashboardContainer: React.FC = () => {
   const [data, setData] = useState<DashboardData>(EMPTY);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [customFrom, setCustomFrom] = useState('');
+  const [customTo, setCustomTo] = useState('');
+  const [appliedCustomFrom, setAppliedCustomFrom] = useState('');
+  const [appliedCustomTo, setAppliedCustomTo] = useState('');
+
+  // Inicializa las fechas cuando el usuario cambia a rango personalizado
+  useEffect(() => {
+    if (timeRange === 'custom' && (!customFrom || !customTo)) {
+      const now = new Date();
+      const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      const toLocalISO = (d: Date) => {
+        const tzOffset = d.getTimezoneOffset() * 60000;
+        return new Date(d.getTime() - tzOffset).toISOString().slice(0, 16);
+      };
+      const localFrom = toLocalISO(yesterday);
+      const localTo = toLocalISO(now);
+      setCustomFrom(localFrom);
+      setCustomTo(localTo);
+      setAppliedCustomFrom(localFrom);
+      setAppliedCustomTo(localTo);
+    }
+  }, [timeRange]);
 
   // Sensores + alertas + stats no dependen de la métrica → cargan una sola vez.
   useEffect(() => {
@@ -78,10 +101,17 @@ const DashboardContainer: React.FC = () => {
     };
   }, []);
 
-  // El chart comparativo depende de timeRange + métrica → recarga dedicada.
+  // El chart comparativo depende de timeRange + métrica + fechas custom → recarga dedicada.
   useEffect(() => {
     let cancelled = false;
-    fetchChartData(timeRange, metric)
+    if (timeRange === 'custom' && (!appliedCustomFrom || !appliedCustomTo)) {
+      return;
+    }
+
+    const fromUtc = timeRange === 'custom' ? toUtcIsoString(appliedCustomFrom) : undefined;
+    const toUtc = timeRange === 'custom' ? toUtcIsoString(appliedCustomTo) : undefined;
+
+    fetchChartData(timeRange, metric, fromUtc, toUtc)
       .then(chartData => {
         if (!cancelled) setData(prev => ({ ...prev, chartData }));
       })
@@ -91,7 +121,7 @@ const DashboardContainer: React.FC = () => {
     return () => {
       cancelled = true;
     };
-  }, [timeRange, metric]);
+  }, [timeRange, metric, appliedCustomFrom, appliedCustomTo]);
 
   return (
     <div className="dashboard flex h-screen overflow-hidden">
@@ -125,8 +155,19 @@ const DashboardContainer: React.FC = () => {
               </div>
             )}
           </div>
-          <div className="lg:col-span-1">
-            <TimeRangeFilter timeRange={timeRange} onTimeRangeChange={setTimeRange} />
+          <div className="lg:col-span-1 h-fit">
+            <TimeRangeFilter
+              timeRange={timeRange}
+              onTimeRangeChange={setTimeRange}
+              customFrom={customFrom}
+              customTo={customTo}
+              onCustomFromChange={setCustomFrom}
+              onCustomToChange={setCustomTo}
+              onApplyCustomRange={(from, to) => {
+                setAppliedCustomFrom(from);
+                setAppliedCustomTo(to);
+              }}
+            />
           </div>
         </div>
 
@@ -137,6 +178,7 @@ const DashboardContainer: React.FC = () => {
             onMetricChange={setMetric}
             timeRange={timeRange}
             loading={loading && data.chartData.datasets.length === 0}
+            customRangeLabel={timeRange === 'custom' ? getCustomTimeRangeLabel(appliedCustomFrom, appliedCustomTo) : undefined}
           />
         </div>
 

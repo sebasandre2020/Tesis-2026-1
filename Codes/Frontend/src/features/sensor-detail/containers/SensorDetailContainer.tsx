@@ -17,7 +17,7 @@ import {
   SENSOR_ID_TO_NODE,
 } from '../../../services/api';
 import { SensorDetailData, ChartData, TimeRange, MetricType } from '../../../types/sensor.types';
-import { getTimeRangeLabel } from '../../../utils/formatters';
+import { getTimeRangeLabel, toUtcIsoString, getCustomTimeRangeLabel } from '../../../utils/formatters';
 
 const TIME_RANGE_OPTIONS: { value: TimeRange; label: string }[] = [
   { value: '1h', label: 'Última hora' },
@@ -26,6 +26,7 @@ const TIME_RANGE_OPTIONS: { value: TimeRange; label: string }[] = [
   { value: '24h', label: 'Últimas 24 horas' },
   { value: '7d', label: 'Últimos 7 días' },
   { value: 'june', label: 'Todo Junio' },
+  { value: 'custom', label: 'Personalizado...' },
 ];
 
 const parseSensorId = (raw: string | undefined): number | null => {
@@ -46,6 +47,28 @@ const SensorDetailContainer: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [chartLoading, setChartLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [customFrom, setCustomFrom] = useState('');
+  const [customTo, setCustomTo] = useState('');
+  const [appliedCustomFrom, setAppliedCustomFrom] = useState('');
+  const [appliedCustomTo, setAppliedCustomTo] = useState('');
+
+  // Inicializa las fechas cuando el usuario cambia a rango personalizado
+  useEffect(() => {
+    if (timeRange === 'custom' && (!customFrom || !customTo)) {
+      const now = new Date();
+      const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      const toLocalISO = (d: Date) => {
+        const tzOffset = d.getTimezoneOffset() * 60000;
+        return new Date(d.getTime() - tzOffset).toISOString().slice(0, 16);
+      };
+      const localFrom = toLocalISO(yesterday);
+      const localTo = toLocalISO(now);
+      setCustomFrom(localFrom);
+      setCustomTo(localTo);
+      setAppliedCustomFrom(localFrom);
+      setAppliedCustomTo(localTo);
+    }
+  }, [timeRange]);
 
   useEffect(() => {
     if (sensorId === null) {
@@ -84,12 +107,18 @@ const SensorDetailContainer: React.FC = () => {
 
   useEffect(() => {
     if (sensorId === null) return;
+    if (timeRange === 'custom' && (!appliedCustomFrom || !appliedCustomTo)) {
+      return;
+    }
 
     let cancelled = false;
     setChartLoading(true);
     setChartData({ labels: [], datasets: [] });
 
-    fetchSensorDetailChart(sensorId, timeRange, metric)
+    const fromUtc = timeRange === 'custom' ? toUtcIsoString(appliedCustomFrom) : undefined;
+    const toUtc = timeRange === 'custom' ? toUtcIsoString(appliedCustomTo) : undefined;
+
+    fetchSensorDetailChart(sensorId, timeRange, metric, fromUtc, toUtc)
       .then(chart => {
         if (!cancelled) setChartData(chart);
       })
@@ -103,7 +132,7 @@ const SensorDetailContainer: React.FC = () => {
     return () => {
       cancelled = true;
     };
-  }, [sensorId, timeRange, metric]);
+  }, [sensorId, timeRange, metric, appliedCustomFrom, appliedCustomTo]);
 
   if (sensorId === null) {
     return (
@@ -178,6 +207,7 @@ const SensorDetailContainer: React.FC = () => {
               loading={chartLoading}
               suggestedRange="7d"
               onSuggestedRangeClick={() => setTimeRange('7d')}
+              customRangeLabel={timeRange === 'custom' ? getCustomTimeRangeLabel(appliedCustomFrom, appliedCustomTo) : undefined}
             />
           </div>
 
@@ -193,19 +223,56 @@ const SensorDetailContainer: React.FC = () => {
               humidityStatus={sensorData.currentHumidityStatus}
             />
             <SensorStatsPanel stats={sensorData.stats} />
-            <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
-              <h3 className="text-sm font-semibold mb-2">Filtrar por Período</h3>
-              <select
-                className="w-full p-2 border rounded text-sm"
-                value={timeRange}
-                onChange={(e) => setTimeRange(e.target.value as TimeRange)}
-              >
-                {TIME_RANGE_OPTIONS.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-              <p className="text-[10px] text-gray-500 mt-1.5">
-                Mostrando: {getTimeRangeLabel(timeRange)}
+            
+            <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 flex flex-col gap-3">
+              <div>
+                <h3 className="text-sm font-semibold mb-2">Filtrar por Período</h3>
+                <select
+                  className="w-full p-2 border rounded text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                  value={timeRange}
+                  onChange={(e) => setTimeRange(e.target.value as TimeRange)}
+                >
+                  {TIME_RANGE_OPTIONS.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {timeRange === 'custom' && (
+                <div className="flex flex-col gap-3 border-t pt-3 border-gray-100">
+                  <div>
+                    <label className="block text-[10px] font-medium text-gray-500 mb-1">Desde</label>
+                    <input
+                      type="datetime-local"
+                      className="w-full p-1.5 border rounded text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                      value={customFrom}
+                      onChange={(e) => setCustomFrom(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-medium text-gray-500 mb-1">Hasta</label>
+                    <input
+                      type="datetime-local"
+                      className="w-full p-1.5 border rounded text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                      value={customTo}
+                      onChange={(e) => setCustomTo(e.target.value)}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    className="w-full py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-semibold transition-colors mt-1"
+                    onClick={() => {
+                      setAppliedCustomFrom(customFrom);
+                      setAppliedCustomTo(customTo);
+                    }}
+                  >
+                    Aplicar Filtro
+                  </button>
+                </div>
+              )}
+              
+              <p className="text-[10px] text-gray-500">
+                Mostrando: {timeRange === 'custom' ? getCustomTimeRangeLabel(appliedCustomFrom, appliedCustomTo) : getTimeRangeLabel(timeRange)}
               </p>
             </div>
           </div>

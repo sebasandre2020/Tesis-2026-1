@@ -57,7 +57,7 @@ const safeJson = async <T,>(res: Response, context: string): Promise<T | null> =
 };
 
 const labelForRange = (d: Date, range: TimeRange): string => {
-  if (range === 'june' || range === '7d' || range === '24h' || range === '12h') {
+  if (range === 'june' || range === '7d' || range === '24h' || range === '12h' || range === 'custom') {
     return d.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -254,13 +254,19 @@ export const fetchSensorDetail = async (sensorId: number): Promise<SensorDetailD
 export const fetchSensorDetailChart = async (
   sensorId: number,
   timeRange: TimeRange,
-  metric: MetricType
+  metric: MetricType,
+  customFrom?: string,
+  customTo?: string
 ): Promise<ChartData> => {
   const meta = SENSOR_ID_TO_NODE[sensorId];
   if (!meta) return { labels: [], datasets: [] };
 
   try {
-    const res = await fetch(`${API_BASE_URL}/readings?range=${encodeURIComponent(timeRange)}`);
+    let url = `${API_BASE_URL}/readings?range=${encodeURIComponent(timeRange)}`;
+    if (timeRange === 'custom' && customFrom && customTo) {
+      url = `${API_BASE_URL}/readings?from=${encodeURIComponent(customFrom)}&to=${encodeURIComponent(customTo)}`;
+    }
+    const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const raw = (await safeJson<RawReading[]>(res, 'fetchSensorDetailChart')) ?? [];
     const nodeReadings = raw.filter(r => r.nodeId === meta.nodeId);
@@ -322,10 +328,16 @@ export const processChartData = (
 
 export const fetchChartData = async (
   timeRange: TimeRange,
-  metric: MetricType
+  metric: MetricType,
+  customFrom?: string,
+  customTo?: string
 ): Promise<ChartData> => {
   try {
-    const res = await fetch(`${API_BASE_URL}/readings?range=${encodeURIComponent(timeRange)}`);
+    let url = `${API_BASE_URL}/readings?range=${encodeURIComponent(timeRange)}`;
+    if (timeRange === 'custom' && customFrom && customTo) {
+      url = `${API_BASE_URL}/readings?from=${encodeURIComponent(customFrom)}&to=${encodeURIComponent(customTo)}`;
+    }
+    const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const raw = (await safeJson<RawReading[]>(res, 'fetchChartData')) ?? [];
     return processChartData(raw, timeRange, metric);

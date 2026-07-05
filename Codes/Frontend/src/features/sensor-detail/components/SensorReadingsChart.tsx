@@ -19,6 +19,7 @@ interface SensorReadingsChartProps {
   suggestedRange?: TimeRange;
   /** Callback al click en el botón de rango sugerido. */
   onSuggestedRangeClick?: () => void;
+  customRangeLabel?: string;
 }
 
 const hasData = (data: ChartData) =>
@@ -32,6 +33,7 @@ const SensorReadingsChart: React.FC<SensorReadingsChartProps> = ({
   loading = false,
   suggestedRange,
   onSuggestedRangeClick,
+  customRangeLabel,
 }) => {
   const meta = METRIC_META[metric];
   const options = {
@@ -57,9 +59,8 @@ const SensorReadingsChart: React.FC<SensorReadingsChartProps> = ({
     },
   };
 
-  const title = timeRange
-    ? `Lecturas — ${getTimeRangeLabel(timeRange)}`
-    : 'Lecturas Recientes';
+  const label = customRangeLabel || (timeRange ? getTimeRangeLabel(timeRange) : 'Lecturas Recientes');
+  const title = `Lecturas — ${label}`;
 
   return (
     <div

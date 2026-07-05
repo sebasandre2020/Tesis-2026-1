@@ -15,6 +15,7 @@ interface MetricsTrendChartProps {
   onMetricChange: (m: MetricType) => void;
   timeRange: TimeRange;
   loading?: boolean;
+  customRangeLabel?: string;
 }
 
 const hasData = (data: ChartData) =>
@@ -26,6 +27,7 @@ const MetricsTrendChart: React.FC<MetricsTrendChartProps> = ({
   onMetricChange,
   timeRange,
   loading = false,
+  customRangeLabel,
 }) => {
   const meta = METRIC_META[metric];
   const options = {
@@ -61,7 +63,7 @@ const MetricsTrendChart: React.FC<MetricsTrendChartProps> = ({
       className="bg-white p-4 rounded-lg shadow-md border border-gray-200 h-full flex flex-col"
     >
       <h2 className="text-xl font-semibold mb-2 flex-shrink-0">
-        Tendencias de {meta.label} — {getTimeRangeLabel(timeRange)}
+        Tendencias de {meta.label} — {customRangeLabel || getTimeRangeLabel(timeRange)}
       </h2>
 
       <MetricTabs value={metric} onChange={onMetricChange} className="mb-3 flex-shrink-0" />

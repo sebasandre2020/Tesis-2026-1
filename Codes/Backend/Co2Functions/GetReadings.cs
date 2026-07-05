@@ -26,16 +26,40 @@ namespace Co2Functions
             _logger.LogInformation("Processing GetReadings request.");
 
             var query = HttpUtility.ParseQueryString(req.Url.Query);
-            string rangeStr = query["range"] ?? "24h";
+            string rangeStr = query["range"];
+            string fromStr = query["from"];
+            string toStr = query["to"];
+
+            bool isCustom = !string.IsNullOrEmpty(fromStr) && !string.IsNullOrEmpty(toStr);
+            DateTime? fromDate = null;
+            DateTime? toDate = null;
+
+            if (isCustom)
+            {
+                if (DateTime.TryParse(fromStr, null, System.Globalization.DateTimeStyles.RoundtripKind, out var f))
+                    fromDate = f;
+                if (DateTime.TryParse(toStr, null, System.Globalization.DateTimeStyles.RoundtripKind, out var t))
+                    toDate = t;
+
+                if (fromDate == null || toDate == null)
+                {
+                    isCustom = false; // Fallback to standard range if parsing fails
+                }
+            }
+
             int hours = 24;
             bool isJune = false;
 
-            if (rangeStr == "1h") hours = 1;
-            else if (rangeStr == "3h") hours = 3;
-            else if (rangeStr == "12h") hours = 12;
-            else if (rangeStr == "24h") hours = 24;
-            else if (rangeStr == "7d") hours = 168;
-            else if (rangeStr == "june") isJune = true;
+            if (!isCustom)
+            {
+                string r = rangeStr ?? "24h";
+                if (r == "1h") hours = 1;
+                else if (r == "3h") hours = 3;
+                else if (r == "12h") hours = 12;
+                else if (r == "24h") hours = 24;
+                else if (r == "7d") hours = 168;
+                else if (r == "june") isJune = true;
+            }
 
             var readings = new List<object>();
 
@@ -57,7 +81,14 @@ namespace Co2Functions
                 {
                     await conn.OpenAsync();
 
-                    var text = isJune
+                    var text = isCustom
+                        ? @"
+                            SELECT NodeId, Co2Level, DustLevel, Temperature, Humidity, Timestamp
+                            FROM TelemetryReadings
+                            WHERE Timestamp >= @From AND Timestamp <= @To
+                            ORDER BY Timestamp ASC;
+                        "
+                        : isJune
                         ? @"
                             SELECT NodeId, Co2Level, DustLevel, Temperature, Humidity, Timestamp
                             FROM TelemetryReadings
@@ -73,7 +104,15 @@ namespace Co2Functions
 
                     using (SqlCommand cmd = new SqlCommand(text, conn))
                     {
-                        cmd.Parameters.AddWithValue("@Hours", hours);
+                        if (isCustom)
+                        {
+                            cmd.Parameters.AddWithValue("@From", fromDate.Value);
+                            cmd.Parameters.AddWithValue("@To", toDate.Value);
+                        }
+                        else
+                        {
+                            cmd.Parameters.AddWithValue("@Hours", hours);
+                        }
 
                         using (var reader = await cmd.ExecuteReaderAsync())
                         {

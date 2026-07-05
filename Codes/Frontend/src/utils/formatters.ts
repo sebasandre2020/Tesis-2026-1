@@ -165,8 +165,33 @@ export const getTimeRangeLabel = (range: TimeRange): string => {
     '24h': 'Últimas 24 horas',
     '7d': 'Últimos 7 días',
     'june': 'Todo Junio',
+    'custom': 'Período personalizado',
   };
   return labels[range];
+};
+
+/**
+ * Convierte un string de fecha local de un input datetime-local a string UTC ISO.
+ */
+export const toUtcIsoString = (localDateTimeStr: string): string => {
+  if (!localDateTimeStr) return '';
+  const d = new Date(localDateTimeStr);
+  return Number.isNaN(d.getTime()) ? '' : d.toISOString();
+};
+
+/**
+ * Devuelve una etiqueta formateada legible para rangos de tiempo personalizados.
+ */
+export const getCustomTimeRangeLabel = (from: string, to: string): string => {
+  if (!from || !to) return 'Período personalizado';
+  const fd = new Date(from);
+  const td = new Date(to);
+  if (Number.isNaN(fd.getTime()) || Number.isNaN(td.getTime())) {
+    return 'Período personalizado';
+  }
+  const format = (d: Date) =>
+    d.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  return `Desde ${format(fd)} hasta ${format(td)}`;
 };
 
 /**
