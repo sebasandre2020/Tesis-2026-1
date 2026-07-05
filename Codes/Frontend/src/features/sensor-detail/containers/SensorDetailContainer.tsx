@@ -168,7 +168,7 @@ const SensorDetailContainer: React.FC = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-1 min-h-0">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 w-full">
           <div className="lg:col-span-2 min-h-[420px] flex-shrink-0">
             <SensorReadingsChart
               data={chartData}
@@ -210,28 +210,30 @@ const SensorDetailContainer: React.FC = () => {
             </div>
           </div>
 
-          <div className="lg:col-span-3 bg-white p-4 rounded-lg shadow-md border border-gray-200">
-            <h3 className="text-lg font-semibold mb-4">Historial de Alertas (CO₂)</h3>
-            {sensorData.alertHistory.length === 0 ? (
-              <p className="text-gray-500 text-center py-4">No hay alertas registradas para este sensor.</p>
-            ) : (
-              <ul className="space-y-2">
-                {sensorData.alertHistory.map((alert, index) => (
-                  <li
-                    key={`${alert.time}-${index}`}
-                    className="flex items-center justify-between p-3 rounded-lg bg-red-50 border border-red-200 shadow-sm"
-                  >
-                    <div className="flex items-center">
-                      <FaExclamationTriangle className="text-red-500 mr-3" size={20} />
-                      <div>
-                        <p className="text-sm text-gray-500">Hora: {alert.time}</p>
-                        <p className="text-lg font-bold text-red-600">{alert.level} ppm</p>
+          <div className="lg:col-span-3 bg-white p-4 rounded-lg shadow-md border border-gray-200 flex flex-col h-[320px]">
+            <h3 className="text-lg font-semibold mb-4 flex-shrink-0">Historial de Alertas (CO₂)</h3>
+            <div className="flex-1 overflow-y-auto pr-1">
+              {sensorData.alertHistory.length === 0 ? (
+                <p className="text-gray-500 text-center py-4">No hay alertas registradas para este sensor.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {sensorData.alertHistory.map((alert, index) => (
+                    <li
+                      key={`${alert.time}-${index}`}
+                      className="flex items-center justify-between p-3 rounded-lg bg-red-50 border border-red-200 shadow-sm"
+                    >
+                      <div className="flex items-center">
+                        <FaExclamationTriangle className="text-red-500 mr-3" size={20} />
+                        <div>
+                          <p className="text-sm text-gray-500">Hora: {alert.time}</p>
+                          <p className="text-lg font-bold text-red-600">{alert.level} ppm</p>
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
         </div>
       </div>
