@@ -450,7 +450,88 @@ En términos comparativos, el PI/PID fue el controlador que alcanzó más rápid
 
 En conjunto, los resultados experimentales permiten concluir que las tres estrategias fueron capaces de reducir la concentración de CO\(_2\) hasta una zona cercana al valor de referencia de 900 ppm. Sin embargo, cada controlador presentó un comportamiento distinto: el PI/PID destacó por su rapidez, el Fuzzy PI agresivo por su reducción progresiva frente a una condición inicial severa, y el LQR por su respuesta rápida y estable ante una concentración inicial elevada. Por ello, considerando únicamente los ensayos experimentales, el LQR representa una alternativa con buen compromiso entre tiempo de respuesta, estabilidad y reducción progresiva del esfuerzo de control.
 
+\section{Análisis complementario de temperatura y humedad relativa durante las pruebas experimentales}
 
+Además de la concentración de CO\(_2\), durante las pruebas experimentales se incorporó el seguimiento de la temperatura y la humedad relativa del ambiente. Estas variables no fueron consideradas como variables principales de control, debido a que el sistema implementado actúa únicamente mediante ventilación. Sin embargo, su análisis resulta importante porque permite observar si la acción de los ventiladores genera variaciones relevantes en las condiciones ambientales mientras se reduce la concentración de CO\(_2\).
+
+En este sentido, la temperatura y la humedad relativa se emplean como variables complementarias de monitoreo ambiental. Su inclusión permite relacionar el desempeño de los controladores con el comportamiento general del ambiente, reforzando el enfoque de Calidad Ambiental Interior desarrollado en la presente investigación.
+
+\subsection{Temperatura y humedad relativa durante la prueba PI/PID}
+
+En la prueba experimental del controlador PI/PID se observa que la temperatura presenta inicialmente un ligero incremento, pasando aproximadamente de 23.4~\(^\circ\)C a un valor cercano a 23.6~\(^\circ\)C durante los primeros minutos. Posteriormente, la temperatura disminuye de forma progresiva hasta valores cercanos a 23.2~\(^\circ\)C, para luego mostrar una recuperación moderada hacia el final de la prueba. Este comportamiento indica que la acción inicial del controlador, caracterizada por una ventilación elevada, no produjo variaciones térmicas bruscas, sino cambios reducidos dentro de un rango estrecho.
+
+Por otro lado, la humedad relativa muestra un incremento más pronunciado durante la etapa inicial, alcanzando valores cercanos al 86~\%. Luego de este aumento, la humedad disminuye progresivamente y se estabiliza alrededor de 77--78~\%. Este comportamiento evidencia que, aunque la humedad relativa varió durante la prueba, su tendencia final fue hacia una condición más estable conforme el sistema redujo el CO\(_2\) y disminuyó el esfuerzo de ventilación.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/capitulo4/PID_Temperatura.png}
+        \caption{Temperatura durante la prueba experimental PI/PID.}
+        \label{fig:pid_temperatura}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/capitulo4/PID_Humedad.png}
+        \caption{Humedad relativa durante la prueba experimental PI/PID.}
+        \label{fig:pid_humedad}
+    \end{minipage}
+\end{figure}
+
+\subsection{Temperatura y humedad relativa durante la prueba Fuzzy PI}
+
+En el caso del controlador Fuzzy PI, la temperatura presenta una disminución gradual desde aproximadamente 23.4~\(^\circ\)C hasta valores cercanos a 23.1--23.2~\(^\circ\)C. A diferencia del controlador PI/PID, no se observa un incremento inicial marcado, sino una tendencia descendente más suave y progresiva. Esto es coherente con la naturaleza del controlador Fuzzy PI, cuya acción de control resulta menos agresiva y más gradual durante la reducción del CO\(_2\).
+
+La humedad relativa también presenta una disminución progresiva. Inicialmente se ubica alrededor de 73.4~\% y desciende hasta valores cercanos a 70.5--71~\%, para luego mantenerse con pequeñas variaciones. Este comportamiento muestra que la ventilación aplicada por el controlador Fuzzy PI no generó oscilaciones abruptas en la humedad relativa, sino una evolución más suave en comparación con la prueba PI/PID.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/capitulo4/FUZZY_Temperatura.png}
+        \caption{Temperatura durante la prueba experimental Fuzzy PI.}
+        \label{fig:fuzzy_temperatura}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/capitulo4/FUZZY_Humedad.png}
+        \caption{Humedad relativa durante la prueba experimental Fuzzy PI.}
+        \label{fig:fuzzy_humedad}
+    \end{minipage}
+\end{figure}
+
+\subsection{Temperatura y humedad relativa durante la prueba LQR}
+
+Durante la prueba experimental del controlador LQR, la temperatura disminuye rápidamente durante los primeros minutos, pasando de aproximadamente 23.4~\(^\circ\)C a valores cercanos a 23.1~\(^\circ\)C. Luego, la variable presenta una recuperación lenta y progresiva hasta ubicarse alrededor de 23.2~\(^\circ\)C hacia la etapa final. Esta tendencia indica que el controlador LQR, a pesar de aplicar una acción de control eficiente sobre el CO\(_2\), mantuvo la temperatura dentro de un intervalo reducido.
+
+La humedad relativa, por su parte, muestra una caída inicial desde valores cercanos a 73.4~\% hasta aproximadamente 70.6~\%. Posteriormente, se mantiene con ligeras variaciones alrededor de 71~\%. Este comportamiento evidencia una estabilización ambiental posterior a la etapa inicial de mayor ventilación, lo cual complementa los resultados obtenidos en la concentración de CO\(_2\).
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/capitulo4/LQR_Temperatura.png}
+        \caption{Temperatura durante la prueba experimental LQR.}
+        \label{fig:lqr_temperatura}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/capitulo4/LQR_Humedad.png}
+        \caption{Humedad relativa durante la prueba experimental LQR.}
+        \label{fig:lqr_humedad}
+    \end{minipage}
+\end{figure}
+
+\subsection{Comparación del comportamiento ambiental complementario}
+
+De manera general, los tres controladores mantuvieron la temperatura dentro de un rango reducido, aproximadamente entre 23.1~\(^\circ\)C y 23.6~\(^\circ\)C. Esto permite afirmar que la acción de ventilación aplicada para reducir el CO\(_2\) no generó variaciones térmicas significativas durante las pruebas experimentales.
+
+Respecto a la humedad relativa, el controlador PI/PID presentó la variación más pronunciada, con un incremento inicial seguido de una disminución progresiva. En cambio, los controladores Fuzzy PI y LQR mostraron comportamientos más suaves, con una disminución inicial y posterior estabilización. Esto sugiere que las estrategias Fuzzy PI y LQR produjeron una evolución ambiental más gradual en las variables complementarias, mientras que el PI/PID tuvo una respuesta más intensa durante la etapa inicial.
+
+En conclusión, el análisis de temperatura y humedad relativa permite complementar la evaluación de los controladores. Aunque el objetivo principal del sistema fue el control de CO\(_2\), el seguimiento de estas variables demuestra que la ventilación aplicada no afectó de manera considerable las condiciones ambientales del aula. Por ello, la incorporación de temperatura y humedad relativa fortalece la validación experimental del sistema desde una perspectiva más amplia de calidad ambiental interior.
 
 \section{Página web para la lectura de los sensores}
 
