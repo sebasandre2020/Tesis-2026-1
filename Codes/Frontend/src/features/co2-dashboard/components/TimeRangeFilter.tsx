@@ -24,7 +24,7 @@ const TimeRangeFilter: React.FC<TimeRangeFilterProps> = ({
   onApplyCustomRange,
 }) => {
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 h-fit flex flex-col gap-3">
+    <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 flex flex-col gap-3 lg:absolute lg:inset-0 overflow-y-auto">
       <div>
         <h2 className="text-xl font-semibold mb-2">Filtro por periodo</h2>
         <select

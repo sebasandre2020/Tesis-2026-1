@@ -155,7 +155,7 @@ const DashboardContainer: React.FC = () => {
               </div>
             )}
           </div>
-          <div className="lg:col-span-1 h-fit">
+          <div className="lg:col-span-1 relative h-fit lg:h-full min-h-[150px] lg:min-h-0">
             <TimeRangeFilter
               timeRange={timeRange}
               onTimeRangeChange={setTimeRange}
