@@ -182,13 +182,13 @@ const SensorDetailContainer: React.FC = () => {
       <Sidebar />
 
       <div className="p-6 bg-gray-100 flex-1 flex flex-col gap-4 ml-64 overflow-y-auto">
-        <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+        <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 flex-shrink-0">
           <h2 className="text-2xl font-bold">{sensorData.sensorName}</h2>
           <p className="text-gray-600">Ubicación: {sensorData.location}</p>
         </div>
 
         {sensorData.hasPartialReadings && (
-          <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-lg p-3 flex items-start gap-2">
+          <div className="bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-lg p-3 flex items-start gap-2 flex-shrink-0">
             <FaInfoCircle className="mt-0.5 flex-shrink-0" />
             <span>
               Algunas lecturas anteriores a la migración aún no incluyen los 3 sensores nuevos.
@@ -197,7 +197,7 @@ const SensorDetailContainer: React.FC = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 w-full flex-shrink-0">
           <div className="lg:col-span-2 min-h-[420px] flex-shrink-0">
             <SensorReadingsChart
               data={chartData}

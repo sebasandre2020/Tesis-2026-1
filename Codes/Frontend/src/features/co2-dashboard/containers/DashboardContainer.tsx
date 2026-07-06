@@ -128,14 +128,14 @@ const DashboardContainer: React.FC = () => {
       <Sidebar />
 
       <div className="ml-64 p-6 w-full bg-gray-100 flex flex-col gap-4 overflow-y-auto">
-        <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 text-center">
+        <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 text-center flex-shrink-0">
           <h1 className="text-2xl font-bold">Dashboard de Monitoreo de Calidad de Aire Interior</h1>
           {error && (
             <p className="text-sm text-red-600 mt-1" role="alert">{error}</p>
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 min-h-[200px]">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 min-h-[200px] flex-shrink-0">
           <div className="lg:col-span-3 sensor-overview">
             {loading && data.sensors.length === 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 h-full">
@@ -182,7 +182,7 @@ const DashboardContainer: React.FC = () => {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 flex-shrink-0">
           <StatisticsPanel stats={data.stats} />
           <AlertHistoryList history={data.history} />
           <AlertList alerts={data.alerts} />
