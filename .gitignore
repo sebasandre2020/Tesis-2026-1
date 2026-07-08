@@ -18,12 +18,28 @@
 *.pdf
 
 Codes/
+.kombai/
 
-Transmisor_E220-Arduino_UNO.zip
-
-Transmisor_E220-Arduino_UNO/
-
-.agents/
-skills-lock.json
+# C# build artifacts and settings
+[Bb]in/
+[Oo]bj/
+[Pp]ublish/
+*.zip
+local.settings.json
+.vs/
 
 notebooklm-config.json
+
+Transmisor_E220-Arduino_UNO/
+Transmisor_E220-Arduino_UNO.zip
+PID_Temperatura.ino
+
+skills-lock.json
+
+.agents/
+
+#Code related files
+PID_COMBINADO.ino
+node_modules/
+package-lock.json
+package.json
