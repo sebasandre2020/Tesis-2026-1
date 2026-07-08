@@ -1,27 +1,30 @@
 // src/features/shared/NotFoundPage.tsx
-// Página 404 para rutas no encontradas.
-
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { TbError404, TbChevronLeft } from 'react-icons/tb';
 import Sidebar from '../../components/Sidebar';
 
 const NotFoundPage: React.FC = () => {
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-gray-50 font-sans">
       <Sidebar />
-      <div className="p-6 bg-gray-100 flex-1 flex flex-col items-center justify-center ml-64">
-        <div className="bg-white p-8 rounded-lg shadow-md border border-gray-200 text-center max-w-md">
-          <p className="text-6xl font-bold text-gray-300 mb-4">404</p>
-          <h1 className="text-2xl font-bold mb-2">Página no encontrada</h1>
-          <p className="text-gray-500 mb-6">La ruta que buscas no existe en el sistema.</p>
+      <main className="ml-64 flex-1 flex flex-col items-center justify-center p-8">
+        <div className="card-refined p-12 text-center max-w-md w-full bg-white">
+          <TbError404 size={120} className="mx-auto mb-6 text-utec-cyan/10" />
+          
+          <h1 className="text-2xl font-bold text-utec-black uppercase tracking-tight mb-2">Recurso no encontrado</h1>
+          <p className="text-gray-500 font-medium leading-relaxed mb-10">
+            La dirección solicitada no existe o no tiene una telemetría asignada en este momento.
+          </p>
+          
           <Link
             to="/"
-            className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-utec-cyan text-white rounded-lg font-bold uppercase tracking-widest hover:bg-utec-cyan/90 transition-all active:scale-[0.98]"
           >
-            Volver al Dashboard
+            <TbChevronLeft /> Dashboard Principal
           </Link>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

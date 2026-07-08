@@ -1,16 +1,11 @@
 // src/features/co2-dashboard/components/SensorCard.tsx
-// Componente PRESENTACIONAL — Tarjeta de sensor con CO₂ como valor primario
-// y mini-snapshots de las otras 3 métricas (Polvo / Temperatura / Humedad).
-
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { TbChevronRight } from 'react-icons/tb';
 import { Sensor } from '../../../types/sensor.types';
 import {
   getStatusColor,
-  formatPPM,
-  formatMetricValue,
   getMetricStatus,
-  METRIC_META,
 } from '../../../utils/formatters';
 
 interface SensorCardProps {
@@ -31,41 +26,51 @@ const snapshots: Array<{
 const SensorCard: React.FC<SensorCardProps> = ({ sensor }) => {
   return (
     <Link to={`/sensor/${sensor.id}`} className="block h-full">
-      <div className="shadow-md p-4 rounded-lg border border-gray-200 bg-white h-full hover:shadow-lg hover:border-blue-300 transition-all duration-200 cursor-pointer flex flex-col">
-        <h3 className="font-bold text-lg">{sensor.name || 'Nodo sin nombre'}</h3>
-        <p className="text-gray-600 text-xs">{sensor.location || 'Ubicación desconocida'}</p>
+      <div className="card-refined p-5 h-full flex flex-col group relative overflow-hidden">
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h3 className="font-bold text-lg text-utec-black group-hover:text-utec-cyan transition-colors">
+              {sensor.name || 'Nodo sin nombre'}
+            </h3>
+            <p className="text-gray-400 text-[10px] uppercase tracking-wider font-semibold">
+              {sensor.location || 'Ubicación desconocida'}
+            </p>
+          </div>
+          <TbChevronRight className="text-gray-300 group-hover:text-utec-cyan group-hover:translate-x-1 transition-all" size={20} />
+        </div>
 
-        <p className="text-gray-600 mt-2">
-          Nivel de CO₂:{' '}
-          <span className={`font-semibold ${getStatusColor(sensor.status)}`}>
-            {formatPPM(sensor.currentLevel ?? 0)}
-          </span>
-        </p>
+        <div className="mb-6">
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Concentración CO₂</p>
+          <div className="flex items-baseline gap-2">
+            <span className={`text-3xl font-bold font-mono ${getStatusColor(sensor.status)}`}>
+              {sensor.currentLevel ?? 0}
+            </span>
+            <span className="text-xs text-gray-500 font-medium">ppm</span>
+          </div>
+        </div>
 
-        <div className="mt-3 pt-2 border-t border-gray-100 space-y-1">
+        <div className="grid grid-cols-3 gap-2 mt-auto pt-4 border-t border-gray-50">
           {snapshots.map(({ metric, label, valueKey, statusKey }) => {
             const value = sensor[valueKey] as number | null | undefined;
             const status = (sensor[statusKey] as string | undefined) ?? getMetricStatus(metric, value);
-            const meta = METRIC_META[metric];
             return (
-              <p key={metric} className="text-xs text-gray-500 flex items-center">
-                <span
-                  className="inline-block w-2 h-2 rounded-full mr-1.5"
-                  style={{ background: meta.color }}
-                  aria-hidden
-                />
-                <span className="font-medium text-gray-700">{label}:</span>
-                <span className={`ml-1 font-semibold ${getStatusColor(status as 'Normal' | 'Elevado' | 'Crítico')}`}>
-                  {formatMetricValue(value, metric)}
-                </span>
-              </p>
+              <div key={metric}>
+                <p className="text-[8px] font-bold text-gray-400 uppercase tracking-tighter mb-0.5">{label}</p>
+                <p className={`text-xs font-bold font-mono ${getStatusColor(status as any)}`}>
+                  {value !== null && value !== undefined ? value.toFixed(metric === 'dust' ? 0 : 1) : '—'}
+                </p>
+              </div>
             );
           })}
         </div>
 
-        <p className="text-gray-400 text-[10px] mt-auto pt-2">
-          Última actualización: {sensor.lastUpdate || '—'}
-        </p>
+        <div className="mt-4 flex items-center justify-between text-[9px]">
+          <span className="flex items-center text-gray-400">
+            <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${sensor.status === 'Normal' ? 'bg-green-500' : 'bg-red-500'}`} />
+            Sincronizado
+          </span>
+          <span className="text-gray-400 italic">{sensor.lastUpdate || '—'}</span>
+        </div>
       </div>
     </Link>
   );

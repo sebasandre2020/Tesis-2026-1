@@ -1,10 +1,8 @@
 // src/features/sensor-detail/components/CurrentReadingsWidget.tsx
-// Componente PRESENTACIONAL — 4 mini-readouts (CO₂ / Polvo / Temperatura / Humedad)
-// con badge de estado derivado de umbrales.
-
 import React from 'react';
+import { TbWind, TbDroplets, TbThermometer, TbChartDots } from 'react-icons/tb';
 import { CO2Status } from '../../../types/sensor.types';
-import { METRIC_META, METRIC_ORDER, getStatusBgColor, getStatusColor, formatMetricValue, getMetricStatus } from '../../../utils/formatters';
+import { getStatusColor, getMetricStatus } from '../../../utils/formatters';
 
 interface CurrentReadingsWidgetProps {
   co2: number;
@@ -20,53 +18,56 @@ interface CurrentReadingsWidgetProps {
 const toStatus = (s: string): CO2Status =>
   s === 'Crítico' || s === 'Elevado' || s === 'Normal' ? s : 'Normal';
 
-const readouts: Array<{
-  metric: typeof METRIC_ORDER[number];
-  label: string;
-  valueKey: 'co2' | 'dust' | 'temperature' | 'humidity';
-  statusKey: 'co2Status' | 'dustStatus' | 'temperatureStatus' | 'humidityStatus';
-  isPrimary: boolean;
-}> = [
-  { metric: 'co2', label: 'CO₂', valueKey: 'co2', statusKey: 'co2Status', isPrimary: true },
-  { metric: 'dust', label: 'Polvo', valueKey: 'dust', statusKey: 'dustStatus', isPrimary: false },
-  { metric: 'temperature', label: 'Temp', valueKey: 'temperature', statusKey: 'temperatureStatus', isPrimary: false },
-  { metric: 'humidity', label: 'Humedad', valueKey: 'humidity', statusKey: 'humidityStatus', isPrimary: false },
-];
-
 const CurrentReadingsWidget: React.FC<CurrentReadingsWidgetProps> = ({
-  co2, co2Status, dust, dustStatus, temperature, temperatureStatus, humidity, humidityStatus,
+  co2,
+  co2Status,
+  dust,
+  dustStatus,
+  temperature,
+  temperatureStatus,
+  humidity,
+  humidityStatus,
 }) => {
-  const values = { co2, dust, temperature, humidity };
-  const statuses = { co2Status, dustStatus, temperatureStatus, humidityStatus };
+  const readings = [
+    { label: 'CO₂', value: co2, unit: 'ppm', status: toStatus(co2Status), icon: TbChartDots, color: 'text-utec-cyan', metric: 'co2' as const },
+    { label: 'Polvo', value: dust, unit: 'µg/m³', status: toStatus(dustStatus), icon: TbWind, color: 'text-gray-600', metric: 'dust' as const },
+    { label: 'Temperatura', value: temperature, unit: '°C', status: toStatus(temperatureStatus), icon: TbThermometer, color: 'text-red-500', metric: 'temperature' as const },
+    { label: 'Humedad', value: humidity, unit: '%', status: toStatus(humidityStatus), icon: TbDroplets, color: 'text-blue-400', metric: 'humidity' as const },
+  ];
 
   return (
-    <div className="grid grid-cols-2 gap-3">
-      {readouts.map(({ metric, label, valueKey, statusKey, isPrimary }) => {
-        const meta = METRIC_META[metric];
-        const value = values[valueKey];
-        const status = toStatus(statuses[statusKey]) ?? getMetricStatus(metric, value);
-        return (
-          <div
-            key={metric}
-            className={`p-3 rounded-lg border flex flex-col items-center text-center ${
-              isPrimary ? getStatusBgColor(toStatus(co2Status)) : getStatusBgColor(status)
-            }`}
-          >
-            <div className="flex items-center gap-1.5 self-start mb-1">
-              <span
-                className="inline-block w-2 h-2 rounded-full"
-                style={{ background: meta.color }}
-                aria-hidden
-              />
-              <p className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">{label}</p>
+    <div className="card-refined p-5">
+      <h2 className="text-sm font-bold text-utec-black uppercase tracking-wider mb-6 flex items-center">
+        <TbChartDots className="mr-2 text-utec-cyan" /> Lecturas Actuales
+      </h2>
+      
+      <div className="grid grid-cols-2 gap-4">
+        {readings.map((r, i) => {
+          const status = r.status ?? getMetricStatus(r.metric, r.value);
+          return (
+            <div key={r.label} className="p-3 rounded-lg bg-gray-50/50 border border-gray-100 flex flex-col gap-2">
+              <div className="flex justify-between items-start">
+                <r.icon className={`${r.color} text-lg`} />
+                <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded uppercase ${
+                  status === 'Normal' ? 'bg-green-100 text-green-700' : 
+                  status === 'Elevado' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
+                }`}>
+                  {status}
+                </span>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">{r.label}</p>
+                <div className="flex items-baseline gap-1 mt-0.5">
+                  <span className={`text-xl font-bold font-mono ${getStatusColor(status)}`}>
+                    {r.value !== null && r.value !== undefined ? r.value.toFixed(i >= 2 ? 1 : 0) : '—'}
+                  </span>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase">{r.unit}</span>
+                </div>
+              </div>
             </div>
-            <p className={`text-xl font-bold ${getStatusColor(status)}`}>
-              {formatMetricValue(value, metric)}
-            </p>
-            <p className={`text-[10px] font-semibold ${getStatusColor(status)}`}>{status}</p>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };

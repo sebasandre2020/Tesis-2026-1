@@ -1,10 +1,9 @@
 // src/features/sensor-detail/components/SensorStatsPanel.tsx
-// Componente PRESENTACIONAL — Estadísticas clave de un sensor individual.
-
 import React from 'react';
-import { FaChartLine, FaArrowUp, FaClock, FaBell } from 'react-icons/fa';
+import { TbAlertCircle, TbWind, TbChartBar } from 'react-icons/tb';
 import { SystemStats } from '../../../types/sensor.types';
-import { formatPPM, formatHours } from '../../../utils/formatters';
+import { formatHours } from '../../../utils/formatters';
+import { CO2_ALERT_THRESHOLD } from '../../../services/api';
 
 interface SensorStatsPanelProps {
   stats: SystemStats;
@@ -12,35 +11,45 @@ interface SensorStatsPanelProps {
 
 const SensorStatsPanel: React.FC<SensorStatsPanelProps> = ({ stats }) => {
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 flex-1">
-      <h3 className="text-lg font-semibold mb-4">Estadísticas Clave</h3>
+    <div className="card-refined p-5">
+      <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center">
+        <TbChartBar className="mr-2" /> Métricas del Nodo
+      </h3>
+      
       <div className="grid grid-cols-2 gap-4">
-        <div className="flex items-center">
-          <FaChartLine className="text-blue-500 mr-2" size={20} />
-          <div>
-            <p className="text-sm text-gray-500">Promedio CO₂</p>
-            <p className="text-lg font-bold">{formatPPM(stats.averageCO2)}</p>
+        <div className="flex flex-col">
+          <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tight">Promedio CO₂</span>
+          <div className="flex items-baseline gap-1 mt-0.5">
+            <span className={`text-lg font-bold font-mono ${stats.averageCO2 > CO2_ALERT_THRESHOLD ? 'text-red-600' : 'text-green-600'}`}>
+              {stats.averageCO2}
+            </span>
+            <span className="text-[8px] text-gray-400 font-bold uppercase">ppm</span>
           </div>
         </div>
-        <div className="flex items-center">
-          <FaArrowUp className="text-red-500 mr-2" size={20} />
-          <div>
-            <p className="text-sm text-gray-500">Máximo CO₂</p>
-            <p className="text-lg font-bold">{formatPPM(stats.maxCO2)}</p>
+
+        <div className="flex flex-col">
+          <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tight">Nivel Máximo</span>
+          <div className="flex items-baseline gap-1 mt-0.5">
+            <span className={`text-lg font-bold font-mono ${stats.maxCO2 > CO2_ALERT_THRESHOLD ? 'text-red-600' : 'text-green-600'}`}>
+              {stats.maxCO2}
+            </span>
+            <span className="text-[8px] text-gray-400 font-bold uppercase">ppm</span>
           </div>
         </div>
-        <div className="flex items-center">
-          <FaClock className="text-yellow-500 mr-2" size={20} />
-          <div>
-            <p className="text-sm text-gray-500">Tiempo en Alerta</p>
-            <p className="text-lg font-bold">{formatHours(stats.alertTimeHours)}</p>
+
+        <div className="flex flex-col">
+          <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tight">Ciclo Extracción</span>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <TbWind className={stats.alertTimeHours > 0 ? 'text-utec-cyan' : 'text-gray-300'} size={14} />
+            <span className="text-lg font-bold font-mono text-utec-black">{formatHours(stats.alertTimeHours)}</span>
           </div>
         </div>
-        <div className="flex items-center">
-          <FaBell className="text-green-500 mr-2" size={20} />
-          <div>
-            <p className="text-sm text-gray-500">Alertas Generadas</p>
-            <p className="text-lg font-bold">{stats.totalAlerts}</p>
+
+        <div className="flex flex-col">
+          <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tight">Alertas Generadas</span>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <TbAlertCircle className={stats.totalAlerts > 0 ? 'text-red-500' : 'text-gray-300'} size={14} />
+            <span className="text-lg font-bold font-mono text-utec-black">{stats.totalAlerts}</span>
           </div>
         </div>
       </div>

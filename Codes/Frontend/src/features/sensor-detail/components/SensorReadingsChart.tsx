@@ -1,9 +1,7 @@
 // src/features/sensor-detail/components/SensorReadingsChart.tsx
-// Componente PRESENTACIONAL — Gráfica de lecturas recientes de un sensor con
-// tabs de métrica + líneas de umbral (dashed) por métrica.
-
 import React from 'react';
 import { Chart } from 'primereact/chart';
+import { TbChartLine, TbCalendarStats } from 'react-icons/tb';
 import { ChartData, MetricType, TimeRange } from '../../../types/sensor.types';
 import { METRIC_META, getTimeRangeLabel } from '../../../utils/formatters';
 import { THRESHOLD_LINES } from '../../../utils/chartThresholds';
@@ -15,9 +13,7 @@ interface SensorReadingsChartProps {
   onMetricChange: (m: MetricType) => void;
   timeRange?: TimeRange;
   loading?: boolean;
-  /** Cuando hay un rango con datos sugerido (ej. "7d"), lo mostramos como acción. */
   suggestedRange?: TimeRange;
-  /** Callback al click en el botón de rango sugerido. */
   onSuggestedRangeClick?: () => void;
   customRangeLabel?: string;
 }
@@ -36,6 +32,7 @@ const SensorReadingsChart: React.FC<SensorReadingsChartProps> = ({
   customRangeLabel,
 }) => {
   const meta = METRIC_META[metric];
+  
   const options = {
     maintainAspectRatio: false,
     responsive: true,
@@ -43,8 +40,8 @@ const SensorReadingsChart: React.FC<SensorReadingsChartProps> = ({
       legend: { display: false },
       tooltip: {
         callbacks: {
-          label: (ctx: { parsed: { y: number | null } }) =>
-            ctx.parsed.y === null ? 'Sin datos' : `${ctx.parsed.y.toFixed(meta.decimals)} ${meta.unit}`,
+          label: (ctx: any) => 
+            ctx.parsed.y === null ? 'Sin datos' : `${ctx.dataset.label ?? meta.label}: ${ctx.parsed.y.toFixed(meta.decimals)} ${meta.unit}`,
         },
       },
       thresholdAnnotation: {
@@ -54,54 +51,62 @@ const SensorReadingsChart: React.FC<SensorReadingsChartProps> = ({
     scales: {
       y: {
         beginAtZero: false,
-        title: { display: true, text: `${meta.label} (${meta.shortUnit})` },
+        grid: { color: '#f1f5f9' },
+        ticks: { font: { family: 'IBM Plex Mono', size: 10 } },
+        title: { display: true, text: `${meta.label} (${meta.shortUnit})`, font: { size: 10, weight: 'bold' } },
+      },
+      x: {
+        grid: { display: false },
+        ticks: { font: { family: 'IBM Plex Mono', size: 10 } },
       },
     },
   };
 
   const label = customRangeLabel || (timeRange ? getTimeRangeLabel(timeRange) : 'Lecturas Recientes');
-  const title = `Lecturas — ${label}`;
 
   return (
-    <div
-      id={`chart-panel-${metric}`}
-      role="tabpanel"
-      aria-label={`Gráfica de ${meta.label}`}
-      className="bg-white p-4 rounded-lg shadow-md border border-gray-200 h-full flex flex-col"
-    >
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2 flex-shrink-0">
-        <h3 className="text-lg font-semibold">{title}</h3>
+    <div className="card-refined p-6 h-full flex flex-col">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 flex-shrink-0">
+        <div>
+          <h2 className="text-lg font-bold text-utec-black flex items-center">
+            <TbChartLine className="mr-2 text-utec-cyan" /> Tendencia de {meta.label}
+          </h2>
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">
+            {label}
+          </p>
+        </div>
+        <MetricTabs value={metric} onChange={onMetricChange} className="bg-gray-50 p-1 rounded-lg" />
       </div>
 
-      <MetricTabs value={metric} onChange={onMetricChange} className="mb-2 flex-shrink-0" />
-
-      <div className="relative flex-1 min-h-[280px]">
+      <div className="relative flex-1 min-h-[300px]">
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/70 z-10">
-            <p className="text-gray-500">Cargando lecturas...</p>
+          <div className="absolute inset-0 flex items-center justify-center bg-white/70 z-10 backdrop-blur-[1px]">
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 border-4 border-utec-cyan border-t-transparent rounded-full animate-spin mb-2" />
+              <p className="text-[10px] font-bold text-utec-cyan uppercase tracking-widest">Sincronizando...</p>
+            </div>
           </div>
         )}
-        {!loading && !hasData(data) ? (
+        
+        {hasData(data) ? (
+          <Chart type="line" data={data} options={options} style={{ height: '100%' }} />
+        ) : !loading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-            <p className="text-gray-500 font-medium">Sin lecturas de {meta.label.toLowerCase()} en este período.</p>
-            <p className="text-sm text-gray-400 mt-1 max-w-sm">
-              El sensor no tiene datos para esta métrica en el rango seleccionado.
-              {suggestedRange && onSuggestedRangeClick && (
-                <> Prueba ampliando el rango de tiempo.</>
-              )}
+            <TbCalendarStats size={48} className="text-gray-200 mb-2" />
+            <p className="text-gray-500 font-bold uppercase tracking-tighter">Sin Lecturas Disponibles</p>
+            <p className="text-[10px] text-gray-400 mt-1 max-w-[200px]">
+              No se encontraron registros para {meta.label.toLowerCase()} en este período.
             </p>
             {suggestedRange && onSuggestedRangeClick && (
               <button
                 type="button"
                 onClick={onSuggestedRangeClick}
-                className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded transition-colors"
+                className="mt-4 px-4 py-1.5 text-[10px] font-bold bg-utec-cyan text-white rounded uppercase tracking-widest hover:bg-utec-cyan/90 transition-colors"
               >
-                Ver {getTimeRangeLabel(suggestedRange).toLowerCase()}
+                Ver {getTimeRangeLabel(suggestedRange)}
               </button>
             )}
           </div>
-        ) : (
-          <Chart type="line" data={data} options={options} style={{ height: '100%' }} />
         )}
       </div>
     </div>

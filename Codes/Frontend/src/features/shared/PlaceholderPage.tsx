@@ -1,9 +1,7 @@
 // src/features/shared/PlaceholderPage.tsx
-// Página placeholder para secciones en construcción.
-
 import React from 'react';
+import { TbSettings, TbHelp, TbHourglassLow } from 'react-icons/tb';
 import Sidebar from '../../components/Sidebar';
-import { FaCog, FaQuestionCircle } from 'react-icons/fa';
 
 interface PlaceholderPageProps {
   title: string;
@@ -11,21 +9,29 @@ interface PlaceholderPageProps {
 }
 
 const PlaceholderPage: React.FC<PlaceholderPageProps> = ({ title, icon }) => {
-  const IconComponent = icon === 'config' ? FaCog : FaQuestionCircle;
+  const IconComponent = icon === 'config' ? TbSettings : TbHelp;
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-gray-50 font-sans">
       <Sidebar />
-      <div className="p-6 bg-gray-100 flex-1 flex flex-col items-center justify-center ml-64">
-        <div className="bg-white p-8 rounded-lg shadow-md border border-gray-200 text-center max-w-md">
-          <IconComponent className="text-blue-400 mx-auto mb-4" size={48} />
-          <h1 className="text-2xl font-bold mb-2">{title}</h1>
-          <p className="text-gray-500">Esta sección estará disponible próximamente.</p>
-          <div className="mt-4 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-600">🚧 En construcción</p>
+      <main className="ml-64 flex-1 flex flex-col items-center justify-center p-8">
+        <div className="card-refined p-12 text-center max-w-lg w-full bg-white">
+          <div className="relative inline-block mb-8">
+            <IconComponent className="text-utec-cyan/20 mx-auto" size={80} />
+            <TbHourglassLow className="absolute bottom-0 right-0 text-utec-cyan animate-bounce" size={32} />
+          </div>
+          
+          <h1 className="text-3xl font-bold text-utec-black uppercase tracking-tight mb-3">{title}</h1>
+          <p className="text-gray-500 font-medium leading-relaxed mb-8">
+            Estamos configurando esta sección para ofrecerle un control más granular de la red de sensores. Estará disponible en la próxima actualización.
+          </p>
+          
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 border border-gray-100 rounded-full">
+            <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Fase de Desarrollo</span>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

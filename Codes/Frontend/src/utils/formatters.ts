@@ -23,7 +23,7 @@ export const METRIC_META: Record<MetricType, MetricMeta> = {
     label: 'CO₂',
     unit: 'ppm',
     shortUnit: 'ppm',
-    color: '#42A5F5',
+    color: '#00A4E4',
     decimals: 0,
     description: 'Dióxido de carbono (MH-Z19)',
   },
@@ -32,7 +32,7 @@ export const METRIC_META: Record<MetricType, MetricMeta> = {
     label: 'Polvo',
     unit: 'µg/m³',
     shortUnit: 'µg/m³',
-    color: '#FF8A65',
+    color: '#64748b',
     decimals: 0,
     description: 'Material particulado (Sharp GP2Y1010AU0F)',
   },
@@ -41,7 +41,7 @@ export const METRIC_META: Record<MetricType, MetricMeta> = {
     label: 'Temperatura',
     unit: '°C',
     shortUnit: '°C',
-    color: '#EF5350',
+    color: '#f43f5e',
     decimals: 1,
     description: 'Temperatura (DHT22)',
   },
@@ -50,7 +50,7 @@ export const METRIC_META: Record<MetricType, MetricMeta> = {
     label: 'Humedad',
     unit: '%',
     shortUnit: '%',
-    color: '#26C6DA',
+    color: '#0ea5e9',
     decimals: 1,
     description: 'Humedad relativa (DHT22)',
   },
@@ -64,11 +64,11 @@ export const METRIC_ORDER: MetricType[] = ['co2', 'dust', 'temperature', 'humidi
 export const getStatusColor = (status: CO2Status): string => {
   switch (status) {
     case 'Crítico':
-      return 'text-red-500';
+      return 'text-red-600';
     case 'Elevado':
-      return 'text-yellow-500';
+      return 'text-amber-600';
     case 'Normal':
-      return 'text-green-500';
+      return 'text-green-600';
     default:
       return 'text-gray-500';
   }

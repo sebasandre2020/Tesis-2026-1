@@ -32,20 +32,20 @@ const L = {
 export const THRESHOLD_LINES: Record<MetricType, ThresholdLine[]> = {
   // CO₂: 1 sola línea en el umbral crítico (métricas "lower is better" sin banda de confort).
   co2: [
-    { value: 500, label: L.CRITICO_CO2, color: '#f59e0b', variant: 'critico' },
+    { value: 500, label: L.CRITICO_CO2, color: '#dc2626', variant: 'critico' },
   ],
   // Polvo (PM2.5): mismo razonamiento que CO₂.
   dust: [
-    { value: 55, label: L.CRITICO_DUST, color: '#f59e0b', variant: 'critico' },
+    { value: 55, label: L.CRITICO_DUST, color: '#dc2626', variant: 'critico' },
   ],
   // Temperatura: 2 líneas formando la banda de confort 18-26 °C.
   temperature: [
-    { value: 18, label: L.CONFORT_TEMP_LOW, color: '#10b981', variant: 'limite' },
-    { value: 26, label: L.CONFORT_TEMP_HIGH, color: '#10b981', variant: 'limite' },
+    { value: 18, label: L.CONFORT_TEMP_LOW, color: '#00A4E4', variant: 'limite' },
+    { value: 26, label: L.CONFORT_TEMP_HIGH, color: '#dc2626', variant: 'limite' },
   ],
   // Humedad: 2 líneas formando la banda de confort 30-60 %.
   humidity: [
-    { value: 30, label: L.CONFORT_HUM_LOW, color: '#10b981', variant: 'limite' },
-    { value: 60, label: L.CONFORT_HUM_HIGH, color: '#10b981', variant: 'limite' },
+    { value: 30, label: L.CONFORT_HUM_LOW, color: '#00A4E4', variant: 'limite' },
+    { value: 60, label: L.CONFORT_HUM_HIGH, color: '#00A4E4', variant: 'limite' },
   ],
 };

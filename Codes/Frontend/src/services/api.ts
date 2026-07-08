@@ -21,7 +21,9 @@ import {
   getHumidityStatus,
 } from '../utils/formatters';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://func-co2-yfifyk.azurewebsites.net/api';
+const API_BASE_URL = process.env.NODE_ENV === 'development' 
+  ? '/api' 
+  : (process.env.REACT_APP_API_URL || 'https://func-co2-yfifyk.azurewebsites.net/api');
 
 // =============================================================================
 // Mapeo: id numérico de la URL ↔ NodeId del backend ↔ nombre legible
@@ -29,9 +31,9 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://func-co2-yfifyk.a
 // en /api/sensors. Mantenemos este mapa sincronizado con el backend.
 // =============================================================================
 export const SENSOR_ID_TO_NODE: Record<number, { nodeId: string; name: string; location: string }> = {
-  1: { nodeId: 'Node_01', name: 'Aula 101', location: 'Piso 1' },
-  2: { nodeId: 'Node_02', name: 'Laboratorio', location: 'Piso 2' },
-  3: { nodeId: 'Node_03', name: 'Biblioteca', location: 'Piso 1' },
+  [-2058440505]: { nodeId: 'Node_01', name: 'Aula 101', location: 'Piso 1' },
+  [1460776100]: { nodeId: 'Node_02', name: 'Laboratorio', location: 'Piso 2' },
+  [666411971]: { nodeId: 'Node_03', name: 'Biblioteca', location: 'Piso 1' },
 };
 
 /** Tabla de nodeId -> nombre legible (para legends/labels en la UI). */

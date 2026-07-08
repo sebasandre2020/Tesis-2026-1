@@ -1,8 +1,6 @@
 // src/features/co2-dashboard/components/AlertList.tsx
-// Componente PRESENTACIONAL — Muestra las alertas activas del sistema.
-
 import React from 'react';
-import { FaCheckCircle } from 'react-icons/fa';
+import { TbCheck, TbAlertTriangle } from 'react-icons/tb';
 import { Alert } from '../../../types/sensor.types';
 
 interface AlertListProps {
@@ -11,40 +9,38 @@ interface AlertListProps {
 
 const AlertList: React.FC<AlertListProps> = ({ alerts }) => {
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 h-full">
-      <h2 className="text-xl font-semibold mb-4">Alertas Activas</h2>
+    <div className="card-refined p-5 h-full flex flex-col">
+      <h2 className="text-sm font-bold text-utec-black uppercase tracking-wider mb-4 flex items-center">
+        <TbAlertTriangle className="mr-2 text-red-500" /> Alertas Activas
+      </h2>
+      
       {alerts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center text-center py-6 text-gray-500">
-          <FaCheckCircle className="text-green-500 mb-2" size={28} />
-          <p className="font-medium">Sin alertas activas</p>
-          <p className="text-sm text-gray-400 mt-1">Todos los sensores están dentro de los niveles seguros.</p>
+        <div className="flex-1 flex flex-col items-center justify-center text-center opacity-40 grayscale">
+          <TbCheck size={32} className="text-green-500 mb-2" />
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Sistema Seguro</p>
         </div>
       ) : (
-        <ul className="space-y-2">
+        <div className="flex-1 space-y-3 overflow-y-auto pr-1">
           {alerts.map((alert) => (
-            <li
+            <div
               key={alert.id}
-              className="flex items-center justify-between p-2 rounded-lg bg-red-50 border border-red-200 shadow-sm"
+              className="p-3 rounded-lg border border-red-100 bg-red-50/30 flex flex-col gap-1"
             >
-              <div className="flex items-center space-x-4">
-                <div>
-                  <p className="text-sm font-semibold">{alert.location}</p>
-                  <p className="text-sm text-gray-500">
-                    {alert.level}
-                    {alert.time && <span className="ml-2 text-xs text-gray-400">· {alert.time}</span>}
-                  </p>
-                </div>
-                <span className={`text-sm font-bold ${alert.status === 'Crítico' ? 'text-red-600' : 'text-orange-500'}`}>
+              <div className="flex justify-between items-start">
+                <p className="text-xs font-bold text-utec-black uppercase tracking-tight">{alert.location}</p>
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase ${
+                  alert.status === 'Crítico' ? 'bg-red-600 text-white' : 'bg-amber-500 text-white'
+                }`}>
                   {alert.status}
                 </span>
               </div>
-              <div className="flex space-x-2">
-                <button className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs">Reconocer</button>
-                <button className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs">Silenciar</button>
+              <div className="flex justify-between items-end mt-1 font-mono">
+                <p className="text-lg font-bold text-red-700 leading-none">{alert.level}</p>
+                {alert.time && <p className="text-[10px] text-gray-400 font-semibold uppercase">{alert.time}</p>}
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

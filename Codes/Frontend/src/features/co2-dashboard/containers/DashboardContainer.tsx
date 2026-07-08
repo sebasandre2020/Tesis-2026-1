@@ -1,8 +1,6 @@
 // src/features/co2-dashboard/containers/DashboardContainer.tsx
-// Componente CONTENEDOR (Smart) — Carga los datos del dashboard y coordina
-// la métrica seleccionada para la gráfica comparativa.
-
 import React, { useEffect, useState } from 'react';
+import { TbLayoutGrid, TbBolt } from 'react-icons/tb';
 import Sidebar from '../../../components/Sidebar';
 import SensorCard from '../components/SensorCard';
 import MetricsTrendChart from '../components/MetricsTrendChart';
@@ -50,7 +48,6 @@ const DashboardContainer: React.FC = () => {
   const [appliedCustomFrom, setAppliedCustomFrom] = useState('');
   const [appliedCustomTo, setAppliedCustomTo] = useState('');
 
-  // Inicializa las fechas cuando el usuario cambia a rango personalizado
   useEffect(() => {
     if (timeRange === 'custom' && (!customFrom || !customTo)) {
       const now = new Date();
@@ -68,7 +65,6 @@ const DashboardContainer: React.FC = () => {
     }
   }, [timeRange]);
 
-  // Sensores + alertas + stats no dependen de la métrica → cargan una sola vez.
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -82,7 +78,13 @@ const DashboardContainer: React.FC = () => {
     ])
       .then(([sensors, alerts, history, stats]) => {
         if (cancelled) return;
-        setData(prev => ({ ...prev, sensors, alerts, history, stats }));
+        
+        // Sort sensors by nodeId to match sidebar order (Node_01, Node_02, Node_03)
+        const sortedSensors = [...sensors].sort((a, b) => 
+          (a.nodeId || '').localeCompare(b.nodeId || '')
+        );
+
+        setData(prev => ({ ...prev, sensors: sortedSensors, alerts, history, stats }));
         if (sensors.length === 0) {
           setError('No se pudieron obtener datos. Verifica la conexión con la API.');
         }
@@ -101,7 +103,6 @@ const DashboardContainer: React.FC = () => {
     };
   }, []);
 
-  // El chart comparativo depende de timeRange + métrica + fechas custom → recarga dedicada.
   useEffect(() => {
     let cancelled = false;
     if (timeRange === 'custom' && (!appliedCustomFrom || !appliedCustomTo)) {
@@ -124,70 +125,88 @@ const DashboardContainer: React.FC = () => {
   }, [timeRange, metric, appliedCustomFrom, appliedCustomTo]);
 
   return (
-    <div className="dashboard flex h-screen overflow-hidden">
+    <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
       <Sidebar />
 
-      <div className="ml-64 p-6 w-full bg-gray-100 flex flex-col gap-4 overflow-y-auto">
-        <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 text-center flex-shrink-0">
-          <h1 className="text-2xl font-bold">Dashboard de Monitoreo de Calidad de Aire Interior</h1>
-          {error && (
-            <p className="text-sm text-red-600 mt-1" role="alert">{error}</p>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 min-h-[200px] flex-shrink-0">
-          <div className="lg:col-span-3 sensor-overview">
-            {loading && data.sensors.length === 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 h-full">
-                {[0, 1, 2].map(i => (
-                  <div key={i} className="h-full bg-white border border-gray-200 rounded-lg shadow-sm animate-pulse" />
-                ))}
-              </div>
-            ) : data.sensors.length === 0 ? (
-              <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200 h-full flex items-center justify-center text-gray-500">
-                No hay sensores registrados.
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 h-full">
-                {data.sensors.map(sensor => (
-                  <SensorCard key={sensor.id} sensor={sensor} />
-                ))}
-              </div>
-            )}
+      <main className="ml-64 flex-1 flex flex-col h-full overflow-y-auto">
+        <header className="px-8 py-6 bg-white border-b border-gray-200 sticky top-0 z-20 flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-utec-black tracking-tight flex items-center">
+              <TbLayoutGrid className="mr-2 text-utec-cyan" /> Centro de Control de Calidad de Aire
+            </h1>
+            <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mt-1">
+              Monitoreo en Tiempo Real · Universidad de Ingeniería y Tecnología
+            </p>
           </div>
-          <div className="lg:col-span-1 relative h-fit lg:h-full min-h-[150px] lg:min-h-0">
-            <TimeRangeFilter
+          <div className="flex items-center gap-3">
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] font-bold text-green-600 uppercase flex items-center">
+                <TbBolt className="mr-1" /> Sistema Activo
+              </span>
+              <span className="text-[9px] text-gray-400 font-mono">ID: UTEC-AQ-01</span>
+            </div>
+          </div>
+        </header>
+
+        <div className="p-8 flex flex-col gap-6">
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg animate-in fade-in slide-in-from-left-4 duration-300">
+              <p className="text-sm text-red-700 font-medium" role="alert">{error}</p>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 h-full">
+                {loading && data.sensors.length === 0 ? (
+                  [0, 1, 2].map(i => (
+                    <div key={i} className="h-[220px] bg-white border border-gray-100 rounded-xl animate-pulse" />
+                  ))
+                ) : data.sensors.length === 0 ? (
+                  <div className="col-span-full card-refined p-8 flex items-center justify-center text-gray-400 font-medium italic">
+                    No se detectaron nodos activos en la red.
+                  </div>
+                ) : (
+                  data.sensors.map(sensor => (
+                    <SensorCard key={sensor.id} sensor={sensor} />
+                  ))
+                )}
+              </div>
+            </div>
+            <div className="lg:col-span-1 min-h-[180px]">
+              <TimeRangeFilter
+                timeRange={timeRange}
+                onTimeRangeChange={setTimeRange}
+                customFrom={customFrom}
+                customTo={customTo}
+                onCustomFromChange={setCustomFrom}
+                onCustomToChange={setCustomTo}
+                onApplyCustomRange={(from, to) => {
+                  setAppliedCustomFrom(from);
+                  setAppliedCustomTo(to);
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="min-h-[480px]">
+            <MetricsTrendChart
+              data={data.chartData}
+              metric={metric}
+              onMetricChange={setMetric}
               timeRange={timeRange}
-              onTimeRangeChange={setTimeRange}
-              customFrom={customFrom}
-              customTo={customTo}
-              onCustomFromChange={setCustomFrom}
-              onCustomToChange={setCustomTo}
-              onApplyCustomRange={(from, to) => {
-                setAppliedCustomFrom(from);
-                setAppliedCustomTo(to);
-              }}
+              loading={loading && data.chartData.datasets.length === 0}
+              customRangeLabel={timeRange === 'custom' ? getCustomTimeRangeLabel(appliedCustomFrom, appliedCustomTo) : undefined}
             />
           </div>
-        </div>
 
-        <div className="min-h-[460px] flex-shrink-0">
-          <MetricsTrendChart
-            data={data.chartData}
-            metric={metric}
-            onMetricChange={setMetric}
-            timeRange={timeRange}
-            loading={loading && data.chartData.datasets.length === 0}
-            customRangeLabel={timeRange === 'custom' ? getCustomTimeRangeLabel(appliedCustomFrom, appliedCustomTo) : undefined}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <StatisticsPanel stats={data.stats} />
+            <AlertHistoryList history={data.history} />
+            <AlertList alerts={data.alerts} />
+          </div>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 flex-shrink-0">
-          <StatisticsPanel stats={data.stats} />
-          <AlertHistoryList history={data.history} />
-          <AlertList alerts={data.alerts} />
-        </div>
-      </div>
+      </main>
     </div>
   );
 };

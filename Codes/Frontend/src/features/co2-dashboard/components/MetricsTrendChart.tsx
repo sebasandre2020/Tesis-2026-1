@@ -1,9 +1,7 @@
 // src/features/co2-dashboard/components/MetricsTrendChart.tsx
-// Componente PRESENTACIONAL — Gráfica comparativa de métricas entre los
-// nodos, con tabs de métrica y líneas de umbral (dashed) por métrica.
-
 import React from 'react';
 import { Chart } from 'primereact/chart';
+import { TbChartArea, TbCalendarSearch } from 'react-icons/tb';
 import { ChartData, MetricType, TimeRange } from '../../../types/sensor.types';
 import { METRIC_META, getTimeRangeLabel } from '../../../utils/formatters';
 import { THRESHOLD_LINES } from '../../../utils/chartThresholds';
@@ -30,17 +28,22 @@ const MetricsTrendChart: React.FC<MetricsTrendChartProps> = ({
   customRangeLabel,
 }) => {
   const meta = METRIC_META[metric];
+  
   const options = {
     maintainAspectRatio: false,
     responsive: true,
     plugins: {
-      legend: { display: true, position: 'top' as const },
+      legend: { 
+        display: true, 
+        position: 'top' as const,
+        labels: { font: { family: 'Manrope', size: 10, weight: 'bold' }, usePointStyle: true, boxWidth: 6 }
+      },
       tooltip: {
         callbacks: {
-          label: (ctx: { parsed: { y: number | null }; dataset: { label?: string } }) =>
-            ctx.parsed.y === null
-              ? `${ctx.dataset.label ?? ''}: sin datos`
-              : `${ctx.dataset.label ?? ''}: ${ctx.parsed.y.toFixed(meta.decimals)} ${meta.unit}`,
+          label: (ctx: any) => 
+            ctx.parsed.y === null 
+              ? `${ctx.dataset.label}: sin datos` 
+              : `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(meta.decimals)} ${meta.unit}`,
         },
       },
       thresholdAnnotation: {
@@ -50,39 +53,48 @@ const MetricsTrendChart: React.FC<MetricsTrendChartProps> = ({
     scales: {
       y: {
         beginAtZero: false,
-        title: { display: true, text: `${meta.label} (${meta.shortUnit})` },
+        grid: { color: '#f1f5f9' },
+        ticks: { font: { family: 'IBM Plex Mono', size: 10 } },
+        title: { display: true, text: `${meta.label} (${meta.shortUnit})`, font: { size: 10, weight: 'bold' } },
+      },
+      x: {
+        grid: { display: false },
+        ticks: { font: { family: 'IBM Plex Mono', size: 10 } },
       },
     },
   };
 
   return (
-    <div
-      id={`dashboard-chart-panel-${metric}`}
-      role="tabpanel"
-      aria-label={`Gráfica comparativa de ${meta.label}`}
-      className="bg-white p-4 rounded-lg shadow-md border border-gray-200 h-full flex flex-col"
-    >
-      <h2 className="text-xl font-semibold mb-2 flex-shrink-0">
-        Tendencias de {meta.label} — {customRangeLabel || getTimeRangeLabel(timeRange)}
-      </h2>
-
-      <MetricTabs value={metric} onChange={onMetricChange} className="mb-3 flex-shrink-0" />
+    <div className="card-refined p-6 h-full flex flex-col">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 flex-shrink-0">
+        <div>
+          <h2 className="text-lg font-bold text-utec-black flex items-center">
+            <TbChartArea className="mr-2 text-utec-cyan" /> Comparativa de Red
+          </h2>
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">
+            {customRangeLabel || getTimeRangeLabel(timeRange)}
+          </p>
+        </div>
+        <MetricTabs value={metric} onChange={onMetricChange} className="bg-gray-50 p-1 rounded-lg" />
+      </div>
 
       <div className="relative flex-1 min-h-[320px]">
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/70 z-10">
-            <p className="text-gray-500">Cargando datos...</p>
+          <div className="absolute inset-0 flex items-center justify-center bg-white/70 z-10 backdrop-blur-[1px]">
+            <div className="flex flex-col items-center">
+              <div className="w-8 h-8 border-4 border-utec-cyan border-t-transparent rounded-full animate-spin mb-2" />
+              <p className="text-[10px] font-bold text-utec-cyan uppercase tracking-widest">Analizando Datos...</p>
+            </div>
           </div>
         )}
-        {!loading && !hasData(data) ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-            <p className="text-gray-500 font-medium">Sin lecturas de {meta.label.toLowerCase()} en este período.</p>
-            <p className="text-sm text-gray-400 mt-1">
-              Aún no se han recibido lecturas para esta métrica en el rango seleccionado.
-            </p>
-          </div>
-        ) : (
+        
+        {hasData(data) ? (
           <Chart type="line" data={data} options={options} style={{ height: '100%' }} />
+        ) : !loading && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center opacity-30">
+            <TbCalendarSearch size={48} className="text-gray-200 mb-2" />
+            <p className="text-sm font-bold uppercase tracking-widest">Sin Registros en el Período</p>
+          </div>
         )}
       </div>
     </div>
