@@ -1,4 +1,4 @@
-\customchapter{INTRODUCCIÓN} 
+\customchapter{INTRODUCCIÓN}
 
 \section{Presentación del tema de investigación}
 
@@ -38,7 +38,7 @@ A pesar del consenso científico sobre el impacto negativo de las altas concentr
 
 En espacios universitarios específicos como los de la UTEC, los métodos de ventilación suelen ser reactivos o manuales, dependiendo de la percepción de los ocupantes, lo cual es ineficaz ya que el ser humano no puede detectar conscientemente la acumulación de CO\(_2\) hasta que los síntomas físicos (como somnolencia o dolor de cabeza) ya se han manifestado. Además, el despliegue de soluciones tecnológicas convencionales enfrenta obstáculos económicos y de infraestructura; el cableado estructurado o la dependencia de redes Wi-Fi saturadas dificultan la implementación de una red de sensores a gran escala.
 
-Por otro lado, los sistemas de ventilación automatizada convencionales basados en umbrales estáticos operan con un retraso inherente (dead-time). Cuando el sistema detecta que el nivel de CO\(_2\) ha superado el límite seguro, el ambiente ya está contaminado, y el sistema requiere un tiempo considerable para purificar el aire, exponiendo a los estudiantes a condiciones desfavorables temporalmente. 
+Por otro lado, los sistemas de ventilación automatizada convencionales basados en umbrales estáticos operan con un retraso inherente (dead-time). Cuando el sistema detecta que el nivel de CO\(_2\) ha superado el límite seguro, el ambiente ya está contaminado, y el sistema requiere un tiempo considerable para purificar el aire, exponiendo a los estudiantes a condiciones desfavorables temporalmente.
 
 En este contexto, la problemática radica en la carencia de un sistema integral que no solo monitoree eficientemente grandes áreas universitarias superando las barreras de comunicación inalámbrica, sino que también actúe de manera proactiva y no reactiva. Resulta imperativa la necesidad de diseñar una solución de bajo costo, basada en la tecnología LoRa mediante gateways personalizados, que integre un control predictivo capaz de accionar automáticamente la ventilación basándose en tendencias estadísticas antes de que se alcancen concentraciones nocivas de dióxido de carbono.
 
@@ -61,19 +61,18 @@ En esta sección se presentan los objetivos de este Trabajo Final de Ingeniería
 
 \subsubsection*{Objetivo general}
 
-Diseñar e implementar un sistema de monitoreo y alerta IoT para niveles de CO\(_2\) basado en comunicación LoRa mediante gateways personalizados, integrando tres nodos sensores para espacios universitarios en la UTEC, y desarrollar un control automatizado de ventilación en función de una tendencia predictiva de niveles peligrosos de CO\(_2\).
+Diseñar e implementar un sistema multivariable de monitoreo, alerta y control comparativo IoT (CO\(_2\), material particulado, temperatura y humedad) para espacios universitarios, basado en comunicación LoRa mediante un gateway personalizado y una infraestructura en la nube desplegada en Azure.
 
 \subsection*{Objetivos específicos}
 
 \begin{itemize}
-   \item Diseñar la arquitectura de hardware y software de una red de sensores IoT basada en tecnología LoRa para el monitoreo de niveles de CO\(_2\), integrando tres nodos sensores y un gateway personalizado.
-   \item Configurar e implementar la comunicación inalámbrica LoRa entre los nodos sensores y el gateway, asegurando una transmisión de datos confiable y de bajo consumo energético dentro de las instalaciones universitarias.
-   \item Desarrollar e integrar una plataforma en la nube o servidor local para el almacenamiento, procesamiento y visualización en tiempo real de los datos de concentración de CO\(_2\) adquiridos por la red de sensores.
-    \item Implementar un subsistema de ventilación activa basado en ventiladores PWM.
-    \item Diseñar y comparar controladores PID y Fuzzy para la regulación de la concentración de CO$_2$.
-    \item Validar experimentalmente el desempeño del sistema propuesto en condiciones representativas de uso.
-    \item Elaborar la documentación técnica detallada que incluya el diseño de la red LoRa, el desarrollo del algoritmo de control, los resultados de las pruebas funcionales y las consideraciones para la escalabilidad del sistema.
-
+    \item Diseñar la arquitectura de hardware y software de una red de sensores IoT basada en tecnología LoRa para el monitoreo concurrente de CO\(_2\), polvo, temperatura y humedad, integrando nodos sensores y un gateway personalizado.
+    \item Configurar e implementar la comunicación inalámbrica LoRa entre los nodos sensores y el gateway, asegurando una transmisión de datos estructurada y confiable dentro de las instalaciones universitarias.
+    \item Desplegar e integrar una infraestructura en la nube en Microsoft Azure, aprovisionada mediante IaC (Infraestructura como Código), para el almacenamiento, procesamiento y visualización web en tiempo real de la telemetría adquirida.
+    \item Implementar un subsistema de ventilación activa (mitigación) basado en actuadores controlados por PWM.
+    \item Diseñar, implementar y comparar el desempeño de diversas estrategias de control (ej. PID, Fuzzy, entre otros) para la regulación automatizada de la calidad del aire.
+    \item Validar experimentalmente el desempeño del sistema propuesto (flujo de datos en la nube, precisión y respuesta de los controladores) en condiciones representativas de uso.
+    \item Elaborar la documentación técnica detallada que incluya el diseño de la red LoRa, los algoritmos de control, el despliegue en la nube y los resultados experimentales.
 
 \end{itemize}
 
@@ -84,7 +83,7 @@ La calidad del aire en espacios cerrados es un factor determinante para la salud
 
 A pesar de esta importancia, las instituciones educativas a menudo carecen de sistemas de monitoreo y control de ventilación proactivos. Las soluciones tradicionales, que dependen de redes Wi-Fi o Bluetooth, suelen presentar problemas de escalabilidad debido al alto consumo energético, la saturación de red o la limitada penetración de señal en infraestructuras con paredes gruesas.
 
-El uso de la tecnología LoRa resuelve estos desafíos comunicacionales al proporcionar un medio de bajo costo, largo alcance y bajo consumo energético, ideal para el despliegue de redes de sensores en un campus universitario. Sin embargo, el solo monitoreo no resuelve el problema subyacente. La incorporación de un control automatizado y predictivo sobre los sistemas de ventilación permite adelantarse a la contaminación del aire; encendiendo la ventilación antes de que se sobrepasen los umbrales de seguridad, lo cual garantiza de manera continua un entorno saludable, y a su vez, previene el desperdicio energético asociado a una ventilación innecesaria. 
+El uso de la tecnología LoRa resuelve estos desafíos comunicacionales al proporcionar un medio de bajo costo, largo alcance y bajo consumo energético, ideal para el despliegue de redes de sensores en un campus universitario. Sin embargo, el solo monitoreo no resuelve el problema subyacente. La incorporación de un control automatizado y predictivo sobre los sistemas de ventilación permite adelantarse a la contaminación del aire; encendiendo la ventilación antes de que se sobrepasen los umbrales de seguridad, lo cual garantiza de manera continua un entorno saludable, y a su vez, previene el desperdicio energético asociado a una ventilación innecesaria.
 
 De esta forma, este proyecto aportará una solución integral e inteligente que puede mejorar directamente el bienestar de la comunidad universitaria en la UTEC, proponiendo una arquitectura que sea fácilmente replicable y escalable en el futuro.
 
@@ -99,10 +98,10 @@ Entre las limitaciones del proyecto, la principal restricción es el tiempo, dad
 El plan de trabajo de esta investigación se muestra en la tabla \ref{tab: gantt}.
 
 \begin{table}[H]
-\centering
+    \centering
     \caption{\centering Diagrama de Gantt del proyecto.}
     \includegraphics[width=1\linewidth]{images/Introduccion/Gantt.png}
-\label{tab: gantt}
+    \label{tab: gantt}
 \end{table}
 
 Este trabajo de investigación está estructurado de la siguiente manera. El Capítulo I, Estado del Arte, revisa la literatura referente a arquitecturas IoT para el monitoreo ambiental, el uso de protocolos LoRa en edificaciones, y el avance de algoritmos de control predictivo aplicados a sistemas de ventilación. En el Capítulo II, Marco Teórico, se exponen los fundamentos técnicos de la comunicación LoRa, los sensores de gas para la detección de CO\(_2\), y los principios de control estadístico y predictivo orientados a la automatización. El Capítulo III, Metodología, detalla el proceso de diseño y construcción de los nodos sensores, la configuración del gateway, la arquitectura de la red, y el desarrollo e integración del algoritmo predictivo con el actuador de ventilación. El Capítulo IV, Resultados, presenta las pruebas de comunicación de la red LoRa, la precisión del monitoreo, el desempeño del algoritmo de predicción, y la validación integral del control de ventilación automatizado en las pruebas piloto realizadas. Finalmente, se presentan las conclusiones del estudio, verificando el cumplimiento de los objetivos y proponiendo trabajos futuros.
