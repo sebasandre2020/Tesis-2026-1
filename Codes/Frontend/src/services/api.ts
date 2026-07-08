@@ -31,9 +31,9 @@ const API_BASE_URL = process.env.NODE_ENV === 'development'
 // en /api/sensors. Mantenemos este mapa sincronizado con el backend.
 // =============================================================================
 export const SENSOR_ID_TO_NODE: Record<number, { nodeId: string; name: string; location: string }> = {
-  [-2058440505]: { nodeId: 'Node_01', name: 'Aula 101', location: 'Piso 1' },
-  [1460776100]: { nodeId: 'Node_02', name: 'Laboratorio', location: 'Piso 2' },
-  [666411971]: { nodeId: 'Node_03', name: 'Biblioteca', location: 'Piso 1' },
+  [-642718467]: { nodeId: 'Node_01', name: 'Aula 101', location: 'Piso 1' },
+  [-889472740]: { nodeId: 'Node_02', name: 'Laboratorio', location: 'Piso 2' },
+  [615230235]: { nodeId: 'Node_03', name: 'Biblioteca', location: 'Piso 1' },
 };
 
 /** Tabla de nodeId -> nombre legible (para legends/labels en la UI). */
@@ -185,27 +185,35 @@ export const fetchSensors = async (): Promise<Sensor[]> => {
  *    desde /readings.
  */
 export const fetchSensorDetail = async (sensorId: number): Promise<SensorDetailData | null> => {
-  const meta = SENSOR_ID_TO_NODE[sensorId];
-  if (!meta) return null;
+  // Intentamos obtener metadata del mapa estático primero.
+  let meta = SENSOR_ID_TO_NODE[sensorId];
 
   try {
+    const sensors = await fetchSensors();
+    
+    // Si no está en el mapa estático, buscamos dinámicamente en la lista de sensores.
+    if (!meta) {
+      const sensorFromApi = sensors.find(s => s.id === sensorId);
+      if (sensorFromApi) {
+        meta = {
+          nodeId: sensorFromApi.nodeId || 'Unknown',
+          name: sensorFromApi.name || 'Nodo Desconocido',
+          location: sensorFromApi.location || 'Sin ubicación',
+        };
+      }
+    }
+
+    if (!meta) return null;
+
     // Traemos lecturas del rango seleccionado para chart/stats/alerts.
-    // (Usamos 24h como baseline; el chart específico se carga después con
-    // el rango que el usuario elija en la UI.)
-    const [res24h, sensors] = await Promise.all([
-      fetch(`${API_BASE_URL}/readings?range=24h`).then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r;
-      }),
-      fetchSensors(),
-    ]);
+    const res24h = await fetch(`${API_BASE_URL}/readings?range=24h`);
+    if (!res24h.ok) throw new Error(`HTTP ${res24h.status}`);
+    
     const raw = (await safeJson<RawReading[]>(res24h, 'fetchSensorDetail')) ?? [];
     const nodeReadings = raw.filter(r => r.nodeId === meta.nodeId);
 
-    // Para los widgets de "lectura actual", usamos /sensors (que devuelve
-    // la última lectura sin importar el rango de tiempo).
     const sensorFromSensors = sensors.find(
-      s => s.nodeId === meta.nodeId || NODE_ID_TO_NAME[s.nodeId ?? ''] === meta.name
+      s => s.nodeId === meta.nodeId || s.id === sensorId
     );
 
     const fallbackReadings = sensorFromSensors ? [{
@@ -260,10 +268,19 @@ export const fetchSensorDetailChart = async (
   customFrom?: string,
   customTo?: string
 ): Promise<ChartData> => {
-  const meta = SENSOR_ID_TO_NODE[sensorId];
-  if (!meta) return { labels: [], datasets: [] };
+  let meta = SENSOR_ID_TO_NODE[sensorId];
 
   try {
+    if (!meta) {
+      const sensors = await fetchSensors();
+      const s = sensors.find(s => s.id === sensorId);
+      if (s) {
+        meta = { nodeId: s.nodeId || '', name: s.name || '', location: s.location || '' };
+      }
+    }
+    
+    if (!meta) return { labels: [], datasets: [] };
+
     let url = `${API_BASE_URL}/readings?range=${encodeURIComponent(timeRange)}`;
     if (timeRange === 'custom' && customFrom && customTo) {
       url = `${API_BASE_URL}/readings?from=${encodeURIComponent(customFrom)}&to=${encodeURIComponent(customTo)}`;
