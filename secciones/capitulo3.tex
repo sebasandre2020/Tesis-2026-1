@@ -309,6 +309,46 @@ Por otro lado, los \textbf{gateways comerciales de bajo costo (Prosumer)}, como 
 
 Finalmente, los \textbf{gateways personalizados (Custom/DIY)} se ensamblan acoplando microcontroladores o computadoras de placa única (SBC) a módulos concentradores LoRa o transceptores \cite{nb_gateway_custom_9}. Este enfoque ofrece flexibilidad absoluta de software y control total sobre las rutinas de enrutamiento \cite{nb_gateway_custom_7}. Su principal virtud es la posibilidad de operar en modo ``promiscuo'', lo que permite interactuar con nodos de ultra bajo costo que carecen de la pila LoRaWAN completa, además de reducir dramáticamente el presupuesto de implementación \cite{nb_gateway_custom_10}. Si bien presentan riesgos asociados a la alta complejidad técnica y soporte fragmentado, estos desafíos son coherentes y deseables en el marco de una investigación de tesis en Ingeniería Mecatrónica, donde se busca precisamente el dominio de la integración hardware-software a bajo nivel.
 
+Para ilustrar de manera más detallada las diferencias técnicas y económicas, la Tabla \ref{tabla:gateways_comerciales} presenta una comparativa de algunos de los gateways comerciales \textit{prosumer} más relevantes en el mercado frente a las características del gateway personalizado propuesto.
+
+\begin{landscape}
+    \begin{table}[H]
+        \centering
+        \renewcommand{\arraystretch}{1.4}
+        \fontsize{8}{10}\selectfont
+        \caption{Comparación de Gateways Comerciales frente al Gateway Personalizado}
+        \label{tabla:gateways_comerciales}
+        \begin{tabular}{|p{2.5cm}|p{1cm}|p{2.5cm}|p{1.7cm}|p{3cm}|p{2.3cm}|p{1.7cm}|p{2cm}|p{1.3cm}|}
+            \hline
+            \textbf{Modelo / Marca}                                        & \textbf{Canales}               & \textbf{Frecuencias}                                            & \textbf{Sensibilidad (dBm)}       & \textbf{Soporte de Seguridad (TLS/SSL)}                                & \textbf{Interfaces Backhaul}                      & \textbf{Consumo Energético}            & \textbf{Velocidad de Transmisión}             & \textbf{Precio (USD)}                \\ \hline
+            RAK7268V2 (WisGate Edge Lite 2)                                & 8                              & AU915, US915, AS923, EU868, etc.                                & -139                              & Hardware (ATECC608) / Software                                         & Ethernet PoE, Wi-Fi, Celular (Opc)                & 12 W                                   & 100 Mbps (LAN), 300 Mbps (Wi-Fi)              & \$239.00                             \\ \hline
+            Milesight UG63                                                 & 8                              & CN470, IN865, EU868, AU915, US915                               & -140                              & Software Avanzado (IPsec, OpenVPN)                                     & Ethernet, Celular (Opc)                           & 1.3 -- 3.3 W                           & 100 Mbps (LAN)                                & \$270.00                             \\ \hline
+            SenseCAP M2 Multi-Platform                                     & 8                              & IN865, EU868, AU915, US915, AS923                               & -139                              & Hardware (ECC608)                                                      & Ethernet PoE, Wi-Fi, Celular (Opc)                & 24 W (Máx)                             & 100 Mbps (LAN), 150 Mbps (Wi-Fi)              & \$199.00                             \\ \hline
+            Dragino LPS8v2                                                 & 8                              & Pre-configurado globalmente (AU915, US915, EU868)               & -140                              & Software (Debian OS, OpenVPN)                                          & Ethernet WAN, Wi-Fi AP, Celular                   & 10 W (Máx)                             & 100 Mbps (LAN), 150 Mbps (Wi-Fi)              & \$170.00                             \\ \hline
+            Heltec HT-M7603                                                & 8                              & 470$\sim$510MHz, 863$\sim$870MHz, 902$\sim$928MHz (Comp. AU/US) & -139                              & Software (Firmware ESP32)                                              & Ethernet LAN, Wi-Fi directa                       & 2.25 W (Máx)                           & 100 Mbps (LAN), 150 Mbps (Wi-Fi)              & \$89.00                              \\ \hline
+            MikroTik wAP LoRa8 Kit                                         & 8                              & 863--870MHz, 902--928 MHz (Soporte AU915/US915)                 & -137                              & Software (RouterOS)                                                    & Ethernet PoE, Wi-Fi, Celular                      & 7 W (Máx)                              & 100 Mbps (LAN), 300 Mbps (Wi-Fi)              & \$169.00                             \\ \hline
+            \cellcolor{green!15}\textbf{Gateway Personalizado (Propuesto)} & \cellcolor{green!15}\textbf{1} & \cellcolor{green!15}\textbf{Sub-GHz (915 MHz)}                  & \cellcolor{green!15}\textbf{-147} & \cellcolor{green!15}\textbf{Software (Firmware ESP32, MQTT sobre TLS)} & \cellcolor{green!15}\textbf{Wi-Fi (Nativo ESP32)} & \cellcolor{green!15}\textbf{4 W (Máx)} & \cellcolor{green!15}\textbf{150 Mbps (Wi-Fi)} & \cellcolor{green!15}\textbf{\$48.68} \\ \hline
+        \end{tabular}
+    \end{table}
+\end{landscape}
+\FloatBarrier
+
+Como se observa en la Tabla \ref{tabla:gateways_comerciales}, los equipos comerciales ofrecen prestaciones superiores en términos de concurrencia al soportar 8 canales simultáneos y proporcionar múltiples interfaces de red de respaldo (Ethernet, conectividad celular 4G/LTE), e incluso en algunos casos integran chips criptográficos dedicados por hardware para máxima seguridad. Sin embargo, su costo de adquisición varía entre los \$89.00 y \$270.00 USD, a lo que frecuentemente se suman costos ocultos por licencias de software propietario, plataformas de gestión en la nube y gastos de importación. En contraste, la implementación del gateway personalizado representa una reducción significativa del costo de hardware, con un gasto total de 185 soles (aproximadamente \$48.68 USD), y carece de costos de licenciamiento de software al emplear herramientas de código abierto.
+
+Para validar el consumo energético del gateway personalizado reportado en la Tabla \ref{tabla:gateways_comerciales} ($\sim 4\text{ W}$), se formuló el cálculo considerando el escenario de máxima demanda de corriente. Este pico de consumo ocurre cuando el microcontrolador ESP32 y el transceptor LoRa E220-900T30D transmiten datos simultáneamente. Empleando la ley de Watt, la potencia máxima ($P_{\text{máx}}$) se obtiene multiplicando el voltaje de alimentación ($V_{in}$) por la suma de las corrientes pico de ambos módulos ($I_{\text{ESP32\_TX}}$ e $I_{\text{LoRa\_TX}}$):
+
+\begin{equation}
+    P_{\text{máx}} = V_{in} \times (I_{\text{ESP32\_TX}} + I_{\text{LoRa\_TX}})
+\end{equation}
+
+Según las especificaciones técnicas, el módulo LoRa Ebyte E220-900T30D consume aproximadamente $620\text{ mA}$ al transmitir a su potencia máxima de $30\text{ dBm}$. Por su parte, el ESP32 demanda un promedio de $240\text{ mA}$ durante la transmisión Wi-Fi activa. Alimentando el sistema a $5\text{ V}$ para asegurar el rendimiento óptimo del amplificador de radiofrecuencia, se obtiene:
+
+\begin{equation}
+    P_{\text{máx}} = 5\text{ V} \times (0.24\text{ A} + 0.62\text{ A}) = 5\text{ V} \times 0.86\text{ A} = 4.3\text{ W}
+\end{equation}
+
+Este valor máximo teórico ($4.3\text{ W}$) sustenta la cifra consolidada en la comparativa y es altamente competitivo frente a los consumos de $10\text{ W}$ o $24\text{ W}$ de ciertos gateways comerciales. Cabe destacar como consideración de uso que el gateway operará la gran mayoría del tiempo en modo de recepción (RX) esperando datos de los nodos sensores, escenario donde el consumo cae a unos $100\text{ mA}$ para el ESP32 y $17.2\text{ mA}$ para el módulo LoRa, resultando en una potencia nominal continua cercana a los $0.6\text{ W}$, lo que valida su excepcional eficiencia energética. Aunque presenta limitaciones técnicas como la operación monocanal y la dependencia exclusiva del Wi-Fi para el enlace ascendente, estas restricciones son altamente tolerables y balanceadas para un entorno de investigación académica, donde el volumen de tráfico de datos (telemetría esporádica de una cantidad reducida de nodos sensores) no justifica la inversión económica en un concentrador multicanal. Además, el manejo de la seguridad mediante software en el firmware del ESP32 (MQTT sobre TLS) es lo suficientemente robusto para garantizar la integridad y confidencialidad de los datos sin incurrir en los costos de agregar hardware criptográfico dedicado. De este modo, el desarrollo de un gateway a la medida se posiciona como la opción idónea en la relación costo-beneficio para este tipo de despliegue.
+
 En conclusión, para este proyecto universitario desarrollado en Lima, Perú, se determina la viabilidad técnica y académica de optar por el diseño e implementación de un \textbf{gateway personalizado}. La priorización de la flexibilidad para configurar nodos simples, la reducción contundente del CAPEX y la alineación con los objetivos de diseño embebido respaldan sólidamente esta decisión frente al sobredimensionamiento y rigidez de los equipos comerciales. Esta elección fundamenta, a su vez, la necesidad de una evaluación exhaustiva de microcontroladores y módulos de comunicación para el ensamble tanto del nodo sensor como del gateway.
 
 \subsection{Selección de componentes}
@@ -509,21 +549,21 @@ Posteriormente, el microcontrolador reformatea esta información estructurándol
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\linewidth]{images//capitulo3/DF_frontend.png}
+    \includegraphics[width=0.6\linewidth]{images/capitulo3/DF_frontend.png}
     \caption{Diagrama de flujo para el desarrollo Frontend}
     \label{fig:DF_frontend}
 \end{figure}
 
-En la figura \ref{fig:DF_frontend} se observa la metodología seguida para del desarrollo del frontend de la aplicación web de Monitoreo. En cuanto al paso de evaluación de cualidad (QA: Quality Asessment), consiste en realizar una variedad de pruebas para asegurar el adecuado funcionamiento de la aplicación, cuyos principales focos de atención son los siguientes:
+En la figura \ref{fig:DF_frontend} se observa la metodología seguida para el desarrollo del frontend de la aplicación web de Monitoreo. En cuanto al paso de evaluación de cualidad (QA: Quality Assessment), consiste en realizar una variedad de pruebas para asegurar el adecuado funcionamiento de la aplicación, cuyos principales focos de atención son los siguientes:
 
 \begin{itemize}
-    \item Correcciónes gramaticales.
+    \item Correcciones gramaticales.
     \item Bugs y malfuncionamientos en ciertas acciones de la aplicación.
     \item Configuraciones incompletas.
 \end{itemize}
 
 
-Así mismo, la página web cuenta con dos páginas que funcionan como dashboards. La primera es una landing page en la cual se detallan los datos más relevantes en la aplicaciónl, la segunda es una vista detallada para cada uno de los sensores. Las principales funciones de cada una se detallan a continuación.
+Así mismo, la página web cuenta con dos páginas que funcionan como dashboards. La primera es una landing page en la cual se detallan los datos más relevantes en la aplicación, la segunda es una vista detallada para cada uno de los sensores. Las principales funciones de cada una se detallan a continuación.
 
 
 
@@ -597,7 +637,7 @@ Así mismo, la página web cuenta con dos páginas que funcionan como dashboards
 
 
 \section{Desarrollo del subsistema de mitigación activa y control}
-En esta sección se presenta el desarrollo del subsistema de mitigación activa y control, incorporado con el propósito de extender la funcionalidad del sistema más allá del monitoreo pasivo de la concentración de CO$_2$. Este subsistema se basa en la actuación automática de ventiladores modulados por PWM, de modo que la ventilación del ambiente pueda ajustarse de acuerdo con las condiciones medidas en tiempo real. Para ello, se considera la definición de requisitos del subsistema, la selección de actuadores y fuente de alimentación, el diseño de la arquitectura de control, el modelado del comportamiento dinámico del CO$_2$ en ambientes interiores y la implementación de controladores PID y Fuzzy. Finalmente, se establecen los criterios de validación experimental para comparar ambas estrategias y determinar su conveniencia dentro del sistema propuesto.
+En esta sección se presenta el desarrollo del subsistema de mitigación activa y control, incorporado con el propósito de extender la funcionalidad del sistema más allá del monitoreo pasivo de la concentración de CO$_2$. Este subsistema se basa en la actuación automática de ventiladores modulados por PWM, de modo que la ventilación del ambiente pueda ajustarse de acuerdo con las condiciones medidas en tiempo real. Para ello, se considera la definición de requisitos del subsistema, la selección de actuadores y fuente de alimentación, el diseño de la arquitectura de control, el modelado del comportamiento dinámico del CO$_2$ en ambientes interiores y la implementación de controladores PI/PID, Fuzzy PI y LQR. Finalmente, se establecen los criterios de validación experimental para comparar las tres estrategias de control y determinar su conveniencia dentro del sistema propuesto.
 
 
 
@@ -606,7 +646,7 @@ En esta sección se presenta el desarrollo del subsistema de mitigación activa 
 
 En esta etapa se establecen los requisitos funcionales y no funcionales del subsistema de ventilación activa, cuyo propósito es contribuir a la reducción de la concentración de CO$_2$ en ambientes interiores a partir de la información proporcionada por el sistema de monitoreo. Para ello, el subsistema debe ser capaz de recibir como entrada la concentración de CO$_2$ medida en tiempo real, compararla con un valor de referencia establecido y generar una acción de control que permita regular la velocidad de los ventiladores mediante señal PWM. Asimismo, el subsistema debe integrarse con la arquitectura general del proyecto, de modo que la etapa de sensado, procesamiento, actuación y visualización funcione de manera coordinada.
 
-Desde el punto de vista funcional, se requiere que el sistema permita la activación automática de la ventilación cuando la concentración de CO$_2$ supere el nivel de referencia definido, así como la modulación de la velocidad de los ventiladores de acuerdo con la estrategia de control implementada. De igual manera, debe registrar variables relevantes para el análisis experimental, tales como la concentración medida, el error respecto al setpoint y la señal de control aplicada. Adicionalmente, el diseño debe permitir la implementación y comparación de distintas estrategias de control, específicamente PID y Fuzzy, a fin de evaluar su desempeño en términos de rapidez de respuesta, estabilidad y capacidad de mitigación \cite{emmerich_persily_2001, delwati_2018, predictive_ventilation_iot_2023}.
+Desde el punto de vista funcional, se requiere que el sistema permita la activación automática de la ventilación cuando la concentración de CO$_2$ supere el nivel de referencia definido, así como la modulación de la velocidad de los ventiladores de acuerdo con la estrategia de control implementada. De igual manera, debe registrar variables relevantes para el análisis experimental, tales como la concentración medida, el error respecto al setpoint y la señal de control aplicada. Adicionalmente, el diseño debe permitir la implementación y comparación de distintas estrategias de control, específicamente PID, Fuzzy y LQR, a fin de evaluar su desempeño en términos de rapidez de respuesta, estabilidad y capacidad de mitigación \cite{emmerich_persily_2001, delwati_2018, predictive_ventilation_iot_2023}.
 
 En cuanto a los requisitos no funcionales, el subsistema debe emplear componentes comerciales de fácil adquisición e integración, operar de forma estable y segura, y ser compatible con las condiciones de infraestructura disponibles en el entorno universitario de implementación. Asimismo, debe mantener una complejidad adecuada para el desarrollo de un prototipo experimental de tesis, permitiendo su validación en escenarios controlados y su posible escalabilidad hacia implementaciones futuras de mayor alcance.
 
@@ -616,7 +656,7 @@ En cuanto a los requisitos no funcionales, el subsistema debe emplear componente
     \item Definición de un valor de referencia o setpoint para la concentración de CO$_2$.
     \item Activación automática del sistema de ventilación cuando se superen los niveles establecidos.
     \item Modulación de velocidad de los ventiladores mediante señal PWM.
-    \item Implementación y comparación de controladores PID y Fuzzy.
+    \item Implementación y comparación de controladores PI/PID, Fuzzy PI y LQR.
     \item Registro de variables relevantes para validación experimental.
     \item Integración con la arquitectura IoT general del sistema.
 \end{itemize}
@@ -658,7 +698,39 @@ La arquitectura de control del subsistema de mitigación activa se plantea como 
 
 Desde el punto de vista funcional, la arquitectura está conformada por cuatro bloques principales: sensado, procesamiento, control y actuación. En el bloque de sensado, el sensor de CO$_2$ adquiere la concentración presente en el ambiente y envía dicha información al sistema de procesamiento. En el bloque de procesamiento, la señal medida es acondicionada y utilizada como entrada para el algoritmo de control. Posteriormente, en el bloque de control, se genera una señal de mando a partir del error entre la concentración medida y la referencia establecida. Finalmente, en el bloque de actuación, dicha señal se traduce en una modulación PWM aplicada a los ventiladores, ajustando su velocidad y, por tanto, el caudal de aire introducido o extraído del recinto.
 
-Esta arquitectura permite implementar distintas estrategias de control sobre una misma estructura física, facilitando la comparación entre controladores PID y Fuzzy. Asimismo, el uso de una configuración de lazo cerrado permite que el sistema responda de manera automática frente a variaciones en la ocupación del ambiente o en la concentración de CO$_2$, favoreciendo una operación más estable y adaptable que un esquema de activación basado únicamente en umbrales fijos.
+Esta arquitectura permite implementar distintas estrategias de control sobre una misma estructura física, facilitando la comparación entre controladores PI/PID, Fuzzy PI y LQR. Asimismo, el uso de una configuración de lazo cerrado permite que el sistema responda de manera automática frente a variaciones en la ocupación del ambiente o en la concentración de CO$_2$, favoreciendo una operación más estable y adaptable que un esquema de activación basado únicamente en umbrales fijos.
+
+\subsubsection{Representación mediante diagramas de bloques}
+
+Con el objetivo de visualizar la operación de las estrategias de control implementadas, se elaboraron diagramas de bloques para los controladores PI/PID, Fuzzy PI y LQR. Estas representaciones permiten identificar la relación entre la señal de referencia, la medición de CO\(_2\), el cálculo de la acción de control y la actuación de los ventiladores sobre el ambiente. De esta manera, los diagramas complementan la descripción matemática y facilitan la comprensión del flujo de señales dentro del subsistema de mitigación activa.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{images/capitulo3/Diagrama_PID.png}
+    \caption{Diagrama de bloques del controlador PI/PID aplicado al sistema de ventilación.}
+    \label{fig:diagrama_pid}
+\end{figure}
+
+Como se observa en la Figura \ref{fig:diagrama_pid}, el controlador PI/PID utiliza el error entre la concentración de referencia y la concentración medida de CO\(_2\) para generar una señal de control. Esta señal se convierte posteriormente en una modulación PWM, la cual regula la velocidad de los ventiladores y modifica el caudal de ventilación aplicado al ambiente.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{images/capitulo3/Diagrama_Fuzzy.png}
+    \caption{Diagrama de bloques del controlador Fuzzy PI aplicado al sistema de ventilación.}
+    \label{fig:diagrama_fuzzy}
+\end{figure}
+
+En la Figura \ref{fig:diagrama_fuzzy} se presenta la estructura del controlador Fuzzy PI. En este caso, las entradas del sistema difuso corresponden al error de CO\(_2\) y a la integral del error. Estas variables son procesadas mediante funciones de membresía, una base de reglas lingüísticas y un mecanismo de inferencia tipo Mamdani, obteniéndose como salida un porcentaje de PWM aplicado a los ventiladores.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{images/capitulo3/Diagrama_LQR.png}
+    \caption{Diagrama de bloques del controlador LQR aplicado al sistema de ventilación.}
+    \label{fig:diagrama_lqr}
+\end{figure}
+
+La Figura \ref{fig:diagrama_lqr} muestra la estructura del controlador LQR. A diferencia de los controladores basados directamente en el error, esta estrategia emplea una representación en espacio de estados del sistema, considerando las desviaciones de la concentración de CO\(_2\) respecto al punto de operación. A partir de estos estados, el controlador calcula una acción de control orientada a minimizar una función de costo asociada al error de concentración y al esfuerzo de ventilación.
+
 
 \subsection{Modelado de la dinámica de \texorpdfstring{CO$_2$}{CO2} en ambientes interiores}
 
@@ -675,7 +747,7 @@ La ecuación general utilizada para representar esta dinámica es la siguiente:
 
 donde \(C(t)\) es la concentración de CO$_2$ en el ambiente interior, \(C_{out}\) es la concentración de CO$_2$ del aire exterior, \(G(t)\) representa la tasa de generación de CO$_2$ por los ocupantes, \(Q(t)\) es el caudal de ventilación y \(V\) es el volumen del recinto. En este modelo, la variable manipulada es el caudal de ventilación, el cual depende de la velocidad de los ventiladores controlados por PWM, mientras que la variable controlada es la concentración interior de CO$_2$.
 
-A partir de esta formulación, es posible simular distintos escenarios de operación y analizar la respuesta del sistema ante cambios en la ocupación o en las condiciones de ventilación. Asimismo, este modelo proporciona una base adecuada para la implementación y comparación de controladores PID y Fuzzy, al permitir evaluar la evolución de la concentración de CO$_2$ frente a diferentes acciones de control \cite{delwati_2018, bordin_2025}.
+A partir de esta formulación, es posible simular distintos escenarios de operación y analizar la respuesta del sistema ante cambios en la ocupación o en las condiciones de ventilación. Asimismo, este modelo proporciona una base adecuada para la implementación y comparación de controladores PI/PID, Fuzzy PI y LQR, al permitir evaluar la evolución de la concentración de CO$_2$ frente a diferentes acciones de control \cite{delwati_2018, bordin_2025}.
 
 
 \begin{itemize}
@@ -687,9 +759,11 @@ A partir de esta formulación, es posible simular distintos escenarios de operac
 \end{itemize}
 
 
-\subsection{Diseño e implementación de controladores PID y Fuzzy}
+\subsection{Diseño e implementación de controladores PI/PID, Fuzzy PI y LQR}
 
-Con el fin de evaluar distintas estrategias de mitigación activa de CO$_2$ en ambientes interiores, se planteó el diseño e implementación de dos esquemas de control sobre una misma arquitectura física: un controlador PID y un controlador Fuzzy. En ambos casos, la variable controlada corresponde a la concentración de CO$_2$ en el recinto, mientras que la variable manipulada es la velocidad de los ventiladores, regulada mediante una señal PWM. De esta forma, ambas estrategias actúan sobre el mismo sistema y bajo las mismas condiciones de operación, permitiendo una comparación directa de su desempeño.
+Con el fin de evaluar distintas estrategias de mitigación activa de CO$_2$ en ambientes interiores, se planteó el diseño e implementación de tres esquemas de control sobre una misma arquitectura física: un controlador PI/PID, un controlador Fuzzy PI y un controlador LQR. En los tres casos, la variable controlada corresponde a la concentración de CO$_2$ en el recinto, mientras que la variable manipulada es la velocidad de los ventiladores, regulada mediante una señal PWM. Esta decisión metodológica permite comparar el desempeño de las estrategias bajo condiciones equivalentes de sensado, actuación y ventilación.
+
+Adicionalmente, durante la aplicación de los controladores se registrará la evolución de la temperatura y la humedad relativa del ambiente. Estas variables no constituyen variables principales de control, debido a que la acción de los controladores se orienta a regular la ventilación para reducir la concentración de CO$_2$; sin embargo, su registro permite analizar cómo se desarrollan las condiciones ambientales del aula durante la actuación del sistema. De esta manera, además de evaluar la respuesta del CO$_2$, se podrá observar si la aplicación de las estrategias PI/PID, Fuzzy PI y LQR genera variaciones apreciables en la temperatura y la humedad relativa.
 
 En el caso del controlador PID, la acción de control se calcula a partir del error entre la concentración medida y el valor de referencia establecido. Este esquema combina una acción proporcional, una integral y una derivativa, con el objetivo de reducir el error en estado estacionario, mejorar la rapidez de respuesta y atenuar oscilaciones en la salida. La ley de control utilizada se expresa de la siguiente manera:
 
@@ -699,31 +773,34 @@ En el caso del controlador PID, la acción de control se calcula a partir del er
 
 donde \(e(t)\) representa el error entre la concentración medida de CO$_2$ y el setpoint definido, mientras que \(u(t)\) corresponde a la señal de control que posteriormente se traduce en un duty cycle PWM aplicado a los ventiladores. La sintonización de los parámetros \(K_p\), \(K_i\) y \(K_d\) se realiza buscando un compromiso entre rapidez de corrección, estabilidad y ausencia de sobreimpulso excesivo.
 
-Por otro lado, el controlador Fuzzy se plantea como una alternativa basada en reglas lingüísticas, adecuada para sistemas con incertidumbre o comportamiento no lineal. En este caso, las variables de entrada consideradas son el error de concentración de CO$_2$ y la variación del error, mientras que la variable de salida corresponde al ajuste de la señal PWM aplicada al sistema de ventilación. A partir de funciones de pertenencia y una base de reglas tipo IF-THEN, el controlador determina la acción de control más conveniente según el estado del sistema, sin depender de un modelo matemático exacto del proceso.
+Por otro lado, el controlador Fuzzy se plantea como una alternativa basada en reglas lingüísticas, adecuada para sistemas con incertidumbre o comportamiento no lineal. En este caso, las variables de entrada consideradas son el error de concentración de CO$_2$ y la integral del error, mientras que la variable de salida corresponde al ajuste de la señal PWM aplicada al sistema de ventilación. A partir de funciones de pertenencia y una base de reglas tipo IF-THEN, el controlador determina la acción de control más conveniente según el estado del sistema, sin depender de un modelo matemático exacto del proceso.
 
 
-```latex
 \subsubsection{Diseño del controlador Fuzzy propuesto}
 
 Para el controlador Fuzzy se empleó un sistema de inferencia difusa tipo Mamdani, implementado mediante la herramienta Fuzzy Logic Designer de MATLAB. La elección de este tipo de controlador se debe a que permite representar el comportamiento del sistema mediante reglas lingüísticas, lo cual resulta adecuado para un proceso con incertidumbre en la ventilación efectiva, la mezcla del aire interior y la respuesta del sensor de CO$_2$.
 
-El controlador utiliza dos variables de entrada: el error de concentración de CO$_2$ y la variación del error. La salida corresponde a la señal de control aplicada a los ventiladores, expresada como porcentaje de PWM. El error se define como:
+El controlador utiliza dos variables de entrada: el error de concentración de CO$_2$ y la integral del error. La salida corresponde a la señal de control aplicada a los ventiladores mediante PWM.
 
 \begin{equation}
-    e(k)=C_{CO_2}(k)-C_{ref}
+    e(k)=C_{\mathrm{CO}_2}(k)-C_{\mathrm{ref}}
+    \label{eq:error_fuzzy}
 \end{equation}
 
-donde \(C_{CO_2}(k)\) representa la concentración medida de CO$_2$ en el instante \(k\), y \(C_{ref}\) corresponde al valor de referencia establecido. La variación del error se calcula como:
+donde \(C_{\mathrm{CO}_2}(k)\) representa la concentración medida de CO$_2$ en el instante \(k\), y \(C_{\mathrm{ref}}\) corresponde al valor de referencia o setpoint establecido para el sistema.
 
 \begin{equation}
-    \Delta e(k)=e(k)-e(k-1)
+    I(k)=I(k-1)+e(k)\Delta t
+    \label{eq:integral_error_fuzzy}
 \end{equation}
 
-Para la simulación, la variación del error también puede expresarse en ppm/min, con el objetivo de representar mejor la velocidad de cambio de la concentración:
+Para la simulación, la integral del error puede expresarse considerando el tiempo en minutos, con el objetivo de representar la acumulación del error de concentración durante la evolución del sistema:
 
 \begin{equation}
-    \Delta e_{min}(k)=\frac{e(k)-e(k-1)}{\Delta t}\cdot 60
+    I_{min}(k)=I_{min}(k-1)+e(k)\Delta t_{min}
 \end{equation}
+
+donde \(\Delta t_{min}\) representa el intervalo de muestreo expresado en minutos. Esta variable permite que el controlador Fuzzy PI considere no solo el error instantáneo, sino también la persistencia del error en el tiempo.
 
 La señal de salida del controlador se encuentra limitada al intervalo:
 
@@ -734,6 +811,9 @@ La señal de salida del controlador se encuentra limitada al intervalo:
 donde \(U_{fuzzy}(k)\) representa el porcentaje de PWM sugerido por el controlador difuso. Esta señal se convierte posteriormente a una señal normalizada entre 0 y 1 para calcular el caudal efectivo de ventilación.
 
 \begin{table}[H]
+
+
+
     \centering
     \renewcommand{\arraystretch}{1.3}
     \caption{Variables lingüísticas del controlador Fuzzy}
@@ -743,15 +823,19 @@ donde \(U_{fuzzy}(k)\) representa el porcentaje de PWM sugerido por el controlad
             \hline
             \textbf{Variable}   & \textbf{Rango}       & \textbf{Conjuntos difusos}  & \textbf{Interpretación}                                                   \\ \hline
             Error de CO$_2$     & \([-600,1500]\) ppm  & Bajo, Medio, Alto, Muy Alto & Indica qué tan alejada está la concentración medida respecto al setpoint. \\ \hline
-            Variación del error & \([-30,30]\) ppm/min & Baja, Media, Alta           & Indica si el error disminuye, permanece casi estable o aumenta.           \\ \hline
+            Integral del error  & \([-30,30]\) ppm/min & Baja, Media, Alta           & Indica si el error disminuye, permanece casi estable o aumenta.           \\ \hline
             PWM de ventiladores & \([0,100]\) \%       & Cero, Baja, Media, Alta     & Define el porcentaje de potencia aplicado a los ventiladores.             \\ \hline
         \end{tabular}
     }
+
 \end{table}
 
-La base de reglas se definió considerando que, mientras mayor sea el error de CO$_2$ y mayor sea su tendencia de incremento, mayor debe ser la acción de ventilación. Por el contrario, si el error es bajo y la concentración disminuye, la potencia puede reducirse.
+La base de reglas se definió considerando que, mientras mayor sea el error de CO$_2$ y mayor sea la acumulación del error, mayor debe ser la acción de ventilación. Por el contrario, si el error es bajo y la concentración disminuye, la potencia puede reducirse.
 
 \begin{table}[H]
+
+
+
     \centering
     \renewcommand{\arraystretch}{1.3}
     \caption{Base de reglas del controlador Fuzzy}
@@ -759,14 +843,43 @@ La base de reglas se definió considerando que, mientras mayor sea el error de C
     \resizebox{\textwidth}{!}{
         \begin{tabular}{|c|c|c|c|}
             \hline
-            \textbf{Error / Derivada del error} & \textbf{Baja der.} & \textbf{Media der.} & \textbf{Alta der.} \\ \hline
-            \textbf{Bajo PPM}                   & Cero POT           & Baja POT            & Baja POT           \\ \hline
-            \textbf{Medio PPM}                  & Baja POT           & Media POT           & Media POT          \\ \hline
-            \textbf{Alto PPM}                   & Media POT          & Media POT           & Alta POT           \\ \hline
-            \textbf{Muy Alto PPM}               & Alta POT           & Alta POT            & Alta POT           \\ \hline
+            \textbf{Error / Integral del error} & \textbf{Baja} & \textbf{Media} & \textbf{Alta} \\ \hline
+            \textbf{Bajo PPM}                   & Cero POT      & Baja POT       & Baja POT      \\ \hline
+            \textbf{Medio PPM}                  & Baja POT      & Media POT      & Media POT     \\ \hline
+            \textbf{Alto PPM}                   & Media POT     & Media POT      & Alta POT      \\ \hline
+            \textbf{Muy Alto PPM}               & Alta POT      & Alta POT       & Alta POT      \\ \hline
         \end{tabular}
     }
+
 \end{table}
+
+
+\subsubsection{Sintonización agresiva del controlador Fuzzy PI}
+
+Con el propósito de evaluar una respuesta más rápida del sistema de ventilación frente a incrementos elevados de CO\(_2\), se planteó una variante agresiva del controlador Fuzzy PI. Esta modificación no cambia la estructura general del controlador, ya que se mantienen como entradas el error de concentración de CO\(_2\) y la integral del error; sin embargo, se ajusta la base de reglas y la distribución de las funciones de membresía de salida para favorecer mayores porcentajes de PWM ante errores medios y altos.
+
+En esta variante, la acción de control se vuelve más intensa cuando la concentración de CO\(_2\) se encuentra alejada del setpoint o cuando la acumulación del error indica que la desviación se mantiene durante un periodo prolongado. De esta manera, el controlador agresivo prioriza una reducción más rápida de la concentración de CO\(_2\), aunque esta decisión puede incrementar el esfuerzo de control y generar una respuesta con mayor posibilidad de oscilaciones.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{images/capitulo3/Salida_Agresiva.png}
+    \caption{Funciones de membresía de salida para la sintonización agresiva del controlador Fuzzy PI.}
+    \label{fig:fuzzy_salida_agresiva}
+\end{figure}
+
+Como se observa en la Figura \ref{fig:fuzzy_salida_agresiva}, la salida del controlador agresivo mantiene el rango de operación entre 0\% y 100\% de PWM, pero desplaza la activación de las potencias media y alta hacia zonas de mayor actuación. Esto permite que el sistema aplique una ventilación más fuerte cuando las condiciones de CO\(_2\) lo requieren.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{images/capitulo3/Reglas_Agresivas.png}
+    \caption{Base de reglas agresiva implementada en el controlador Fuzzy PI.}
+    \label{fig:fuzzy_reglas_agresivas}
+\end{figure}
+
+La Figura \ref{fig:fuzzy_reglas_agresivas} muestra la modificación de la base de reglas para la sintonización agresiva. En comparación con la configuración base, esta variante asigna salidas de mayor potencia en escenarios donde el error de CO\(_2\) es medio o alto y la integral del error indica persistencia de la desviación. Por ello, esta configuración se considera más adecuada para escenarios donde se busca reducir la concentración de CO\(_2\) en menor tiempo, aunque con un mayor consumo energético y esfuerzo de ventilación.
+
+
+
 
 Adicionalmente, se incorporó un PWM base calculado a partir del caudal mínimo requerido para sostener el setpoint de CO$_2$. Esta consideración evita que el sistema reduzca excesivamente la ventilación cuando el error se aproxima a cero, debido a que siempre existe generación continua de CO$_2$ por parte de los ocupantes.
 
@@ -790,43 +903,40 @@ Finalmente, la señal de control aplicada al sistema se define como:
 
 De esta manera, el controlador Fuzzy regula la potencia de los ventiladores según el estado del sistema, mientras que el PWM base garantiza un caudal mínimo de ventilación para mantener la concentración de CO$_2$ cerca del valor de referencia.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\linewidth]{images/capitulo3/fuzzy_respuesta_co2.png}
-    \caption{Respuesta de concentración de CO$_2$ con controlador Fuzzy.}
-    \label{fig:fuzzy_respuesta_co2}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\linewidth]{images/capitulo3/fuzzy_pwm.png}
-    \caption{Esfuerzo de control del controlador Fuzzy con PWM base.}
-    \label{fig:fuzzy_pwm}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\linewidth]{images/capitulo3/fuzzy_caudal.png}
-    \caption{Caudal efectivo total generado por el sistema de ventilación.}
-    \label{fig:fuzzy_caudal}
-\end{figure}
 
 
 
 
-Para la implementación de ambas estrategias, se establece una misma estructura de operación: el sensor mide la concentración de CO$_2$, el sistema calcula el error respecto al valor de referencia, el controlador correspondiente genera la acción de control y esta señal se aplica a los ventiladores mediante modulación PWM. De esta manera, tanto el controlador PID como el controlador Fuzzy pueden evaluarse bajo un mismo entorno de simulación y, posteriormente, sobre la plataforma experimental, permitiendo comparar su comportamiento en términos de tiempo de respuesta, estabilidad, capacidad de mitigación y esfuerzo de control.
 
-En ambos casos, la implementación se orienta a determinar cuál de las dos estrategias presenta mejores resultados para la reducción de CO$_2$ en ambientes universitarios, considerando no solo la rapidez de corrección, sino también la estabilidad de la respuesta y la factibilidad de integración en un sistema de bajo costo.
+Para la implementación de las estrategias de control, se establece una misma estructura de operación: el sistema mide la concentración de CO$_2$, calcula el error respecto al valor de referencia, genera la acción de control correspondiente y aplica esta señal a los ventiladores mediante modulación PWM. De forma paralela, se registran la temperatura y la humedad relativa del ambiente, con la finalidad de observar su evolución durante la aplicación de los controladores. Estas variables se consideran complementarias para el análisis experimental, ya que permiten describir el comportamiento ambiental del aula mientras se ejecutan las estrategias PI/PID, Fuzzy PI y LQR.
 
+En este sentido, la implementación se orienta a determinar cuál de las estrategias de control presenta mejores resultados para la reducción de CO\(_2\) en ambientes universitarios, considerando no solo la rapidez de corrección, sino también la estabilidad de la respuesta, el esfuerzo de control y la factibilidad de integración en un sistema de bajo costo.
 
+\subsubsection{Diseño del controlador LQR propuesto}
+
+El controlador LQR se plantea como una estrategia de control óptimo basada en el modelo linealizado de la dinámica de CO\(_2\) del ambiente. Para ello, se define el estado del sistema como la desviación de la concentración de CO\(_2\) respecto al valor de referencia, y la entrada de control como la variación del caudal o del PWM aplicado a los ventiladores respecto a un valor base de ventilación.
+
+La ley de control empleada se expresa como:
+
+\begin{equation}
+    u(t) = -Kx(t)
+\end{equation}
+
+donde \(x(t)\) representa el vector de estados del sistema y \(K\) corresponde a la ganancia óptima calculada mediante el método LQR. Esta ganancia se obtiene minimizando una función de costo cuadrática que penaliza tanto el error de concentración como el esfuerzo de control:
+
+\begin{equation}
+    J = \int_0^\infty \left(x^TQx + u^TRu\right)dt
+\end{equation}
+
+De esta manera, el controlador LQR busca reducir la concentración de CO\(_2\) hacia el setpoint utilizando una acción de ventilación eficiente, evitando un uso excesivo de los actuadores. Su inclusión permite comparar una estrategia clásica, una estrategia basada en reglas difusas y una estrategia de control óptimo dentro del mismo sistema experimental.
 
 \subsection{Criterios de evaluación y validación experimental}
 
-La evaluación del subsistema de mitigación activa y control se plantea con el objetivo de comparar el desempeño de las estrategias PID y Fuzzy bajo condiciones equivalentes de operación. Para ello, ambos controladores serán analizados sobre la misma arquitectura de sensado y actuación, considerando la concentración de CO$_2$ como variable controlada y la señal PWM aplicada a los ventiladores como variable manipulada. La validación se realizará tanto en simulación como en pruebas experimentales, con el fin de observar la respuesta del sistema frente a variaciones en la concentración inicial de CO$_2$ y ante cambios en las condiciones del ambiente interior.
+La evaluación del subsistema de mitigación activa y control se plantea con el objetivo de comparar el desempeño de las estrategias PI/PID, Fuzzy PI y LQR bajo condiciones equivalentes de operación. Para ello, los controladores serán analizados sobre la misma arquitectura de sensado y actuación, considerando la concentración de CO$_2$ como variable controlada y la señal PWM aplicada a los ventiladores como variable manipulada. Asimismo, se registrarán la temperatura y la humedad relativa del ambiente como variables complementarias de seguimiento, con el fin de analizar su evolución durante la actuación del sistema de ventilación. La validación se realizará tanto en simulación como en pruebas experimentales, con el fin de observar la respuesta del sistema frente a variaciones en la concentración inicial de CO$_2$ y ante cambios en las condiciones del ambiente interior.
 
 Los criterios principales de evaluación considerados en este trabajo son el tiempo de establecimiento, entendido como el tiempo requerido para que la concentración de CO$_2$ alcance y permanezca próxima al valor de referencia; el sobreimpulso, asociado a desviaciones excesivas respecto al setpoint; el error en estado estacionario, que permite medir la precisión de regulación del sistema; y el esfuerzo de control, representado por la intensidad de la acción aplicada a los ventiladores mediante PWM. Asimismo, se considera la estabilidad general de la respuesta y la capacidad del controlador para recuperar condiciones aceptables de calidad del aire ante perturbaciones o incrementos en la generación de CO$_2$ dentro del recinto.
 
-A partir de estos criterios, la validación experimental permitirá determinar cuál de las dos estrategias presenta un mejor compromiso entre rapidez de respuesta, estabilidad, precisión y factibilidad de implementación en un sistema de bajo costo orientado a espacios universitarios. De esta manera, la comparación no solo se enfocará en la disminución de la concentración de CO$_2$, sino también en la viabilidad práctica de integrar cada controlador dentro del prototipo desarrollado.
+A partir de estos criterios, la validación experimental permitirá determinar cuál de las estrategias presenta un mejor compromiso entre rapidez de respuesta, estabilidad, precisión y factibilidad de implementación en un sistema de bajo costo orientado a espacios universitarios. De esta manera, la comparación no solo se enfocará en la disminución de la concentración de CO$_2$, sino también en la viabilidad práctica de integrar cada controlador dentro del prototipo desarrollado.
 
 
 
