@@ -81,6 +81,24 @@ El módulo E220-900T30D, mostrado en la Figura \ref{fig:modulo_lora}, es un disp
 
 El sensor MH-Z19B es un módulo infrarrojo no dispersivo (NDIR: non dispersive infrared detector) que permite detectar CO\(_2\) en el aire de manera precisa y estable. Su diseño compacto y de bajo consumo incluye compensación de temperatura, lo que lo hace adecuado para aplicaciones como la monitorización de calidad del aire en interiores, sistemas de climatización (HVAC: heating, ventilation and air conditioning) y dispositivos inteligentes. Ofrece múltiples opciones de salida de datos, incluyendo UART y PWM, y es capaz de medir concentraciones de CO\(_2\) en un rango de 0 a 2000 ppm o hasta 5000 ppm, con un tiempo de respuesta inferior a 120 segundos y una vida útil superior a los 5 años.
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.45\linewidth]{images/capitulo2/dht22.png}
+	\caption{\centering Sensor de temperatura y humedad DHT22 \cite{dht22_datasheet}.}
+	\label{fig:sensor_dht22}
+\end{figure}
+
+El sensor DHT22 (AM2302) es un dispositivo digital capacitivo de bajo costo diseñado para medir la temperatura y humedad relativa del aire en interiores de manera continua. El dispositivo incorpora un sensor capacitivo de humedad y un termistor NTC para realizar las lecturas térmicas. Ofrece un rango de medición de humedad de 0\% a 100\% de humedad relativa con una precisión de $\pm2$\%, y un rango de temperatura de $-40$ a $+80$ °C con una precisión de $\pm0.5$ °C. El sensor transmite las lecturas en formato digital serial mediante un protocolo de un solo hilo (1-wire), lo cual facilita su integración directa con microcontroladores al requerir una sola línea de datos para la comunicación y alimentación en un rango de 3.3V a 5.5V.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.45\linewidth]{images/capitulo2/sensor_polvo.png}
+	\caption{\centering Sensor de material particulado Sharp GP2Y1010AU0F \cite{sharp_datasheet}.}
+	\label{fig:sensor_polvo}
+\end{figure}
+
+El sensor Sharp GP2Y1010AU0F es un dispositivo de medición de densidad de material particulado y polvo en suspensión basado en principios ópticos. El sensor consta de un diodo emisor de luz infrarroja (IRED) y un fototransistor posicionados diagonalmente cerca de un conducto central por el que circula el aire. Las partículas de polvo que ingresan al conducto reflejan el haz de luz infrarrojo hacia el fototransistor; a mayor densidad de material particulado, mayor es la intensidad de la luz reflejada. La señal de salida del sensor es un voltaje analógico proporcional a la densidad de polvo, con una sensibilidad típica de 0.5 V por cada 0.1 mg/m³. Requiere de un circuito de acondicionamiento de potencia simple compuesto por una resistencia de 150 $\Omega$ y un capacitor de 220 $\mu$F para generar los pulsos necesarios que activan periódicamente el IRED, con un ciclo de trabajo recomendado de 0.32 ms por cada pulso. Es importante notar que en el firmware final del proyecto, debido a requerimientos de calibración física y estabilidad de la lectura, el valor leído de este sensor es simulado mediante generación de números pseudoaleatorios en el rango de 5 a 100 mg/m³ para validar el flujo del canal de comunicación y su respectivo procesamiento analítico en la nube.
+
 
 
 
@@ -101,11 +119,13 @@ A modo de resumen, los componentes principales seleccionados para el desarrollo 
 	\label{tab:componentes_nodo}
 	\begin{tabular}{p{4cm} p{4cm} p{6cm}}
 		\hline
-		\textbf{Componente}    & \textbf{Modelo}          & \textbf{Función principal}                \\
+		\textbf{Componente}    & \textbf{Modelo}          & \textbf{Función principal}                    \\
 		\hline
-		Microcontrolador       & ATMEGA328P (Arduino Uno) & Procesamiento y control del nodo.         \\
-		Sensor de gas          & MH-Z19B                  & Medición de la concentración de CO\(_2\). \\
-		Módulo de comunicación & LoRa E220-900T30D        & Transmisión inalámbrica de datos.         \\
+		Microcontrolador       & ATMEGA328P (Arduino Uno) & Procesamiento y control del nodo.             \\
+		Sensor de gas          & MH-Z19B                  & Medición de la concentración de CO\(_2\).     \\
+		Sensor de temp. y hum. & DHT22                    & Medición de temperatura y humedad ambiental.  \\
+		Sensor de polvo        & Sharp GP2Y1010AU0F       & Medición de densidad de material particulado. \\
+		Módulo de comunicación & LoRa E220-900T30D        & Transmisión inalámbrica de datos.             \\
 		\hline
 	\end{tabular}
 \end{table}
@@ -146,12 +166,44 @@ Para el despliegue de los servicios del sistema, almacenamiento y visualización
 \subsection{Microsoft Azure}
 Microsoft Azure es una plataforma de computación en la nube de nivel empresarial que ofrece más de 200 productos y servicios en la nube \cite{azure_docs}. Permite construir, ejecutar y administrar aplicaciones en múltiples nubes, de forma local y en el perímetro. En el contexto de sistemas IoT, Azure provee alta disponibilidad, escalabilidad dinámica y robustos mecanismos de seguridad, facilitando la integración fluida entre los datos enviados por el gateway (a través de Wi-Fi) y las interfaces de usuario.
 
-\subsection{Azure Cosmos DB}
-Azure Cosmos DB es un servicio de base de datos relacional y NoSQL totalmente administrado para el desarrollo de aplicaciones modernas \cite{cosmosdb_docs}. Ofrece tiempos de respuesta de un solo dígito de milisegundos, escalabilidad automática e instantánea y compatibilidad con APIs de código abierto. Su capacidad para manejar datos no estructurados y de series temporales de manera eficiente lo hace ideal para almacenar las lecturas continuas de CO\(_2\) generadas por la red de sensores.
+\subsection{Azure SQL Database}
+Azure SQL Database es un servicio de base de datos relacional totalmente administrado y basado en el motor de base de datos SQL Server de Microsoft \cite{azuresql_docs}. Ofrece escalabilidad automática, alta disponibilidad integrada y soporte completo para consultas transaccionales complejas mediante T-SQL. En este proyecto, se utiliza para almacenar de manera estructurada y relacional los registros históricos de telemetría (CO\(_2\), material particulado, temperatura y humedad) enviados desde la red de sensores, asegurando la consistencia e integridad referencial de los datos.
 
 \subsection{Azure Container Apps y .NET Core}
 Para alojar la lógica del backend del sistema, se utiliza Azure Container Apps, un entorno sin servidor (serverless) que permite ejecutar microservicios y aplicaciones en contenedores de manera escalable, sin la sobrecarga de administrar infraestructuras complejas \cite{containerapps_docs}. La lógica del backend, responsable de procesar la telemetría, gestionar las alertas y exponer las APIs REST, se desarrolla utilizando .NET Core, una plataforma de código abierto, multiplataforma y de alto rendimiento que permite crear aplicaciones robustas y eficientes \cite{net_core}.
 
 \subsection{React.js y Azure Static Web Apps}
 La interfaz de usuario, encargada de la visualización de los niveles de CO\(_2\) en tiempo real y la gestión del sistema, se desarrolla empleando React.js, una biblioteca de JavaScript de código abierto para construir interfaces de usuario interactivas basadas en componentes \cite{reactjs_docs}. Para el alojamiento y despliegue continuo de este frontend, se utiliza Azure Static Web Apps, un servicio que construye y despliega aplicaciones web de pila completa automáticamente desde un repositorio de código, integrándose nativamente con APIs alojadas y proporcionando entrega de contenido estático distribuido globalmente \cite{staticwebapps_docs}.
+
+\section{Estrategias de Control de Ventilación Activa}
+
+Para regular la calidad del aire interior y el confort térmico en las aulas universitarias, el sistema implementa un esquema de control distribuido y jerarquizado en el nodo final. A continuación, se detallan los principios de las estrategias de control empleadas.
+
+\subsection{Control Proporcional-Integral-Derivativo (PID)}
+El controlador PID es un mecanismo de realimentación ampliamente utilizado en sistemas de control industrial. El controlador calcula un valor de error $e(t)$ como la diferencia entre una variable de proceso medida (en este caso, la concentración de CO\(_2\)) y un punto de consigna deseado (SetPoint, $SP$). El controlador aplica una acción correctiva basada en términos proporcionales, integrales y derivativos, expresada matemáticamente como:
+
+\begin{equation}\label{eq:pid}
+	u(t) = K_p e(t) + K_i \int_{0}^{t} e(\tau) d\tau + K_d \frac{de(t)}{dt}
+\end{equation}
+
+Donde $K_p$, $K_i$ y $K_d$ son las ganancias proporcional, integral y derivativa, respectivamente. En este proyecto, se implementa una versión discretizada del algoritmo (PI/PID) en el firmware del microcontrolador ATMEGA328P para modular la velocidad de los extractores de aire según el nivel de CO\(_2\), evitando la acumulación de gases nocivos.
+
+\subsection{Control Proporcional (P)}
+El control proporcional es una forma simplificada de control en la cual la señal de salida es directamente proporcional al error medido. Se define por la ecuación:
+
+\begin{equation}\label{eq:control_p}
+	u(t) = K_p e(t)
+\end{equation}
+
+Esta estrategia es adecuada para variables que no requieren un tiempo de estabilización rápido ni la eliminación total del error en estado estacionario. En el sistema propuesto, se emplean controladores proporcionales (P) independientes para la temperatura y la humedad relativa, permitiendo ajustar de forma lineal el ciclo de trabajo de la señal PWM de los ventiladores auxiliares de apoyo.
+
+\subsection{Lógica de Control Priorizado y Combinado}
+Debido a que el sistema opera sobre un mismo flujo de ventilación física en el aula mediante actuadores compartidos, se ha diseñado una lógica de control con prioridad jerárquica:
+
+\begin{enumerate}
+	\item \textbf{Prioridad 1 (Calidad del aire - CO\(_2\)):} El nivel de dióxido de carbono es el contaminante más crítico para la salud cognitiva de los estudiantes. Por tanto, si la concentración de CO\(_2\) supera el umbral de seguridad establecido (por ejemplo, 800 ppm), el controlador PID asume el control absoluto de los actuadores de ventilación, modulando el ciclo de trabajo PWM de los ventiladores principales al valor calculado por el algoritmo de control de CO\(_2\) para renovar el aire con máxima prioridad.
+	\item \textbf{Prioridad 2 (Confort térmico - Temperatura y Humedad):} Si la concentración de CO\(_2\) se encuentra en un rango seguro e inferior al umbral, el sistema permite que las variables de confort térmico entren en acción. En este estado, los controladores proporcionales P de temperatura y humedad calculan sus respectivas acciones de control y se selecciona el valor máximo para establecer la velocidad de los ventiladores. Esto asegura que la ventilación actúe como un apoyo térmico secundario solo cuando las condiciones respiratorias de salubridad ya están plenamente satisfechas.
+\end{enumerate}
+
+Esta lógica priorizada previene conflictos de actuación en el hardware, optimiza el consumo energético de los motores y garantiza en todo momento un ambiente de aprendizaje seguro y confortable.
 
