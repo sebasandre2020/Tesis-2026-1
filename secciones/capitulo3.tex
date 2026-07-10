@@ -12,7 +12,7 @@ El trabajo de investigación se divide en los siguientes cuatro frentes: nodo se
 \section{Metodologías de investigación}
 
 \subsection{Metodología V model}
-Para el desarrollo de la aplicación web, se ha escogido la metodología V model. Esta metodología permite estructurar y gestionar de manera eficaz el proceso de desarrollo y prueba, asegurando que cada fase de construcción esté alineada con un proceso de validación correspondiente. A continuación se describe la adaptación de este modelo al desarrollo de la aplicación web de monitoreo de datos multivariables (CO\(_2\), material particulado, temperatura y humedad).
+Para el desarrollo de la aplicación web, se ha escogido la metodología V model. Esta metodología permite estructurar y gestionar de manera eficaz el proceso de desarrollo y prueba, asegurando que cada fase de construcción esté alineada con un proceso de validación correspondiente. A continuación se describe la adaptación de este modelo al desarrollo de la aplicación web de monitoreo de datos multivariables (CO\(_2\), material particulado, temperatura y humedad), cuya correspondencia entre fases de diseño y pruebas se ilustra en la Figura \ref{fig:vmodel}.
 
 \begin{figure}[H]
     \centering
@@ -64,7 +64,7 @@ El modelo V incluye una fase de mantenimiento, donde se abordan posibles mejoras
 
 \subsection{Metodología PPDIOO}
 
-Para el desarrollo del nodo sensor y el diseño del gateway personalizado, se ha optado por emplear la metodología PPDIOO. Esta metodología se adapta bien a la implementación de sistemas de hardware y redes, pues permite una planificación detallada en cada fase, asegurando la fiabilidad y eficiencia del sistema desde la concepción hasta la operación y mejora continua. A continuación, se describe la aplicación de esta metodología en los dos frentes del proyecto: el nodo sensor y el gateway.
+Para el desarrollo del nodo sensor y el diseño del gateway personalizado, se ha optado por emplear la metodología PPDIOO. Esta metodología se adapta bien a la implementación de sistemas de hardware y redes, pues permite una planificación detallada en cada fase, asegurando la fiabilidad y eficiencia del sistema desde la concepción hasta la operación y mejora continua. Las etapas que conforman este enfoque metodológico iterativo se representan en la Figura \ref{fig:PPDIOO}. A continuación, se describe la aplicación de esta metodología en los dos frentes del proyecto: el nodo sensor y el gateway.
 
 \begin{figure}[H]
     \centering
@@ -119,7 +119,7 @@ Finalmente, la fase de optimización contempla ajustes en la configuración de m
 \section{Arquitectura General del Sistema}
 \subsection{Topología de Red y Capas Físicas}
 
-El diseño del sistema de monitoreo ambiental multivariable y confort térmico (CO\(_2\), material particulado, temperatura y humedad) se fundamenta en una topología de red en estrella, seleccionada estratégicamente para garantizar una cobertura amplia, bajo consumo energético y alta escalabilidad dentro del campus universitario. La arquitectura se divide en dos dominios físicos principales que convergen en la nube: la red de sensores (Percepción) y el nodo central (Edge o Gateway).
+El diseño del sistema de monitoreo ambiental multivariable y confort térmico (CO\(_2\), material particulado, temperatura y humedad) se fundamenta en una topología de red en estrella, mostrada esquemáticamente en la Figura \ref{fig:topologia_completa}, seleccionada estratégicamente para garantizar una cobertura amplia, bajo consumo energético y alta escalabilidad dentro del campus universitario. La arquitectura se divide en dos dominios físicos principales que convergen en la nube: la red de sensores (Percepción) y el nodo central (Edge o Gateway).
 
 \begin{figure}[H]
     \centering
@@ -140,7 +140,7 @@ Posteriormente, ocurre la transición de red: el ESP32, mediante su conectividad
 
 \subsection{Arquitectura de Software y Servicios en la Nube (Azure)}
 
-Para el procesamiento, almacenamiento y visualización de la telemetría, se ha diseñado una arquitectura orientada a la nube altamente desacoplada y basada en servicios \textit{Serverless} \cite{software_arquitectura}. Este diseño ha sido optimizado para operar eficientemente minimizando los costos de infraestructura (presupuesto orientado a \$0), garantizando la escalabilidad a cero (\textit{Scale to Zero}) cuando no hay tráfico activo.
+Para el procesamiento, almacenamiento y visualización de la telemetría, se ha diseñado una arquitectura orientada a la nube altamente desacoplada y basada en servicios \textit{Serverless} \cite{software_arquitectura}. Este diseño ha sido optimizado para operar eficientemente minimizando los costos de infraestructura (presupuesto orientado a \$0), garantizando la escalabilidad a cero (\textit{Scale to Zero}) cuando no hay tráfico activo. La interconexión lógica de todos los recursos virtuales aprovisionados se muestra en la Figura \ref{fig:conexion_recursos_azure}.
 
 \begin{figure}[H]
     \centering
@@ -154,8 +154,8 @@ Para el procesamiento, almacenamiento y visualización de la telemetría, se ha 
 \subsubsection{Patrones de Diseño de Software}
 La solución informática implementa el patrón \textbf{CQRS (Command Query Responsibility Segregation)}, el cual divide estrictamente las operaciones de escritura y lectura, asegurando un rendimiento óptimo en aplicaciones IoT \cite{design_patterns}.
 \begin{itemize}
-    \item \textbf{Canal de Escritura (Ingesta de alta frecuencia):} La telemetría capturada por el gateway es enviada al \textit{Azure IoT Hub}, el cual actúa como el punto de entrada seguro y escalable. Inmediatamente, este evento desencadena una ejecución en \textit{Azure Functions} (modelo \textit{event-driven}), encargada de desempaquetar, validar la carga JSON, y ejecutar la inserción en la base de datos sin afectar el rendimiento de los servicios de consulta.
-    \item \textbf{Canal de Lectura (Consultas complejas):} La extracción de datos históricos para la generación de gráficas en el cliente web se realiza a través de un backend en \textit{.NET Core} alojado en \textit{Azure Container Apps}. Este servicio expone una API REST consumida de forma independiente por la interfaz de usuario en \textit{React.js}, previniendo que picos masivos en la ingesta de telemetría degraden la experiencia del usuario.
+    \item \textbf{Canal de Escritura (Ingesta de alta frecuencia):} La telemetría capturada por el gateway es enviada al \textit{Azure IoT Hub}, el cual actúa como el punto de entrada seguro y escalable. Inmediatamente, este evento desencadena una ejecución en \textit{Azure Functions} (modelo \textit{event-driven}), encargada de desempaquetar, validar la carga JSON, y ejecutar la inserción en la base de datos sin afectar el rendimiento de los servicios de consulta. El diagrama detallado de este flujo de ingesta y almacenamiento de datos se presenta en la Figura \ref{fig:tikz_ingesta}.
+    \item \textbf{Canal de Lectura (Consultas complejas):} La extracción de datos históricos para la generación de gráficas en el cliente web se realiza a través de un backend en \textit{.NET Core} alojado en \textit{Azure Container Apps}. Este servicio expone una API REST consumida de forma independiente por la interfaz de usuario en \textit{React.js}, previniendo que picos masivos en la ingesta de telemetría degraden la experiencia del usuario. Este flujo de consulta y acceso a la información se detalla en la Figura \ref{fig:tikz_consulta}.
 \end{itemize}
 
 \subsubsection{Diagramas de Flujo de Datos en la Nube}
@@ -224,7 +224,7 @@ Para ilustrar de manera secuencial la canalización de los datos desde el punto 
 
 La correcta implementación y configuración de los servicios orientados a eventos (\textit{Serverless}) en la plataforma de Microsoft Azure representa un pilar fundamental para asegurar tanto la alta disponibilidad de los datos como la contención estricta de los costos operativos. Dado que la arquitectura diseñada opera bajo el principio de pago por consumo y escalabilidad dinámica (\textit{Scale to Zero}), resulta imperativo validar empíricamente que los recursos han sido provisionados bajo las tarifas gratuitas o básicas designadas (tales como \textit{F1 Free Tier}, \textit{Consumption Plan} o \textit{DTU Básico}).
 
-Para constatar el cumplimiento de estas restricciones económicas y el correcto flujo de la telemetría en tiempo real, se extrajeron capturas directamente desde el panel de administración del Portal de Azure. Las siguientes evidencias ilustran y validan el ciclo de vida completo del dato en la nube: inician comprobando la ingesta segura a través de \textit{IoT Hub}, continúan verificando el procesamiento sin estado en \textit{Azure Functions} y su posterior almacenamiento relacional optimizado en \textit{Azure SQL Database}. Finalmente, se confirma la correcta exposición de las APIs gestionadas en \textit{Container Apps} y el alojamiento global de la interfaz gráfica de usuario mediante \textit{Static Web Apps}. Estas configuraciones certifican la viabilidad técnica y financiera del sistema de monitoreo implementado.
+Para constatar el cumplimiento de estas restricciones económicas y el correcto flujo de la telemetría en tiempo real, se extrajeron capturas directamente desde el panel de administración del Portal de Azure. Las siguientes evidencias ilustran y validan el ciclo de vida completo del dato en la nube: inician comprobando la ingesta segura a través del panel de \textit{Azure IoT Hub} mostrado en la Figura \ref{fig:azure_iothub}, continúan verificando el procesamiento sin estado en el flujo de invocaciones de \textit{Azure Functions} (ver Figura \ref{fig:azure_function}) y su posterior almacenamiento relacional optimizado en \textit{Azure SQL Database} (ver Figura \ref{fig:azure_sql}). Finalmente, se confirma la correcta exposición de las APIs gestionadas en \textit{Azure Container Apps} y su regla de auto-escalado a cero (ver Figura \ref{fig:azure_containerapp}), junto con el alojamiento global de la interfaz gráfica de usuario en \textit{Azure Static Web Apps} (ver Figura \ref{fig:azure_staticwebapps}). Estas configuraciones certifican la viabilidad técnica y financiera del sistema de monitoreo implementado.
 
 \begin{figure}[H]
     \centering
@@ -518,7 +518,7 @@ Las conexiones lógicas y eléctricas detalladas para la integración física de
 
 \subsection{Estructura del Firmware Multivariable y Lógica de Control Local}
 
-El firmware del nodo sensor se diseñó bajo una estructura multitarea cooperativa no bloqueante mediante el uso del temporizador del sistema (\texttt{millis()}). Esta arquitectura de software evita el uso de funciones de retardo (\texttt{delay()}), asegurando que la lectura de múltiples sensores con diferentes tiempos de respuesta, el procesamiento de las señales de control, el cálculo de las RPM del ventilador y el empaquetado de datos LoRa ocurran en hilos lógicos independientes de manera concurrente.
+El firmware del nodo sensor se diseñó bajo una estructura multitarea cooperativa no bloqueante mediante el uso del temporizador del sistema (\texttt{millis()}). Esta arquitectura de software evita el uso de funciones de retardo (\texttt{delay()}), asegurando que la lectura de múltiples sensores con diferentes tiempos de respuesta, el procesamiento de las señales de control, el cálculo de las RPM del ventilador y el empaquetado de datos LoRa ocurran en hilos lógicos independientes de manera concurrente. El código fuente completo programado en lenguaje C++ para el microcontrolador del nodo sensor se encuentra disponible en el Apéndice \ref{chap:anexo_sensor}.
 
 El flujo procedimental del firmware del nodo sensor se divide en tres etapas principales operando en paralelo:
 
@@ -657,14 +657,14 @@ Así mismo, la página web cuenta con dos páginas que funcionan como dashboards
 
 
 \begin{itemize}
-    \item \textbf{Landing page (Dashboard)}:
+    \item \textbf{Landing page (Dashboard)}: Cuya interfaz principal de visualización conjunta se muestra en la Figura \ref{fig:webapp_dashboard}, encargada de:
           \begin{itemize}
               \item Mostrar las últimas lecturas de CO\(_2\) de tres sensores en tiempo real.
               \item Incluir detalles de la ubicación de cada sensor.
               \item Visualizar las alertas cuando los valores de CO\(_2\) superen el umbral permitido (mediante ventanas emergentes y sonidos de alerta).
           \end{itemize}
 
-    \item \textbf{Vista de Detalle de Sensor}:
+    \item \textbf{Vista de Detalle de Sensor}: Cuya interfaz de análisis de variables históricas se ilustra en la Figura \ref{fig:webapp_sensor}, encargada de:
           \begin{itemize}
               \item Mostrar información detallada de cada sensor, como el nombre y la ubicación.
               \item Incluir un gráfico interactivo con las lecturas de CO\(_2\) de las últimas 8 horas.
@@ -698,6 +698,8 @@ Así mismo, la página web cuenta con dos páginas que funcionan como dashboards
     \item \textbf{Gestión de Alertas:} Cuando los datos de CO\(_2\) superen el umbral configurado, el motor de reglas de negocio en el backend emitirá un evento asíncrono que el frontend presentará visual y sonoramente en el dashboard.
     \item \textbf{Consulta Histórica:} El frontend consumirá los endpoints del backend alojados en Azure Container Apps para permitir la consulta histórica de lecturas y su representación en gráficos dinámicos.
 \end{itemize}
+
+La estructura general del software desarrollado, así como los componentes principales de código de la interfaz gráfica de usuario en React, se encuentran descritos en el Apéndice \ref{chap:anexo_web} y en el Apéndice \ref{an:componentes_front}, respectivamente.
 
 \subsubsection{Requisitos de Hardware e Interacción con el Gateway Personalizado}
 
