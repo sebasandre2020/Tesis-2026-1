@@ -284,42 +284,38 @@
     \let\footnoterule\relax
     \let \footnote \thanks
     \setcounter{footnote}{0}
-    \null\vfil
-    %\vskip 60\p@
     \begin{center}
       \setlength{\parskip}{0pt}
-      \vspace{-1.5cm}
       {\large \textbf{UNIVERSIDAD DE INGENIERÍA Y TECNOLOGÍA}\par}
-      \vspace{0.5cm}
+      \vspace{0.4cm}
       {\large {CARRERA DE \deptname }\par}
       \vfill
      
       \href{https://www.utec.edu.pe}{\includegraphics[height=2.5cm]{images/logo_utec.png}}\\
       \vfill
-      \vspace{0.5cm}
+      \vspace{0.4cm}
       {\Large \bf \@title \par}
-      \vspace{1.5cm}
+      \vspace{0.8cm}
       {\large \textbf{PROYECTO FINAL DE INGENIERÍA MECATRÓNICA II}\par}
       {\large Para optar el grado de \degreename  en \majorname \par}
       \vfill
       \smallskip
-      \vspace{0.5cm}
+      \vspace{0.4cm}
       {\large \textbf{AUTORES}\par}
       {\large \authornames \par}
-      \vspace{0.5cm}
+      \vspace{0.4cm}
 %      {\large \textbf{Código \studentid} \par}
-      \vspace{0.5cm}
+      \vspace{0.4cm}
       {\large \bf ASESOR \par}
       \smallskip
       {\large \supname \par}
       \vfill
-      \vspace{1.5cm}
+      \vspace{0.8cm}
       {\large Lima - Perú \par}
       {\large \dateMY \par}
     \end{center}
     \par
     \@thanks
-    \vfil\null
   \end{titlepage}
   \setcounter{footnote}{0}%
   \global\let\thanks\relax
