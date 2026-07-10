@@ -12,7 +12,7 @@ El trabajo de investigación se divide en los siguientes cuatro frentes: nodo se
 \section{Metodologías de investigación}
 
 \subsection{Metodología V model}
-Para el desarrollo de la aplicación web, se ha escogido la metodología V model. Esta metodología permite estructurar y gestionar de manera eficaz el proceso de desarrollo y prueba, asegurando que cada fase de construcción esté alineada con un proceso de validación correspondiente. A continuación se describe la adaptación de este modelo al desarrollo de la aplicación web de monitoreo de datos de CO\(_2\).
+Para el desarrollo de la aplicación web, se ha escogido la metodología V model. Esta metodología permite estructurar y gestionar de manera eficaz el proceso de desarrollo y prueba, asegurando que cada fase de construcción esté alineada con un proceso de validación correspondiente. A continuación se describe la adaptación de este modelo al desarrollo de la aplicación web de monitoreo de datos multivariables (CO\(_2\), material particulado, temperatura y humedad).
 
 \begin{figure}[H]
     \centering
@@ -119,7 +119,7 @@ Finalmente, la fase de optimización contempla ajustes en la configuración de m
 \section{Arquitectura General del Sistema}
 \subsection{Topología de Red y Capas Físicas}
 
-El diseño del sistema de monitoreo de CO\(_2\) se fundamenta en una topología de red en estrella, seleccionada estratégicamente para garantizar una cobertura amplia, bajo consumo energético y alta escalabilidad dentro del campus universitario. La arquitectura se divide en dos dominios físicos principales que convergen en la nube: la red de sensores (Percepción) y el nodo central (Edge o Gateway).
+El diseño del sistema de monitoreo ambiental multivariable y confort térmico (CO\(_2\), material particulado, temperatura y humedad) se fundamenta en una topología de red en estrella, seleccionada estratégicamente para garantizar una cobertura amplia, bajo consumo energético y alta escalabilidad dentro del campus universitario. La arquitectura se divide en dos dominios físicos principales que convergen en la nube: la red de sensores (Percepción) y el nodo central (Edge o Gateway).
 
 \begin{figure}[H]
     \centering
@@ -131,10 +131,10 @@ El diseño del sistema de monitoreo de CO\(_2\) se fundamenta en una topología 
 \end{figure}
 
 \subsubsection{Capa de Percepción: Nodos Sensores}
-Los nodos sensores representan el nivel físico de captura de datos. Cada nodo integra un microcontrolador (Arduino UNO) acoplado a un sensor NDIR MH-Z19, el cual garantiza alta precisión en la medición de las concentraciones de CO\(_2\). Para la transmisión de los datos, se emplea el módulo transceptor E220-900T30D operando bajo la tecnología de modulación LoRa en la banda Sub-GHz (915 MHz). Esta configuración permite a los nodos operar de forma asíncrona, capturando mediciones periódicas y emitiendo paquetes de telemetría sin requerir una conexión persistente. Al delegar la complejidad del enrutamiento al gateway, se minimiza el consumo energético en los puntos extremos de la red.
+Los nodos sensores representan el nivel físico de captura de datos. Cada nodo integra un microcontrolador (Arduino UNO) acoplado a una carga útil multivariable conformada por un sensor NDIR MH-Z19B (para CO\(_2\)), un sensor capacitivo DHT22 (para temperatura y humedad relativa) y un sensor óptico Sharp GP2Y1010AU0F (para material particulado/polvo en suspensión). Para la transmisión de los datos, se emplea el módulo transceptor E220-900T30D operando bajo la tecnología de modulación LoRa en la banda Sub-GHz (915 MHz). Esta configuración permite a los nodos operar de forma asíncrona, capturando mediciones periódicas y emitiendo paquetes de telemetría sin requerir una conexión persistente. Al delegar la complejidad del enrutamiento al gateway, se minimiza el consumo energético en los puntos extremos de la red.
 
 \subsubsection{Capa Edge y Transición de Red (LoRa a Wi-Fi)}
-El Gateway Personalizado (Custom Gateway) actúa como el núcleo de la topología en estrella. Basado en el microcontrolador ESP32, este dispositivo posee una función dual crítica: la recepción por radiofrecuencia y la retransmisión por redes IP. El gateway utiliza un módulo E220-900T30D idéntico al de los nodos para recibir las tramas LoRa entrantes. Una vez recibido el paquete, el microcontrolador decodifica la carga útil (payload), extrae la información relevante (identificador del nodo y nivel de CO\(_2\)) y la empaqueta en formato JSON.
+El Gateway Personalizado (Custom Gateway) actúa como el núcleo de la topología en estrella. Basado en el microcontrolador ESP32, este dispositivo posee una función dual crítica: la recepción por radiofrecuencia y la retransmisión por redes IP. El gateway utiliza un módulo E220-900T30D idéntico al de los nodos para recibir las tramas LoRa entrantes. Una vez recibido el paquete, el microcontrolador decodifica la carga útil (payload), extrae la información de telemetría multivariable (identificador del nodo, niveles de CO\(_2\), material particulado, temperatura y humedad) y la empaqueta en formato JSON.
 
 Posteriormente, ocurre la transición de red: el ESP32, mediante su conectividad Wi-Fi nativa, establece una conexión segura (HTTPS/MQTT) con los servicios de nube, inyectando los datos de telemetría al flujo de procesamiento en Azure. Esta separación de tecnologías de red permite explotar el largo alcance y la capacidad de penetración de LoRa en el entorno físico, mientras se aprovecha la infraestructura Wi-Fi existente de la universidad para el acceso al internet público de manera económica y segura.
 
@@ -477,8 +477,97 @@ La Tabla \ref{tabla:resumen_seleccion} consolida los resultados de las tres matr
     \end{table}
 \end{landscape}
 \FloatBarrier
-
 Como se puede observar en la Tabla \ref{tabla:resumen_seleccion}, los componentes seleccionados ---ESP32, Ebyte E220-900T30D y Wi-Fi nativo del ESP32--- lideran consistentemente en las categorías de mayor peso (disponibilidad local y facilidad de configuración), lo que valida de forma cuantitativa la decisión de diseño adoptada para el gateway personalizado y los nodos sensores del proyecto.
+
+\subsection{Diseño de Hardware e Integración Física del Nodo Sensor}
+
+Para consolidar la captura multivariable y la mitigación activa en un único dispositivo de bajo costo, se diseñó la arquitectura electrónica del nodo sensor integrando periféricos de adquisición y actuación en torno a un microcontrolador ATmega328P (Arduino UNO). A diferencia de la propuesta inicial de monitoreo univariable, el nodo integra tres sensores ambientales y un circuito de potencia para el control de velocidad de un grupo de ventiladores de 12~V.
+
+La interconexión física de los componentes se detalla a continuación:
+\begin{itemize}
+    \item \textbf{Capa de Procesamiento:} El Arduino UNO actúa como núcleo de control local, ejecutando el firmware multivariable, procesando las lecturas analógicas y digitales, y computando los algoritmos de control en tiempo real.
+    \item \textbf{Sensor de Dióxido de Carbono (MH-Z19B):} Se comunica de forma serie UART a través de un puerto de software (SoftwareSerial) configurado en los pines digitales D10 (RX) y D11 (TX) del Arduino, operando a una tasa de 9600~bps.
+    \item \textbf{Sensor de Temperatura y Humedad (DHT22):} Emplea un protocolo de comunicación propietario de un solo hilo (1-wire), conectado al pin digital D5 del microcontrolador.
+    \item \textbf{Sensor de Material Particulado (Sharp GP2Y1010AU0F):} Para su integración física, se conecta la salida analógica de voltaje al pin A0 del Arduino. Adicionalmente, el diodo emisor de luz infrarroja (IRED) interno del sensor se controla mediante un pulso digital en el pin D7, sincronizando un ciclo de trabajo de 0.32~ms para realizar la lectura analógica de forma estable.
+    \item \textbf{Transceptor LoRa (Ebyte E220-900T30D):} Se conecta mediante SoftwareSerial en los pines D2 (RX) y D3 (TX). Dado que el módulo LoRa opera con niveles lógicos de 3.3~V y el Arduino UNO con 5~V, se implementa un divisor de tensión resistivo (1~k$\Omega$ y 2~k$\Omega$) en la línea TX del Arduino (RXD del módulo) para proteger el puerto del transceptor. El pin D4 se conecta a la señal AUX del transceptor para monitorear el estado de transmisión física de los paquetes.
+    \item \textbf{Etapa de Actuación (Ventilación PWM):} El control de velocidad del ventilador de 12~V (Cooler Master SickleFlow 120) se realiza mediante modulación por ancho de pulsos (PWM). Debido a que los pines de E/S del microcontrolador no soportan la corriente ni el voltaje nominal de los ventiladores, se diseñó un circuito de potencia basado en un transistor MOSFET de canal N (IRF540N) configurado como interruptor de bajo lado (Low-Side Switch). El pin digital D9 del Arduino se conecta a la compuerta (Gate) del MOSFET a través de una resistencia de limitación de corriente de 220~$\Omega$, y se añade una resistencia de pulso bajo (pull-down) de 10~k$\Omega$ para evitar encendidos erráticos. Un diodo de marcha libre (1N4007) se conecta en paralelo al motor de los ventiladores para disipar las corrientes inductivas inversas generadas al conmutar el circuito.
+\end{itemize}
+
+Las conexiones lógicas y eléctricas detalladas para la integración física del nodo sensor multivariable se consolidan en la Tabla \ref{tabla:mapeo_pines_nodo}.
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \caption{Mapeo de Pines de Conexión del Nodo Sensor Multivariable}
+    \label{tabla:mapeo_pines_nodo}
+    \begin{tabular}{|p{3.5cm}|c|c|p{5cm}|}
+        \hline
+        \textbf{Componente}                    & \textbf{Pin Perif.} & \textbf{Pin Arduino} & \textbf{Tipo de Señal / Descripción} \\ \hline
+        \multirow{3}{*}{Transceptor LoRa E220} & TXD                 & D2 (RX\_SW)          & Entrada UART (Serie)                 \\ \cline{2-4}
+                                               & RXD                 & D3 (TX\_SW)          & Salida UART (Divisor 3.3V)           \\ \cline{2-4}
+                                               & AUX                 & D4                   & Entrada digital (Estado LoRa)        \\ \hline
+        Sensor DHT22                           & DATA                & D5                   & E/S digital (Protocolo 1-wire)       \\ \hline
+        Ventilador (Tacómetro)                 & TACH                & D6                   & Entrada digital (Pulsos RPM)         \\ \hline
+        \multirow{2}{*}{Sensor de Polvo Sharp} & V-LED               & D7                   & Salida digital (Pulso IRED)          \\ \cline{2-4}
+                                               & VOUT                & A0                   & Entrada analógica (Medición polvo)   \\ \hline
+        Mosfet IRF540N (Ventilador)            & GATE                & D9 (PWM)             & Salida PWM (Velocidad ventilador)    \\ \hline
+        \multirow{2}{*}{Sensor CO$_2$ MH-Z19B} & TX                  & D10 (RX\_SW)         & Entrada UART (Serie CO$_2$)          \\ \cline{2-4}
+                                               & RX                  & D11 (TX\_SW)         & Salida UART (Serie CO$_2$)           \\ \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Estructura del Firmware Multivariable y Lógica de Control Local}
+
+El firmware del nodo sensor se diseñó bajo una estructura multitarea cooperativa no bloqueante mediante el uso del temporizador del sistema (\texttt{millis()}). Esta arquitectura de software evita el uso de funciones de retardo (\texttt{delay()}), asegurando que la lectura de múltiples sensores con diferentes tiempos de respuesta, el procesamiento de las señales de control, el cálculo de las RPM del ventilador y el empaquetado de datos LoRa ocurran en hilos lógicos independientes de manera concurrente.
+
+El flujo procedimental del firmware del nodo sensor se divide en tres etapas principales operando en paralelo:
+
+\begin{enumerate}
+    \item \textbf{Inicialización (Setup):}
+          \begin{itemize}
+              \item Configuración de la comunicación serie de depuración UART (9600 bps) y los puertos de software para el módulo LoRa y el sensor MH-Z19B.
+              \item Inicialización del puerto del sensor DHT22.
+              \item Configuración del circuito del temporizador Timer 1 del microcontrolador a 25~kHz para el pin de salida digital D9.
+              \item Configuración de los pines de entrada y salida digital, incluyendo el pin de tacómetro (D6) como entrada.
+              \item Establecimiento de un temporizador de precalentamiento de 60 segundos (\texttt{PREHEAT\_MS = 60000}) para estabilizar las lecturas químicas del sensor NDIR de CO$_2$ antes de habilitar la acción del lazo de control.
+          \end{itemize}
+
+    \item \textbf{Lazo de Control Local (Ejecución cada 5 segundos):}
+          \begin{itemize}
+              \item \textbf{Adquisición de Sensores:} El firmware lee la concentración de CO$_2$ (MH-Z19B) enviando una solicitud serie hexadecimal y decodificando la trama de respuesta. De forma paralela, lee la temperatura y humedad relativa (DHT22), y realiza la lectura del sensor óptico de polvo (Sharp). Cabe resaltar que para el caso del sensor de material particulado, ante limitaciones físicas de calibración en campo, el firmware incluye la simulación de lecturas aleatorias estables ($5\text{ a }100\text{ }\mu\text{g/m}^3$) para validar el flujo completo.
+              \item \textbf{Filtrado Digital de Datos:} Para atenuar el ruido de alta frecuencia inhrente al sensor químico de CO$_2$, se implementa un filtro de paso bajo de primer orden (filtro exponencial) con un factor de suavizado $\alpha = 0.35$, definido por la ley recursiva:
+                    \begin{equation}
+                        C_{\text{filt}}(k) = \alpha \cdot C_{\text{raw}}(k) + (1 - \alpha) \cdot C_{\text{filt}}(k-1)
+                    \end{equation}
+                    donde $C_{\text{raw}}(k)$ es la lectura instantánea y $C_{\text{filt}}(k)$ es la lectura suavizada utilizada por el lazo de control.
+              \item \textbf{Ejecución de Estrategias de Control:} Con base en la concentración filtrada de CO$_2$, la temperatura y la humedad, se ejecuta la lógica del controlador seleccionado (PI/PID, Fuzzy o LQR). Para el control de CO$_2$, el algoritmo computa el error respecto al setpoint (900 ppm) y calcula la acción correspondiente.
+              \item \textbf{Lógica de Control Priorizada Multivariable:} Aunque el CO$_2$ es el agente principal de actuación de la ventilación mecánica, el firmware incorpora una lógica de control priorizada para integrar la temperatura y la humedad. Cuando los límites de confort térmico son superados (parámetros sintonizados a $T > 23.5$ °C o $H > 72.0\%$), se calculan acciones de control proporcionales secundarias ($u_{\text{temp}}$ y $u_{\text{hum}}$). La señal final de PWM aplicada al actuador es el valor máximo resultante de las tres ramas de control, asegurando la mitigación del parámetro más crítico:
+                    \begin{equation}
+                        u_{\text{final}}(k) = \max\left( u_{\text{CO}_2}(k),\, u_{\text{temp}}(k),\, u_{\text{hum}}(k) \right)
+                    \end{equation}
+              \item \textbf{Accionamiento del Actuador:} El valor $u_{\text{final}}(k)$ se mapea y escribe directamente en el registro de comparación del Timer 1 (\texttt{OCR1A}), modulando el ciclo de trabajo del MOSFET.
+              \item \textbf{Lectura de Velocidad Real:} Utilizando la función \texttt{pulseIn()} en el pin D6, se mide la duración del pulso alto y bajo de la señal TACH del ventilador. Con base en el periodo obtenido y asumiendo 2 pulsos por revolución, se calculan las RPM reales de giro del motor.
+          \end{itemize}
+
+    \item \textbf{Envío de Telemetría por LoRa (Ejecución cada 10 segundos):}
+          \begin{itemize}
+              \item Para evitar desbordamientos de memoria en el microcontrolador ATmega328P (cuya memoria SRAM es de apenas 2~KB), se prescinde del uso de librerías dinámicas de JSON. En su lugar, se emplea un búfer de caracteres estático de 128 bytes y la función \texttt{snprintf} para empaquetar de manera estructurada y segura los datos de telemetría.
+              \item La trama generada sigue el formato estructurado JSON:
+                    \begin{verbatim}
+{
+  "node_id": "Node_01",
+  "co2": 742,
+  "dust": 31,
+  "temperature": 22.4,
+  "humidity": 48.7
+}
+                    \end{verbatim}
+                    el cual termina con un carácter de salto de línea (\texttt{\textbackslash n}) para actuar como delimitador de fin de paquete.
+              \item Antes de transmitir, el firmware evalúa el estado del pin AUX del transceptor LoRa E220. Si el pin AUX se encuentra en nivel ALTO, indica que el transceptor está libre para transmitir; el microcontrolador inyecta los caracteres en el puerto serie hacia el módulo de radio, el cual modula y propaga la señal electromagnética a 915 MHz en el espacio físico.
+          \end{itemize}
+\end{enumerate}
+
+
 
 \subsection{Criterios Normativos para la Ubicación Espacial de los Nodos Sensores}
 
