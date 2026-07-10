@@ -123,7 +123,7 @@ El diseño del sistema de monitoreo ambiental multivariable y confort térmico (
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{images/capitulo3/placeholder_topologia_completa.png}
+    \includegraphics[width=1.2\textwidth]{images/capitulo3/Topologia_Red.png}
     % UBICACIÓN IMAGEN 1: Topología completa
     % TODO: Reemplaza esta imagen con un diagrama visual o mapa que ilustre la topología en estrella completa del sistema (Nodos sensores comunicándose por LoRa hacia el ESP32 Gateway).
     \caption{Diagrama esquemático de la topología de red en estrella del sistema de monitoreo.}
@@ -144,7 +144,7 @@ Para el procesamiento, almacenamiento y visualización de la telemetría, se ha 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{images/capitulo3/placeholder_conexion_recursos_azure.png}
+    \includegraphics[width=1.2\textwidth]{images/capitulo3/Arquitectura_software.png}
     % UBICACIÓN IMAGEN 2: Conexión de recursos en Azure (Gateway -> Web App)
     % TODO: Reemplaza esta imagen con el diagrama o esquema visual general que muestre la interconexión completa de los recursos nativos en la nube, iniciando desde el Gateway (MQTT) y finalizando en el Frontend (Static Web Apps).
     \caption{Arquitectura general de conexión y servicios aprovisionados en Microsoft Azure.}
@@ -1038,11 +1038,73 @@ A partir de estos criterios, la validación experimental permitirá determinar c
 \newpage
 \section{Integración del sistema}
 
-El diagrama de flujo muestra el funcionamiento general del sistema integrado. Entre los pasos mencionados, procesos como la validación y el empaquetado de datos en formato JSON en el gateway antes de enviarlos a la base de datos, si bien son brevemente explicados en el diagrama, son esenciales para asegurar la integridad de las lecturas. Además, el gateway gestiona eficientemente la petición HTTP POST sobre la conexión segura HTTPS para asegurar que no haya pérdida de datos hacia Azure Container Apps. Cuando se genera una alerta por niveles altos de CO$_2$ o condiciones fuera de los umbrales de salubridad y confort, esta no solo se envía al frontend mediante el polling de la API Serverless, sino que también queda debidamente almacenada en Azure SQL Database para el registro histórico.
+Para validar y consolidar el comportamiento global de la solución propuesta, el funcionamiento coordinado de todos los componentes físicos y lógicos se detalla mediante diagramas de flujo estructurados por subsistemas: el nodo sensor, el gateway personalizado y el entorno en la nube. Esta separación permite comprender la secuencia lógica de cada dispositivo y los protocolos de comunicación que actúan como puente entre las capas física, de enlace y de aplicación.
+
+En primer lugar, el flujo operativo correspondiente al nodo final se divide en dos fases: adquisición y mitigación local, y transmisión de datos. En la Figura \ref{fig:DF_nodo_completo} se detalla este comportamiento de manera secuencial. Específicamente, en la Figura \ref{fig:DF_nodo_adquisicion} se muestra cómo el microcontrolador gestiona la inicialización temporal y la lectura síncrona de los sensores de CO$_2$, material particulado, temperatura y humedad, ejecutando el filtrado digital y la lógica de control multivariable priorizada para regular el actuador mediante modulación de ancho de pulso (PWM) de alta frecuencia. Por su parte, la Figura \ref{fig:DF_nodo_transmision} ilustra la fase de empaquetamiento de las variables en una trama de bytes y su posterior envío mediante radiofrecuencia con el protocolo físico LoRa, validando el estado libre del canal antes de inyectar los datos en el medio.
+
+En segundo lugar, el gateway personalizado actúa como puente entre la red de radio y la red de datos IP. Su flujo de ejecución se ilustra en la Figura \ref{fig:DF_gateway_completo}. La primera fase, mostrada en la Figura \ref{fig:DF_gateway_conexion}, abarca la inicialización de los periféricos serie y el transceptor Wi-Fi, controlando las rutinas de reconexión de red y la escucha constante del puerto serie para detectar la recepción de tramas LoRa. La segunda fase, detallada en la Figura \ref{fig:DF_gateway_procesamiento}, describe cómo el gateway decodifica la trama de radio, calcula el checksum para asegurar la integridad del paquete, estructura los datos en formato JSON, y realiza la publicación de telemetría de forma asíncrona hacia el servicio Azure IoT Hub utilizando el protocolo MQTT con cifrado TLS (puerto 8883), gestionando automáticamente la persistencia de la sesión MQTT ante caídas del enlace.
+
+Finalmente, el flujo de datos y la canalización dentro de los servicios de nube de Microsoft Azure se estructuran bajo el patrón de segregación de responsabilidades de consulta y comando (CQRS), detallado en la Figura \ref{fig:DF_nube_completo}. Por un lado, el canal de escritura (ingesta de telemetría), ilustrado en la Figura \ref{fig:DF_nube_escritura}, inicia con la recepción segura de los payloads JSON en Azure IoT Hub, desencadenando la ejecución del servicio de cómputo serverless (Azure Functions) para validar el esquema JSON e insertar asíncronamente las lecturas en la base de datos relacional Azure SQL Database. Por otro lado, el canal de lectura (consulta de históricos), detallado en la Figura \ref{fig:DF_nube_lectura}, modela la interacción cuando el usuario accede al cliente web (React) alojado en Azure Static Web Apps; el navegador del cliente envía peticiones HTTP REST de tipo GET a la API backend expuesta en Azure Container Apps, la cual consulta la base de datos a través de Entity Framework y devuelve la respuesta JSON para actualizar los gráficos e interfaces y evaluar el disparo de alertas inmediatas en el navegador.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{images/capitulo3/DF_integracion.png}
-    \caption{Diagrama de flujo del funcionamiento del sistema}
-    \label{fig:DF_integracion}
+    \subfigure[Adquisición de variables y control local.]{
+        \includegraphics[width=0.75\textwidth]{images/capitulo3/DF_nodo_sensor_1.png}
+        \label{fig:DF_nodo_adquisicion}
+    }
+    \caption{Diagrama de flujo del funcionamiento del nodo sensor (fase de adquisición y control).}
+    \label{fig:DF_nodo_completo}
+\end{figure}
+
+\begin{figure}[H]
+    \addtocounter{figure}{-1}
+    \setcounter{subfigure}{1}
+    \centering
+    \subfigure[Empaquetamiento y transmisión LoRa.]{
+        \includegraphics[width=0.75\textwidth]{images/capitulo3/DF_nodo_sensor_2.png}
+        \label{fig:DF_nodo_transmision}
+    }
+    \caption{Diagrama de flujo del funcionamiento del nodo sensor (fase de transmisión).}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \subfigure[Conectividad de red y escucha del transceptor.]{
+        \includegraphics[width=0.75\textwidth]{images/capitulo3/DF_gateway_1.png}
+        \label{fig:DF_gateway_conexion}
+    }
+    \caption{Diagrama de flujo del gateway personalizado (conexión y escucha).}
+    \label{fig:DF_gateway_completo}
+\end{figure}
+
+\begin{figure}[H]
+    \addtocounter{figure}{-1}
+    \setcounter{subfigure}{1}
+    \centering
+    \subfigure[Validación, estructuración JSON y envío en la nube.]{
+        \includegraphics[width=0.75\textwidth]{images/capitulo3/DF_gateway_2.png}
+        \label{fig:DF_gateway_procesamiento}
+    }
+    \caption{Diagrama de flujo del gateway personalizado (procesamiento y envío).}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \subfigure[Canal de Escritura (ingesta y almacenamiento de telemetría).]{
+        \includegraphics[width=0.45\textwidth]{images/capitulo3/DF_nube_escritura.png}
+        \label{fig:DF_nube_escritura}
+    }
+    \caption{Diagrama de flujo de canalización de datos en Azure (canal de escritura).}
+    \label{fig:DF_nube_completo}
+\end{figure}
+
+\begin{figure}[H]
+    \addtocounter{figure}{-1}
+    \setcounter{subfigure}{1}
+    \centering
+    \subfigure[Canal de Lectura (consulta e interfaz gráfica de usuario).]{
+        \includegraphics[width=0.58\textwidth]{images/capitulo3/DF_nube_lectura.png}
+        \label{fig:DF_nube_lectura}
+    }
+    \caption{Diagrama de flujo de canalización de datos en Azure (canal de lectura).}
 \end{figure}
