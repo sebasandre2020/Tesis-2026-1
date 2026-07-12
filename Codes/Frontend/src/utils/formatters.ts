@@ -164,7 +164,7 @@ export const getTimeRangeLabel = (range: TimeRange): string => {
     '12h': 'Últimas 12 horas',
     '24h': 'Últimas 24 horas',
     '7d': 'Últimos 7 días',
-    'june': 'Todo Junio',
+    'month': 'Mes actual',
     'custom': 'Período personalizado',
   };
   return labels[range];

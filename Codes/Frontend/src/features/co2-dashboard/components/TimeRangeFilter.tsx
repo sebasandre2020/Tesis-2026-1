@@ -5,7 +5,7 @@ import { TimeRange } from '../../../types/sensor.types';
 
 interface TimeRangeFilterProps {
   timeRange: TimeRange;
-  onTimeRangeChange: (value: string) => void;
+  onTimeRangeChange: (value: TimeRange) => void;
   customFrom?: string;
   customTo?: string;
   onCustomFromChange?: (v: string) => void;
@@ -32,14 +32,14 @@ const TimeRangeFilter: React.FC<TimeRangeFilterProps> = ({
           <select
             className="w-full p-2.5 bg-white border border-gray-200 rounded-lg text-sm font-semibold text-utec-black focus:ring-2 focus:ring-utec-cyan/20 focus:border-utec-cyan outline-none appearance-none cursor-pointer transition-all"
             value={timeRange}
-            onChange={(e) => onTimeRangeChange(e.target.value)}
+            onChange={(e) => onTimeRangeChange(e.target.value as TimeRange)}
           >
             <option value="1h">Última hora</option>
             <option value="3h">Últimas 3 horas</option>
             <option value="12h">Últimas 12 horas</option>
             <option value="24h">Últimas 24 horas</option>
             <option value="7d">Últimos 7 días</option>
-            <option value="june">Todo Junio</option>
+            <option value="month">Mes actual</option>
             <option value="custom">Rango Personalizado</option>
           </select>
           <TbCalendarTime className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />

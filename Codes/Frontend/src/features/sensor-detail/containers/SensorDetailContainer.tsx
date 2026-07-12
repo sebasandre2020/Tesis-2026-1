@@ -6,6 +6,7 @@ import Sidebar from '../../../components/Sidebar';
 import SensorReadingsChart from '../components/SensorReadingsChart';
 import SensorStatsPanel from '../components/SensorStatsPanel';
 import CurrentReadingsWidget from '../components/CurrentReadingsWidget';
+import TimeRangeFilter from '../../co2-dashboard/components/TimeRangeFilter';
 import {
   fetchSensorDetail,
   fetchSensorDetailChart,
@@ -25,7 +26,7 @@ const SensorDetailContainer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const sensorId = parseSensorId(id);
 
-  const [timeRange, setTimeRange] = useState<TimeRange>('24h');
+  const [timeRange, setTimeRange] = useState<TimeRange>('month');
   const [metric, setMetric] = useState<MetricType>('co2');
   const [sensorData, setSensorData] = useState<SensorDetailData | null>(null);
   const [chartData, setChartData] = useState<ChartData>({ labels: [], datasets: [] });
@@ -208,6 +209,19 @@ const SensorDetailContainer: React.FC = () => {
             </div>
 
             <div className="flex flex-col gap-6">
+              <TimeRangeFilter
+                timeRange={timeRange}
+                onTimeRangeChange={(v) => setTimeRange(v)}
+                customFrom={customFrom}
+                customTo={customTo}
+                onCustomFromChange={(v) => setCustomFrom(v)}
+                onCustomToChange={(v) => setCustomTo(v)}
+                onApplyCustomRange={(from, to) => {
+                  setAppliedCustomFrom(from);
+                  setAppliedCustomTo(to);
+                }}
+              />
+
               <CurrentReadingsWidget
                 co2={sensorData.currentLevel}
                 co2Status={sensorData.currentStatus}

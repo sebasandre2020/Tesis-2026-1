@@ -9,11 +9,11 @@ import { TimeRange } from '../types/sensor.types';
  * Sigue el patrón Custom Hooks descrito en el README para abstraer
  * lógica compleja de la interfaz.
  */
-export const useTimeRange = (initialRange: TimeRange = '24h') => {
+export const useTimeRange = (initialRange: TimeRange = 'month') => {
   const [timeRange, setTimeRange] = useState<TimeRange>(initialRange);
 
-  const handleTimeRangeChange = useCallback((value: string) => {
-    setTimeRange(value as TimeRange);
+  const handleTimeRangeChange = useCallback((value: TimeRange) => {
+    setTimeRange(value);
   }, []);
 
   return {

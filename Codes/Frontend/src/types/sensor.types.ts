@@ -2,7 +2,7 @@
 // Tipos TypeScript centralizados para el dominio de monitoreo IoT multi-sensor
 
 /** Rangos de tiempo disponibles para filtrar datos */
-export type TimeRange = '1h' | '3h' | '12h' | '24h' | '7d' | 'june' | 'custom';
+export type TimeRange = '1h' | '3h' | '12h' | '24h' | '7d' | 'month' | 'custom';
 
 /** Métricas disponibles por cada nodo sensor. */
 export type MetricType = 'co2' | 'dust' | 'temperature' | 'humidity';

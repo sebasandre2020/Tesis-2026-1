@@ -59,7 +59,7 @@ const safeJson = async <T,>(res: Response, context: string): Promise<T | null> =
 };
 
 const labelForRange = (d: Date, range: TimeRange): string => {
-  if (range === 'june' || range === '7d' || range === '24h' || range === '12h' || range === 'custom') {
+  if (range === 'month' || range === '7d' || range === '24h' || range === '12h' || range === 'custom') {
     return d.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -72,6 +72,16 @@ const valueFor = (r: RawReading, metric: MetricType): number | null => {
     case 'temperature': return r.temperature;
     case 'humidity': return r.humidity;
   }
+};
+
+const getCurrentMonthRange = (): { from: string; to: string } => {
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+  return {
+    from: startOfMonth.toISOString(),
+    to: endOfMonth.toISOString(),
+  };
 };
 
 const buildSingleSensorChart = (
@@ -282,9 +292,14 @@ export const fetchSensorDetailChart = async (
     if (!meta) return { labels: [], datasets: [] };
 
     let url = `${API_BASE_URL}/readings?range=${encodeURIComponent(timeRange)}`;
-    if (timeRange === 'custom' && customFrom && customTo) {
+    
+    if (timeRange === 'month') {
+      const { from, to } = getCurrentMonthRange();
+      url = `${API_BASE_URL}/readings?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+    } else if (timeRange === 'custom' && customFrom && customTo) {
       url = `${API_BASE_URL}/readings?from=${encodeURIComponent(customFrom)}&to=${encodeURIComponent(customTo)}`;
     }
+
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const raw = (await safeJson<RawReading[]>(res, 'fetchSensorDetailChart')) ?? [];
@@ -353,9 +368,14 @@ export const fetchChartData = async (
 ): Promise<ChartData> => {
   try {
     let url = `${API_BASE_URL}/readings?range=${encodeURIComponent(timeRange)}`;
-    if (timeRange === 'custom' && customFrom && customTo) {
+    
+    if (timeRange === 'month') {
+      const { from, to } = getCurrentMonthRange();
+      url = `${API_BASE_URL}/readings?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+    } else if (timeRange === 'custom' && customFrom && customTo) {
       url = `${API_BASE_URL}/readings?from=${encodeURIComponent(customFrom)}&to=${encodeURIComponent(customTo)}`;
     }
+
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const raw = (await safeJson<RawReading[]>(res, 'fetchChartData')) ?? [];

@@ -39,7 +39,7 @@ const EMPTY: DashboardData = {
 
 const DashboardContainer: React.FC = () => {
   const { sensors, loadingSensors, refreshSensors } = useAppContext();
-  const { timeRange, setTimeRange } = useTimeRange('24h');
+  const { timeRange, setTimeRange } = useTimeRange('month');
   const [metric, setMetric] = useState<MetricType>('co2');
   const [data, setData] = useState<DashboardData>(EMPTY);
   const [loading, setLoading] = useState(true);
@@ -167,11 +167,11 @@ const DashboardContainer: React.FC = () => {
             <div className="lg:col-span-1 min-h-[180px]">
               <TimeRangeFilter
                 timeRange={timeRange}
-                onTimeRangeChange={setTimeRange}
+                onTimeRangeChange={(v) => setTimeRange(v)}
                 customFrom={customFrom}
                 customTo={customTo}
-                onCustomFromChange={setCustomFrom}
-                onCustomToChange={setCustomTo}
+                onCustomFromChange={(v) => setCustomFrom(v)}
+                onCustomToChange={(v) => setCustomTo(v)}
                 onApplyCustomRange={(from, to) => {
                   setAppliedCustomFrom(from);
                   setAppliedCustomTo(to);
