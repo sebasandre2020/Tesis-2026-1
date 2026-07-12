@@ -501,7 +501,7 @@ En conclusión, el análisis de temperatura y humedad relativa permite complemen
 
 En esta sección se presentan los resultados correspondientes a la implementación física e integración de los componentes de hardware que conforman la red de percepción y el nodo central (gateway). Estos resultados dan cumplimiento directo a los objetivos específicos relacionados con el diseño de la red de sensores y la implementación de la comunicación inalámbrica LoRa.
 
-\subsection{Ensamblaje e Instrumentación del Nodo Sensor Final}
+\subsection{Implementación e Instrumentación del Prototipo del Nodo Sensor}
 
 El nodo sensor multivariable se implementó físicamente integrando el microcontrolador Arduino UNO con los sensores MH-Z19B (CO\(_2\)), DHT22 (temperatura y humedad relativa) y el transceptor LoRa E220-900T30D. Adicionalmente, se acopló el ventilador extractor de aire como actuador de mitigación, regulado mediante la señal de control PWM generada a 25~kHz a través del Timer 1 (pin D9) y realimentado con la señal de tacómetro leída síncronamente en el pin D6 (el código fuente de este nodo se encuentra documentado en el Anexo~\ref{anexo:codigo_nodo}).
 
@@ -517,12 +517,12 @@ La transmisión inalámbrica de la telemetría se realiza de forma transparente 
 }
 \end{lstlisting}
 
-En la Figura~\ref{fig:nodo_sensor_fisico} se presenta el nodo sensor ensamblado en su gabinete protector, mostrando la disposición física de los sensores y las conexiones eléctricas hacia el microcontrolador de acuerdo con el mapeo de pines establecido.
+En la Figura~\ref{fig:nodo_sensor_fisico} se presenta el prototipo del nodo sensor físico, mostrando la disposición de los sensores y las conexiones eléctricas realizadas mediante cables tipo jumper hacia el microcontrolador de acuerdo con el mapeo de pines establecido.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.75\textwidth]{images/capitulo4/nodo_sensor_fisico.png}
-    \caption{Fotografía del nodo sensor físico ensamblado e instrumentado.}
+    \caption{Fotografía del prototipo del nodo sensor físico instrumentado.}
     \label{fig:nodo_sensor_fisico}
 \end{figure}
 
@@ -530,12 +530,12 @@ En la Figura~\ref{fig:nodo_sensor_fisico} se presenta el nodo sensor ensamblado 
 
 El gateway personalizado basado en el microcontrolador ESP32 y el transceptor LoRa E220-900T30D se programó en C/C++ utilizando una arquitectura modular distribuida en clases especializadas (\texttt{LoRaManager} y \texttt{AzureIoTManager}, cuyo código fuente se adjunta en el Anexo~\ref{anexo:codigo_gateway}). El gateway realiza el escaneo del búfer UART2 (pines GPIO16 y GPIO17) en modo no bloqueante. Al detectar una trama terminada en salto de línea (\texttt{'\textbackslash n'}), el módulo de radio extrae el payload JSON e invoca al administrador de Azure para publicar los datos.
 
-La conexión hacia la nube se establece de manera segura conectando el transceptor Wi-Fi a la red institucional y configurando un cliente MQTT seguro (\texttt{PubSubClient}) con cifrado TLS en el puerto 8883 directo a Azure IoT Hub. La estabilidad del gateway se comprobó registrando una tasa nula de pérdida de paquetes LoRa en un rango de cobertura de 100 metros dentro de las instalaciones del campus. En la Figura~\ref{fig:gateway_fisico} se aprecia la implementación física del gateway y su interfaz de conexión.
+La conexión hacia la nube se establece de manera segura conectando el transceptor Wi-Fi a la red institucional y configurando un cliente MQTT seguro (\texttt{PubSubClient}) con cifrado TLS en el puerto 8883 directo a Azure IoT Hub. La estabilidad del gateway se comprobó registrando una tasa nula de pérdida de paquetes LoRa en un rango de cobertura de 100 metros dentro de las instalaciones del campus. En la Figura~\ref{fig:gateway_fisico} se muestra el prototipo físico del gateway, donde los módulos electrónicos se interconectan mediante cables tipo jumper en una placa de pruebas.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.75\textwidth]{images/capitulo4/gateway_fisico.png}
-    \caption{Fotografía del gateway personalizado basado en ESP32 y LoRa.}
+    \caption{Fotografía del prototipo del gateway personalizado basado en ESP32 y LoRa.}
     \label{fig:gateway_fisico}
 \end{figure}
 
