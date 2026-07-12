@@ -1,11 +1,31 @@
-\chapter{Programa fuente para el nodo sensor}
-\label{chap:anexo_sensor}
-A continuación se muestra el \href{https://drive.google.com/drive/folders/1aXlGegazAneJh7B8XnAMQGIe_NAUFDmi?usp=sharing}{código} fuente desarrollado para la placa de prototipado Arduino UNO para realizar las lecturas de CO\textsubscript{2} y la comunicación LoRa.
+\chapter{Código para el nodo sensor}
+\label{anexo:codigo_nodo}
+A continuación se proporciona el enlace al repositorio que contiene el código fuente en C/C++ (Arduino) desarrollado para la placa Arduino UNO del nodo sensor. Este código incluye las rutinas de lectura de los sensores de CO\(_2\), temperatura, humedad, el control del actuador PWM y el empaquetado de la telemetría.
 
-\chapter{Programa fuente para la aplicación Web}
-\label{chap:anexo_web}
-A continuación se muestra el \href{https://drive.google.com/drive/folders/1jPNutpOta_48wKc6biCxJ9FPRuB1bk8J?usp=sharing}{código} fuente desarrollado para la aplicación web. Este código se segmenta en 2 secciones, el front end, el cual comprende la interfaz gráfica de la aplicación; y el backend, el cual engloba la lógica de negocio y la interacción con la base de datos.
+\begin{center}
+    URL del repositorio: \href{https://github.com/tu-usuario/repo-nodo}{https://github.com/tu-usuario/repo-nodo} (Placeholder)
+\end{center}
 
-\chapter{Componentes del Frontend}
-\label{an:componentes_front}
-En este anexo se incluyen las especificaciones gráficas y de código de los componentes desarrollados para la interfaz del usuario, el dashboard y la configuración administrativa.
+\chapter{Código para el gateway personalizado}
+\label{anexo:codigo_gateway}
+Este anexo contiene el enlace al código fuente en C/C++ desarrollado para el microcontrolador ESP32 que actúa como gateway. Incluye las clases \texttt{LoRaManager} y \texttt{AzureIoTManager} encargadas de la recepción LoRa en modo no bloqueante y la publicación MQTT segura hacia Azure IoT Hub.
+
+\begin{center}
+    URL del repositorio: \href{https://github.com/tu-usuario/repo-gateway}{https://github.com/tu-usuario/repo-gateway} (Placeholder)
+\end{center}
+
+\chapter{Código para la aplicación web}
+\label{anexo:codigo_web}
+A continuación se provee el enlace al código fuente de la plataforma web, subdividido en el \textit{backend} (desarrollado en .NET Core 8.0 utilizando Clean Architecture) y el \textit{frontend} (desarrollado en React).
+
+\begin{center}
+    URL del repositorio: \href{https://github.com/tu-usuario/repo-web}{https://github.com/tu-usuario/repo-web} (Placeholder)
+\end{center}
+
+\chapter{Código IaC para infraestructura en Azure}
+\label{anexo:codigo_iac}
+Este anexo contiene el enlace a los \textit{scripts} y plantillas de Infraestructura como Código (IaC), utilizados para el aprovisionamiento y configuración automatizada de los recursos en Microsoft Azure (IoT Hub, SQL Database, Container Apps, Azure Functions, Static Web Apps, etc.).
+
+\begin{center}
+    URL del repositorio: \href{https://github.com/tu-usuario/repo-iac}{https://github.com/tu-usuario/repo-iac} (Placeholder)
+\end{center}

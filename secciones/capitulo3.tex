@@ -518,7 +518,7 @@ Las conexiones lógicas y eléctricas detalladas para la integración física de
 
 \subsection{Estructura del Firmware Multivariable y Lógica de Control Local}
 
-El firmware del nodo sensor se diseñó bajo una estructura multitarea cooperativa no bloqueante mediante el uso del temporizador del sistema (\texttt{millis()}). Esta arquitectura de software evita el uso de funciones de retardo (\texttt{delay()}), asegurando que la lectura de múltiples sensores con diferentes tiempos de respuesta, el procesamiento de las señales de control, el cálculo de las RPM del ventilador y el empaquetado de datos LoRa ocurran en hilos lógicos independientes de manera concurrente. El código fuente completo programado en lenguaje C++ para el microcontrolador del nodo sensor se encuentra disponible en el Apéndice \ref{chap:anexo_sensor}.
+El firmware del nodo sensor se diseñó bajo una estructura multitarea cooperativa no bloqueante mediante el uso del temporizador del sistema (\texttt{millis()}). Esta arquitectura de software evita el uso de funciones de retardo (\texttt{delay()}), asegurando que la lectura de múltiples sensores con diferentes tiempos de respuesta, el procesamiento de las señales de control, el cálculo de las RPM del ventilador y el empaquetado de datos LoRa ocurran en hilos lógicos independientes de manera concurrente. El código fuente completo programado en lenguaje C++ para el microcontrolador del nodo sensor se encuentra referenciado en el Anexo~\ref{anexo:codigo_nodo}.
 
 El flujo procedimental del firmware del nodo sensor se divide en tres etapas principales operando en paralelo:
 
@@ -699,7 +699,7 @@ Así mismo, la página web cuenta con dos páginas que funcionan como dashboards
     \item \textbf{Consulta Histórica:} El frontend consumirá los endpoints del backend alojados en Azure Container Apps para permitir la consulta histórica de lecturas y su representación en gráficos dinámicos.
 \end{itemize}
 
-La estructura general del software desarrollado, así como los componentes principales de código de la interfaz gráfica de usuario en React, se encuentran descritos en el Apéndice \ref{chap:anexo_web} y en el Apéndice \ref{an:componentes_front}, respectivamente.
+La estructura general del software desarrollado, así como los componentes principales de código de la interfaz gráfica de usuario en React, se encuentran descritos de forma integral en el Anexo~\ref{anexo:codigo_web}.
 
 \subsubsection{Requisitos de Hardware e Interacción con el Gateway Personalizado}
 
