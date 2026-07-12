@@ -221,19 +221,18 @@ Con el propósito de evaluar el desempeño de las estrategias de control impleme
     \caption{Comparación de desempeño de los controladores simulados}
     \label{tabla:comparacion_controladores_simulados}
     \resizebox{\textwidth}{!}{
-    \begin{tabular}{|p{3cm}|p{3cm}|p{3cm}|p{3cm}|p{4.5cm}|}
-        \hline
-        \textbf{Controlador} & \textbf{Tiempo aprox. de llegada al setpoint} & \textbf{Esfuerzo inicial de control} & \textbf{Caudal inicial aprox.} & \textbf{Observación general} \\ \hline
+        \begin{tabular}{|p{3cm}|p{3cm}|p{3cm}|p{3cm}|p{4.5cm}|}
+            \hline
+            \textbf{Controlador} & \textbf{Tiempo aprox. de llegada al setpoint} & \textbf{Esfuerzo inicial de control} & \textbf{Caudal inicial aprox.} & \textbf{Observación general}                                                                                                    \\ \hline
 
-        PI/PID & 60.3 min & 100\% PWM & 515 m\(^3\)/h & Presenta la respuesta más rápida en simulación, pero requiere la actuación máxima de los ventiladores durante la etapa inicial. \\ \hline
+            PI/PID               & 60.3 min                                      & 100\% PWM                            & 515 m\(^3\)/h                  & Presenta la respuesta más rápida en simulación, pero requiere la actuación máxima de los ventiladores durante la etapa inicial. \\ \hline
 
-        Fuzzy PI base & 170--180 min & 69\% PWM aprox. & 290 m\(^3\)/h & Presenta una respuesta más lenta, pero con una acción de control más suave y menor demanda inicial de ventilación. \\ \hline
+            Fuzzy PI base        & 170--180 min                                  & 69\% PWM aprox.                      & 290 m\(^3\)/h                  & Presenta una respuesta más lenta, pero con una acción de control más suave y menor demanda inicial de ventilación.              \\ \hline
 
-        Fuzzy PI agresivo & 120.6 min & 90\% PWM aprox. & 375--380 m\(^3\)/h & Mejora el tiempo de respuesta respecto al Fuzzy PI base, pero incrementa el esfuerzo de control y la ventilación inicial. \\ \hline
+            Fuzzy PI agresivo    & 120.6 min                                     & 90\% PWM aprox.                      & 375--380 m\(^3\)/h             & Mejora el tiempo de respuesta respecto al Fuzzy PI base, pero incrementa el esfuerzo de control y la ventilación inicial.       \\ \hline
 
-        LQR & 74.8 min & 90\% PWM aprox. & 420 m\(^3\)/h & Presenta una respuesta rápida y estable, con menor tiempo que los controladores Fuzzy y sin oscilaciones significativas. \\ \hline
-
-    \end{tabular}
+            LQR                  & 74.8 min                                      & 90\% PWM aprox.                      & 420 m\(^3\)/h                  & Presenta una respuesta rápida y estable, con menor tiempo que los controladores Fuzzy y sin oscilaciones significativas.        \\ \hline
+        \end{tabular}
     }
 \end{table}
 
@@ -426,17 +425,16 @@ Es importante señalar que las pruebas experimentales no iniciaron exactamente d
     \caption{Comparación experimental de los controladores implementados}
     \label{tabla:comparacion_controladores_experimentales}
     \resizebox{\textwidth}{!}{
-    \begin{tabular}{|p{2.8cm}|p{3.2cm}|p{3.2cm}|p{3.2cm}|p{5cm}|}
-        \hline
-        \textbf{Controlador} & \textbf{Condición inicial de CO\(_2\)} & \textbf{Tiempo aprox. de llegada a la zona del setpoint} & \textbf{Respuesta del actuador} & \textbf{Observación general} \\ \hline
+        \begin{tabular}{|p{2.8cm}|p{3.2cm}|p{3.2cm}|p{3.2cm}|p{5cm}|}
+            \hline
+            \textbf{Controlador} & \textbf{Condición inicial de CO\(_2\)}                            & \textbf{Tiempo aprox. de llegada a la zona del setpoint} & \textbf{Respuesta del actuador}                                                                                                                        & \textbf{Observación general}                                                                                                                                                                  \\ \hline
 
-        PI/PID & Inicia cerca de 1480 ppm y alcanza un pico aproximado de 1580 ppm & 25--30 min & PWM cercano al 100\% al inicio; luego cae hasta valores cercanos a 0\%. RPM inicial de 1800--1900 RPM y final de 700--900 RPM. & Presenta la llegada más rápida a la zona del setpoint, aunque parte desde una concentración inicial menor que los otros ensayos. Luego presenta oscilaciones y valores por debajo de 900 ppm. \\ \hline
+            PI/PID               & Inicia cerca de 1480 ppm y alcanza un pico aproximado de 1580 ppm & 25--30 min                                               & PWM cercano al 100\% al inicio; luego cae hasta valores cercanos a 0\%. RPM inicial de 1800--1900 RPM y final de 700--900 RPM.                         & Presenta la llegada más rápida a la zona del setpoint, aunque parte desde una concentración inicial menor que los otros ensayos. Luego presenta oscilaciones y valores por debajo de 900 ppm. \\ \hline
 
-        Fuzzy PI agresivo & Inicia cerca de 2350--2400 ppm & 105--110 min & PWM inicial aproximado de 65--70\%, luego se aproxima al PWM base de 45\%. RPM inicial de 2000--2100 RPM y etapa final entre 1500--1750 RPM. & Parte desde la condición inicial más severa. Su respuesta es más lenta, pero logra reducir el CO\(_2\) de forma progresiva hasta una zona cercana al setpoint. \\ \hline
+            Fuzzy PI agresivo    & Inicia cerca de 2350--2400 ppm                                    & 105--110 min                                             & PWM inicial aproximado de 65--70\%, luego se aproxima al PWM base de 45\%. RPM inicial de 2000--2100 RPM y etapa final entre 1500--1750 RPM.           & Parte desde la condición inicial más severa. Su respuesta es más lenta, pero logra reducir el CO\(_2\) de forma progresiva hasta una zona cercana al setpoint.                                \\ \hline
 
-        LQR & Inicia cerca de 2000 ppm & 49--50 min & PWM inicial cercano al 100\%, luego se estabiliza cerca del PWM base de 40--45\%. RPM inicial de 1900--1950 RPM y etapa final cercana a 900--1000 RPM. & Presenta una respuesta rápida y estable. Alcanza la zona cercana al setpoint en menor tiempo que el Fuzzy PI agresivo, aun partiendo desde una concentración inicial elevada. \\ \hline
-
-    \end{tabular}
+            LQR                  & Inicia cerca de 2000 ppm                                          & 49--50 min                                               & PWM inicial cercano al 100\%, luego se estabiliza cerca del PWM base de 40--45\%. RPM inicial de 1900--1950 RPM y etapa final cercana a 900--1000 RPM. & Presenta una respuesta rápida y estable. Alcanza la zona cercana al setpoint en menor tiempo que el Fuzzy PI agresivo, aun partiendo desde una concentración inicial elevada.                 \\ \hline
+        \end{tabular}
     }
 \end{table}
 
@@ -533,6 +531,85 @@ Respecto a la humedad relativa, el controlador PI/PID presentó la variación m�
 
 En conclusión, el análisis de temperatura y humedad relativa permite complementar la evaluación de los controladores. Aunque el objetivo principal del sistema fue el control de CO\(_2\), el seguimiento de estas variables demuestra que la ventilación aplicada no afectó de manera considerable las condiciones ambientales del aula. Por ello, la incorporación de temperatura y humedad relativa fortalece la validación experimental del sistema desde una perspectiva más amplia de calidad ambiental interior.
 
-\section{Página web para la lectura de los sensores}
+\section{Implementación y Resultados de los Subsistemas de Hardware}
 
+En esta sección se presentan los resultados correspondientes a la implementación física e integración de los componentes de hardware que conforman la red de percepción y el nodo central (gateway). Estos resultados dan cumplimiento directo a los objetivos específicos relacionados con el diseño de la red de sensores y la implementación de la comunicación inalámbrica LoRa.
 
+\subsection{Ensamblaje e Instrumentación del Nodo Sensor Final}
+
+El nodo sensor multivariable se implementó físicamente integrando el microcontrolador Arduino UNO con los sensores MH-Z19B (CO\(_2\)), DHT22 (temperatura y humedad relativa) y el transceptor LoRa E220-900T30D. Adicionalmente, se acopló el ventilador extractor de aire como actuador de mitigación, regulado mediante la señal de control PWM generada a 25~kHz a través del Timer 1 (pin D9) y realimentado con la señal de tacómetro leída síncronamente en el pin D6.
+
+La transmisión inalámbrica de la telemetría se realiza de forma transparente empaquetando las variables medidas en una trama JSON que sigue la estructura mostrada en el Código~\ref{lst:json_telemetria}. Este formato estructurado facilita la decodificación por parte del gateway y minimiza el uso del canal de radiofrecuencia al transmitir un payload ligero de aproximadamente 115 bytes.
+
+\begin{lstlisting}[basicstyle=\ttfamily\small, caption={Ejemplo de payload JSON emitido por el nodo sensor.}, label={lst:json_telemetria}]
+{
+  "node_id": "Node_01",
+  "co2": 742,
+  "dust": 31,
+  "temperature": 22.4,
+  "humidity": 48.7
+}
+\end{lstlisting}
+
+En la Figura~\ref{fig:nodo_sensor_fisico} se presenta el nodo sensor ensamblado en su gabinete protector, mostrando la disposición física de los sensores y las conexiones eléctricas hacia el microcontrolador de acuerdo con el mapeo de pines establecido.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{images/capitulo4/nodo_sensor_fisico.png}
+    \caption{Fotografía del nodo sensor físico ensamblado e instrumentado.}
+    \label{fig:nodo_sensor_fisico}
+\end{figure}
+
+\subsection{Operación e Integración del Gateway Personalizado}
+
+El gateway personalizado basado en el microcontrolador ESP32 y el transceptor LoRa E220-900T30D se programó en C/C++ utilizando una arquitectura modular distribuida en clases especializadas (\texttt{LoRaManager} y \texttt{AzureIoTManager}). El gateway realiza el escaneo del búfer UART2 (pines GPIO16 y GPIO17) en modo no bloqueante. Al detectar una trama terminada en salto de línea (\texttt{'\textbackslash n'}), el módulo de radio extrae el payload JSON e invoca al administrador de Azure para publicar los datos.
+
+La conexión hacia la nube se establece de manera segura conectando el transceptor Wi-Fi a la red institucional y configurando un cliente MQTT seguro (\texttt{PubSubClient}) con cifrado TLS en el puerto 8883 directo a Azure IoT Hub. La estabilidad del gateway se comprobó registrando una tasa nula de pérdida de paquetes LoRa en un rango de cobertura de 100 metros dentro de las instalaciones del campus. En la Figura~\ref{fig:gateway_fisico} se aprecia la implementación física del gateway y su interfaz de conexión.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{images/capitulo4/gateway_fisico.png}
+    \caption{Fotografía del gateway personalizado basado en ESP32 y LoRa.}
+    \label{fig:gateway_fisico}
+\end{figure}
+
+\section{Resultados de la Plataforma Web e Infraestructura en la Nube}
+
+Para responder al objetivo específico de almacenamiento, procesamiento y visualización de la telemetría en tiempo real, se implementó una infraestructura en la nube basada en Microsoft Azure bajo el patrón arquitectónico CQRS.
+
+\subsection{Validación de Ingesta y Almacenamiento en la Nube}
+
+El flujo de inyección (canal de escritura) fue validado exitosamente. Las tramas JSON publicadas por el gateway son recibidas en Azure IoT Hub. Este evento activa una Azure Function serverless en modalidad \textit{Consumption Plan}, la cual realiza el análisis de esquema (schema validation) e inserta el registro en la Azure SQL Database.
+
+El backend de la plataforma web, escrito en .NET Core 8.0 utilizando Clean Architecture, se implementó en Azure Container Apps. La configuración de escalado dinámico (\textit{Scale to Zero}) fue verificada: la aplicación disminuye sus recursos de cómputo a cero cuando no se detectan peticiones HTTP activa, eliminando costos fijos y reactivándose automáticamente en menos de 2 segundos al recibir una solicitud GET del cliente React.
+
+\subsection{Interfaz Gráfica de Usuario (Frontend React)}
+
+El frontend React, distribuido a través de Azure Static Web Apps, presenta un panel interactivo que consolida la información de todos los laboratorios y aulas instrumentadas. A continuación se presentan las capturas de pantalla de los módulos principales implementados:
+
+1. \textbf{Dashboard General de Telemetría:} Muestra en tiempo real las lecturas de CO\(_2\) (ppm), material particulado (\(\mu\)g/m\textsuperscript{3}), temperatura (\(^\circ\)C) y humedad relativa (\%), junto con indicadores visuales del estado de confort térmico y calidad del aire en cada aula (Figura~\ref{fig:dashboard_general}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/capitulo4/dashboard_general.png}
+    \caption{Interfaz del dashboard general de la plataforma web en tiempo real.}
+    \label{fig:dashboard_general}
+\end{figure}
+
+2. \textbf{Visualización de Históricos y Gráficos:} Permite a los administradores y usuarios de mantenimiento consultar las tendencias de calidad del aire a lo largo de lapsos seleccionados (horas, días o semanas), lo cual resulta crítico para evaluar la efectividad de las estrategias de ventilación implementadas frente a picos de ocupación (Figura~\ref{fig:graficos_historicos}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/capitulo4/graficos_historicos.png}
+    \caption{Gráficos de tendencias históricas de las variables ambientales por aula.}
+    \label{fig:graficos_historicos}
+\end{figure}
+
+3. \textbf{Panel de Alertas y Notificaciones en Tiempo Real:} Implementa la suscripción reactiva a WebSockets de Azure Web PubSub. Cuando una lectura de CO\(_2\) sobrepasa el umbral crítico configurado (ej. 900 ppm), el sistema gatilla alertas visuales instantáneas en pantalla sin necesidad de refrescar la página, facilitando la toma de acciones inmediatas por parte del personal de mantenimiento (Figura~\ref{fig:panel_alertas}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/capitulo4/panel_alertas.png}
+    \caption{Panel de alertas activas y notificaciones críticas del sistema.}
+    \label{fig:panel_alertas}
+\end{figure}
