@@ -36,3 +36,4 @@ PID_Temperatura.ino
 skills-lock.json
 
 .agents/
+Codes/Gateway/main/PID_Temperatura_humedad_Co2_polvo.ino
