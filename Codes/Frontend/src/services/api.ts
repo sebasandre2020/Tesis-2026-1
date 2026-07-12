@@ -31,9 +31,9 @@ const API_BASE_URL = process.env.NODE_ENV === 'development'
 // en /api/sensors. Mantenemos este mapa sincronizado con el backend.
 // =============================================================================
 export const SENSOR_ID_TO_NODE: Record<number, { nodeId: string; name: string; location: string }> = {
-  [-642718467]: { nodeId: 'Node_01', name: 'Aula 101', location: 'Piso 1' },
-  [-889472740]: { nodeId: 'Node_02', name: 'Laboratorio', location: 'Piso 2' },
-  [615230235]: { nodeId: 'Node_03', name: 'Biblioteca', location: 'Piso 1' },
+  [669875426]: { nodeId: 'Node_01', name: 'Aula 101', location: 'Piso 1' },
+  [1567850367]: { nodeId: 'Node_02', name: 'Laboratorio', location: 'Piso 2' },
+  [-1555567215]: { nodeId: 'Node_03', name: 'Biblioteca', location: 'Piso 1' },
 };
 
 /** Tabla de nodeId -> nombre legible (para legends/labels en la UI). */

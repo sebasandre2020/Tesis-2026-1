@@ -9,9 +9,10 @@ import {
   TbChevronDown, 
   TbChevronUp
 } from 'react-icons/tb';
-import { SENSOR_ID_TO_NODE } from '../services/api';
+import { useAppContext } from '../store/AppContext';
 
 const Sidebar: React.FC = () => {
+  const { sensors, loadingSensors } = useAppContext();
   const [isSensorsMenuOpen, setIsSensorsMenuOpen] = useState(false);
   const [userClosedSensorsMenu, setUserClosedSensorsMenu] = useState(false);
   const location = useLocation();
@@ -40,14 +41,6 @@ const Sidebar: React.FC = () => {
       : location.pathname.startsWith(path);
     return `sidebar-link ${isActive ? 'sidebar-link-active' : 'text-gray-600 hover:bg-gray-100'}`;
   };
-
-  const sensorIds = Object.keys(SENSOR_ID_TO_NODE)
-    .map(sid => parseInt(sid, 10))
-    .sort((a, b) => {
-      const nodeA = SENSOR_ID_TO_NODE[a].nodeId;
-      const nodeB = SENSOR_ID_TO_NODE[b].nodeId;
-      return nodeA.localeCompare(nodeB);
-    });
 
   return (
     <aside className="w-64 h-screen bg-white border-r border-gray-200 fixed flex flex-col p-6 z-30">
@@ -83,17 +76,23 @@ const Sidebar: React.FC = () => {
           
           {effectiveOpen && (
             <div className="ml-4 flex flex-col space-y-1 mt-1 border-l border-gray-100 pl-4">
-              {sensorIds.map(sid => (
-                <Link
-                  key={sid}
-                  to={`/sensor/${sid}`}
-                  className={`text-sm p-2 rounded transition-colors ${
-                    activeSensorId === sid ? 'text-utec-cyan font-semibold' : 'text-gray-500 hover:text-utec-cyan hover:bg-utec-cyan/5'
-                  }`}
-                >
-                  {SENSOR_ID_TO_NODE[sid].name} - {SENSOR_ID_TO_NODE[sid].location}
-                </Link>
-              ))}
+              {loadingSensors && sensors.length === 0 ? (
+                <div className="text-[10px] text-gray-400 animate-pulse p-2">Cargando nodos...</div>
+              ) : sensors.length === 0 ? (
+                <div className="text-[10px] text-gray-400 p-2 italic">Sin nodos activos</div>
+              ) : (
+                sensors.map(s => (
+                  <Link
+                    key={s.id}
+                    to={`/sensor/${s.id}`}
+                    className={`text-sm p-2 rounded transition-colors ${
+                      activeSensorId === s.id ? 'text-utec-cyan font-semibold' : 'text-gray-500 hover:text-utec-cyan hover:bg-utec-cyan/5'
+                    }`}
+                  >
+                    {s.name} - {s.location}
+                  </Link>
+                ))
+              )}
             </div>
           )}
         </div>

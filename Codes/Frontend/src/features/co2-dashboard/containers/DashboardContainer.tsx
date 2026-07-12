@@ -21,8 +21,9 @@ import {
   Sensor, Alert, AlertHistoryEntry, SystemStats, ChartData, MetricType,
 } from '../../../types/sensor.types';
 
+import { useAppContext } from '../../../store/AppContext';
+
 interface DashboardData {
-  sensors: Sensor[];
   alerts: Alert[];
   history: AlertHistoryEntry[];
   stats: SystemStats;
@@ -30,7 +31,6 @@ interface DashboardData {
 }
 
 const EMPTY: DashboardData = {
-  sensors: [],
   alerts: [],
   history: [],
   stats: { averageCO2: 0, maxCO2: 0, alertTimeHours: 0, totalAlerts: 0 },
@@ -38,6 +38,7 @@ const EMPTY: DashboardData = {
 };
 
 const DashboardContainer: React.FC = () => {
+  const { sensors, loadingSensors, refreshSensors } = useAppContext();
   const { timeRange, setTimeRange } = useTimeRange('24h');
   const [metric, setMetric] = useState<MetricType>('co2');
   const [data, setData] = useState<DashboardData>(EMPTY);
@@ -71,23 +72,13 @@ const DashboardContainer: React.FC = () => {
     setError(null);
 
     Promise.all([
-      fetchSensors(),
       fetchActiveAlerts(),
       fetchAlertHistory(),
       fetchStats(),
     ])
-      .then(([sensors, alerts, history, stats]) => {
+      .then(([alerts, history, stats]) => {
         if (cancelled) return;
-        
-        // Sort sensors by nodeId to match sidebar order (Node_01, Node_02, Node_03)
-        const sortedSensors = [...sensors].sort((a, b) => 
-          (a.nodeId || '').localeCompare(b.nodeId || '')
-        );
-
-        setData(prev => ({ ...prev, sensors: sortedSensors, alerts, history, stats }));
-        if (sensors.length === 0) {
-          setError('No se pudieron obtener datos. Verifica la conexión con la API.');
-        }
+        setData(prev => ({ ...prev, alerts, history, stats }));
       })
       .catch(err => {
         if (cancelled) return;
@@ -158,16 +149,16 @@ const DashboardContainer: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 h-full">
-                {loading && data.sensors.length === 0 ? (
+                {(loading || loadingSensors) && sensors.length === 0 ? (
                   [0, 1, 2].map(i => (
                     <div key={i} className="h-[220px] bg-white border border-gray-100 rounded-xl animate-pulse" />
                   ))
-                ) : data.sensors.length === 0 ? (
+                ) : sensors.length === 0 ? (
                   <div className="col-span-full card-refined p-8 flex items-center justify-center text-gray-400 font-medium italic">
                     No se detectaron nodos activos en la red.
                   </div>
                 ) : (
-                  data.sensors.map(sensor => (
+                  sensors.map(sensor => (
                     <SensorCard key={sensor.id} sensor={sensor} />
                   ))
                 )}

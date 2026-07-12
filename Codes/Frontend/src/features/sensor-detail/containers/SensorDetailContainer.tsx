@@ -17,7 +17,7 @@ import { getTimeRangeLabel, toUtcIsoString, getCustomTimeRangeLabel } from '../.
 const parseSensorId = (raw: string | undefined): number | null => {
   if (!raw) return null;
   const n = parseInt(raw, 10);
-  if (Number.isNaN(n) || !SENSOR_ID_TO_NODE[n]) return null;
+  if (Number.isNaN(n)) return null;
   return n;
 };
 

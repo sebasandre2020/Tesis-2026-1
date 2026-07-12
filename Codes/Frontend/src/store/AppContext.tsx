@@ -2,12 +2,17 @@
 // Provider Pattern — React Context para estado global de la aplicación.
 // Sigue el patrón Proveedor descrito en el README para evitar prop-drilling.
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { Sensor } from '../types/sensor.types';
+import { fetchSensors } from '../services/api';
 
 interface AppState {
   /** Indica si la barra lateral está colapsada (para responsividad futura) */
   isSidebarCollapsed: boolean;
   toggleSidebar: () => void;
+  sensors: Sensor[];
+  loadingSensors: boolean;
+  refreshSensors: () => Promise<void>;
 }
 
 const AppContext = createContext<AppState | undefined>(undefined);
@@ -22,13 +27,41 @@ interface AppProviderProps {
  */
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [sensors, setSensors] = useState<Sensor[]>([]);
+  const [loadingSensors, setLoadingSensors] = useState(true);
+
+  const refreshSensors = async () => {
+    setLoadingSensors(true);
+    try {
+      const data = await fetchSensors();
+      // Ordenamos por nodeId para mantener consistencia
+      const sorted = [...data].sort((a, b) => 
+        (a.nodeId || '').localeCompare(b.nodeId || '')
+      );
+      setSensors(sorted);
+    } catch (error) {
+      console.error('[AppContext] Failed to fetch sensors', error);
+    } finally {
+      setLoadingSensors(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshSensors();
+  }, []);
 
   const toggleSidebar = () => {
     setIsSidebarCollapsed((prev) => !prev);
   };
 
   return (
-    <AppContext.Provider value={{ isSidebarCollapsed, toggleSidebar }}>
+    <AppContext.Provider value={{ 
+      isSidebarCollapsed, 
+      toggleSidebar, 
+      sensors, 
+      loadingSensors, 
+      refreshSensors 
+    }}>
       {children}
     </AppContext.Provider>
   );
